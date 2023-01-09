@@ -260,8 +260,8 @@ void TurnLeft(int angle) {
   }
 
   for (i = 0; i < 2; ++i) {
-    digitalWrite(LeftForward[i], LOW);
-    digitalWrite(RightReverse[i], LOW);
+    digitalWrite(RightForward[i], LOW);
+    digitalWrite(LeftReverse[i], LOW);
   }
 }
 
