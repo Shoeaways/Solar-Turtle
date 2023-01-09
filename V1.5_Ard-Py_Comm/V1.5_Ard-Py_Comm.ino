@@ -26,7 +26,6 @@ void setup() {
 void loop() {
   //Read the command from the serial port
   readSerialPort();
-
   message.toLowerCase();   
   
   //Stop command stops the robots movement
