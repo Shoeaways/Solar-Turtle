@@ -1,9 +1,8 @@
 /*
   Main file for the communication between our Raspberry Pi and Arduino
 
-  Rev 1.5 Changes
-  - Removed serialprint(nom) in the data function call
-  - Added the indexOf function to implement a dynamic string splitter for QoL
+  Rev 1.6 Changes
+  - 
 */
 
 #include "Movement.h"
