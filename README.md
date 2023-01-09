@@ -1,7 +1,7 @@
-## Solar Operated Land Autonomous Reconnaissance Turtle
-
 <header>
-  <h1>Hello</h1>
+  <h2>
+    Solar Operated Land Autonomous Reconnaissance Turtle
+  <h2>
 </header>
 
 ReadMe file
