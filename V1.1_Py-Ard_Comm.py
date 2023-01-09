@@ -15,7 +15,6 @@ if __name__ == '__main__':
                     if arduino.inWaiting()>0:
                         answer=str(arduino.readline())
                         print(answer)
-                        #print("---> {}".format(answer))
 
                         if cmd == "data":
                             dataList = answer.split("~")
