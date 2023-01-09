@@ -2,20 +2,26 @@
   Main file for the communication between our Raspberry Pi and Arduino
 
   Rev 1.6 Changes
+  - Changed "msg" to "command"
+  Todo
+  - Check to see if we can call functions directly from data.h since we included Movement.h
+  - If data is called, implement how to specify which data we are looking for
+    - ie "data compassheading" or something similar
   - Integrate GPS into the data.h file
+  - 
 */
 
 #include "Movement.h"
 
-//String variables for the serial message
+// String variables for the serial message
 String nom = "Solar Turtle is ";
 String message;
-String msg;
+String command;
 String tempString; 
 int spaceIndex;
 int num;
 
-//Initialize
+// Initialize
 void setup() {
   Serial.begin(9600);
   initMovement();
@@ -23,58 +29,56 @@ void setup() {
 }
 
 void loop() {
-  //Read the command from the serial port
+  // Read the command from the serial port
   readSerialPort();
   message.toLowerCase();   
   
-  //Stop command stops the robots movement
+  // Stop command stops the robots movement
   if (message == "stop") {
     Serial.print(nom + "Stopping...");
     Stop();
   }
 
-  //If data is called, implement how to specify which data we are looking for
-
-  //Data command sends important values such as GPS coordinates or current Roll/Pitch/Yaw
+  // Data command sends important values such as GPS coordinates or current Roll/Pitch/Yaw
   if (message == "data") {
     sendData();
   } 
-  //If the command is none of the above, it will contain a number, space, then the command (XXX COMMAND)
+  // If the command is none of the above, it will contain a number, space, then the command (XXX COMMAND)
   else {
-    //Find the index of the space and split message into two strings, number and command
+    // Find the index of the space (spaceIndex) and split message into two strings, number and command
     spaceIndex = message.indexOf(" ");
     tempString = message.substring(0, spaceIndex);
     num = tempString.toInt();
-    msg = message.substring((spaceIndex + 1), message.length());
+    command = message.substring((spaceIndex + 1), message.length());
     
-    if (msg == "forward") {
+    if (command == "forward") {
       Serial.print(nom + "Schmooving Forward ");
       MoveForward(num);    
     } 
-    else if (msg == "reverse") {
+    else if (command == "reverse") {
       Serial.print(nom +"Reverse Reverse");
       MoveReverse(num);
     }
-    else if (msg == "left") {
+    else if (command == "left") {
       Serial.print(nom + "Turning to the Left ");
       TurnLeft(num);
     }
-    else if (msg == "right") {
+    else if (command == "right") {
       Serial.print(nom + "Turning to the Left ");
       TurnRight(num);
     }
-    else if (msg == "panel") {
+    else if (command == "panel") {
       Serial.print("Schmooving the Panel");
       MovePanel(num);
     }
 
     num = 0;
-    msg = "";
+    command = "";
   }
   delay(250);
 }
 
-//Read serial port
+// Read serial port
 void readSerialPort() {
   message = "";
     if (Serial.available()) {
