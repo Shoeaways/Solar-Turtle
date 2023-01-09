@@ -10,7 +10,7 @@ related to movement using our DC/Servo Motors.
 
 #include "Data.h"
 
-//Motor Pins
+// Motor Pins
 const int Motor1PWM = 11;
 const int Motor1Forward = 14;
 const int Motor1Reverse = 15;
@@ -24,10 +24,10 @@ const int Motor4PWM = 4;
 const int Motor4Forward = 2;
 const int Motor4Reverse = 3;
 
-//Servo Pins
+// Servo Pins
 const int PanelServo = 12;
 
-//Motor Pin Arrays
+// Motor Pin Arrays
 const int LeftForward[] = {Motor1Forward, Motor2Forward};
 const int LeftReverse[] = {Motor1Reverse, Motor2Reverse};
 const int RightForward[] = {Motor3Forward, Motor4Forward};
@@ -36,7 +36,7 @@ const int Forward[] = {Motor1Forward, Motor2Forward, Motor3Forward, Motor4Forwar
 const int Reverse[] = {Motor1Reverse, Motor2Reverse, Motor3Reverse, Motor4Reverse};
 const int PWM[] = {Motor4PWM, Motor3PWM, Motor2PWM, Motor1PWM};
 
-//Variables
+// Variables
 float PWMinput = 0;
 float targetAngle = 0;
 float lowerTargetAngle = 0;
@@ -51,19 +51,19 @@ int j = 0;
 
 boolean fromZero;
 
-//Initialize function
+// Initialize function
 void initMovement() {
-  //Default pins 2-15 to output
+  // Default pins 2-15 to output
   for (i = 2; i <=15; ++i) {
     pinMode(i, OUTPUT);
   }
   
-  //Default all PWMs to 0
+  // Default all PWMs to 0
   for (i = 0; i < 4; ++i) {
     analogWrite(PWM[i],0);
   }
   
-  //Defaults Servo to ~90 degrees which sits our solar panel flat
+  // Defaults Servo to ~90 degrees which sits our solar panel flat
   for (j = 170; j <= 180; ++j) {
       analogWrite(PanelServo, j);
       delay(25);
@@ -71,12 +71,13 @@ void initMovement() {
   currPanelAngle = 180;
 }
 
-//Send GPS coords/RPY/etc.
+// Send GPS coords/RPY/etc.
+// The "~" is to split the data when it's sent back to the RPi
 void sendData() {
   Serial.print(IMUValues() + "~" + String(currPanelAngle) + "~");
 }
 
-//Move forward at a given speed (num is a 0-100 speed input)
+// Move forward at a given speed (num is a 0-100 speed input)
 void MoveForward(int num) {
   PWMinput = num * 2.55;
   //Sets speed to 0 before starting to account for calling the function while the robot is already moving
@@ -86,7 +87,6 @@ void MoveForward(int num) {
     }
     delay(8);
   }
-
   for (i = 0; i < 4; ++i) {
     digitalWrite(Forward[i], LOW);
     digitalWrite(Reverse[i], LOW);
@@ -96,8 +96,7 @@ void MoveForward(int num) {
     digitalWrite(Forward[i], HIGH);
     digitalWrite(Reverse[i], LOW);
   }
-
-  for (i = 0; i < PWMinput; ++i) { //nice
+  for (i = 0; i < PWMinput; ++i) {
     for (j = 0; j < 4; ++j) {
       analogWrite(PWM[j], i);
     }
@@ -105,17 +104,16 @@ void MoveForward(int num) {
   }
 }
 
-//Move backward at a given speed (num is a 0-100 speed input)
+// Move backward at a given speed (num is a 0-100 speed input)
 void MoveReverse(int num) {
   PWMinput = num * 2.55;
-  //Sets speed to 0 before starting to account for calling the function while the robot is already moving
+  // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
       analogWrite(PWM[j], brakeVar);
     }
     delay(8);
   }
-  
   for (i = 0; i < 4; ++i) {
     digitalWrite(Forward[i], LOW);
     digitalWrite(Reverse[i], LOW);
@@ -125,8 +123,7 @@ void MoveReverse(int num) {
     digitalWrite(Forward[i], LOW);
     digitalWrite(Reverse[i], HIGH);
   }
-
-  for (i = 0; i < PWMinput; ++i) { //nice
+  for (i = 0; i < PWMinput; ++i) {
     for (j = 0; j < 4; ++j) {
       analogWrite(PWM[j], i);
     }
@@ -134,9 +131,9 @@ void MoveReverse(int num) {
   }
 }
 
-//Turn Right x amount of degrees at a default speed
+// Turn Right x amount of degrees at a default speed
 void TurnRight(int angle) {
-  //Sets speed to 0 before starting to account for calling the function while the robot is already moving
+  // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
       analogWrite(PWM[j], brakeVar);
@@ -199,16 +196,15 @@ void TurnRight(int angle) {
   }
 }
 
-//Turn Left at a default speed
+// Turn Left at a default speed
 void TurnLeft(int angle) {
-  //Sets speed to 0 before starting to account for calling the function while the robot is already moving
+  // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
       analogWrite(PWM[j], brakeVar);
     }
     delay(8);
   }
-  
   for (i = 0; i < 4; ++i) {
     digitalWrite(Forward[i], LOW);
     digitalWrite(Reverse[i], LOW);
@@ -265,27 +261,27 @@ void TurnLeft(int angle) {
   }
 }
 
-//Moves the solar panel servo to a called angle 
+// Moves the solar panel servo to a called angle 
 void MovePanel(int angle) {
-  //Case where the called angle is greater than the current angle
+  // Case where the called angle is greater than the current angle
   if (currPanelAngle < angle) {
     for (i = currAngle; i <= angle; ++i) {
       analogWrite(PanelServo, i);
       delay(25);
     }
   }
-  //Case where the called angle is smaller than the current angle
+  // Case where the called angle is smaller than the current angle
   else if (currPanelAngle > angle) {
     for (i = currPanelAngle; i >= angle; --i) {
       analogWrite(PanelServo, i);
       delay(25);
     }
   }
-  //Update the current Angle
+  // Update the current Angle
   currPanelAngle = angle;
 }
 
-//Slow down and stop 
+// Slow down and stop 
 void Stop() { 
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
@@ -293,7 +289,7 @@ void Stop() {
     }
     delay(8);
   }
-
+  
   for (i = 0; i < 4; ++i) {
     digitalWrite(Forward[i], LOW);
     digitalWrite(Reverse[i], LOW);

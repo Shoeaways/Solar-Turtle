@@ -55,12 +55,11 @@ void updateValues() {
     magY = IMU.getMagY_uT();
     magZ = IMU.getMagZ_uT();
 
-    pitch = atan2 (accelY,(sqrt ((accelX * accelX) + (accelZ * accelZ))));
+    // Calculate roll, pitch, and yaw
     roll = atan2(-accelX,(sqrt((accelY * accelY) + (accelZ * accelZ))));
-
+    pitch = atan2 (accelY,(sqrt ((accelX * accelX) + (accelZ * accelZ))));
     Yh = (magY * cos(roll)) - (magZ * sin(roll));
     Xh = (magX * cos(pitch))+(magY * sin(roll)*sin(pitch)) + (magZ * cos(roll) * sin(pitch));
-  
     yaw =  atan2(Yh, Xh);
 
     // Convert from Radians to Degrees
@@ -91,11 +90,14 @@ void updateValues() {
   }
 }
 
+// Function to send Roll/Pitch/Yaw values
 String IMUValues() {
   updateValues();
+  // The "~" is to split the data when it's sent back to the RPi
   return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw));
 }
 
+// Function to send just the Yaw value (compass heading)
 float YawValue() {
   updateValues();
   return(yaw);
