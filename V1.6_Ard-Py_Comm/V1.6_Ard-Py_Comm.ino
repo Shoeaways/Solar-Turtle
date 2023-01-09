@@ -33,6 +33,8 @@ void loop() {
     Stop();
   }
 
+  //If data is called, implement how to specify which data we are looking for
+
   //Data command sends important values such as GPS coordinates or current Roll/Pitch/Yaw
   if (message == "data") {
     sendData();
