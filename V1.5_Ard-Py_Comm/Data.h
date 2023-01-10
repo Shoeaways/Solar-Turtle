@@ -5,8 +5,6 @@ The purpose of this file is a library for any function
 related to data such as GPS values and Roll/Pitch/Yaw.
 */
 
-// Need to Implement code for Voltage and Current Sensors in Data.h file
-
 #ifndef Data_h
 #define Data_h
 

@@ -1,8 +1,9 @@
 /*
   Main file for the communication between our Raspberry Pi and Arduino
 
-  Rev 1.6 Changes
-  - 
+  Rev 1.5 Changes
+  - Removed serialprint(nom) in the data function call
+  - Added the indexOf function to implement a dynamic string splitter for QoL
 */
 
 #include "Movement.h"
@@ -25,6 +26,7 @@ void setup() {
 void loop() {
   //Read the command from the serial port
   readSerialPort();
+
   message.toLowerCase();   
   
   //Stop command stops the robots movement
@@ -32,8 +34,6 @@ void loop() {
     Serial.print(nom + "Stopping...");
     Stop();
   }
-
-  //If data is called, implement how to specify which data we are looking for
 
   //Data command sends important values such as GPS coordinates or current Roll/Pitch/Yaw
   if (message == "data") {
