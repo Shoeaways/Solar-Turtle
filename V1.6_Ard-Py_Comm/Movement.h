@@ -38,18 +38,25 @@ const int PWM[] = {Motor4PWM, Motor3PWM, Motor2PWM, Motor1PWM};
 
 // Variables
 float PWMinput = 0;
+int brakeVar = 0;
+int currPanelAngle = 0;
+int i = 0;
+int j = 0;
+
+// Turning Variables
+bool fromZero;
+bool overflowFlag;
+bool rightTurnOverflow;
+bool leftTurnOverflow;
+float tempOverflow = 0;
 float targetAngle = 0;
 float lowerTargetAngle = 0;
 float upperTargetAngle = 0;
 float angleDifference = 0;
 float errorAngle = 2.0;
 float currAngle = 0;
-int brakeVar = 0;
-int currPanelAngle = 0;
-int i = 0;
-int j = 0;
-
-boolean fromZero;
+float prevAngle = 0;
+float turnSpeed = 0;
 
 // Initialize function
 void initMovement() {
@@ -131,8 +138,8 @@ void MoveReverse(int num) {
   }
 }
 
-// Turn Right x amount of degrees at a default speed
-void TurnRight(int angle) {
+// Turn Right x amount of degrees
+void TurnRight(float angle) {
   // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
@@ -145,49 +152,138 @@ void TurnRight(int angle) {
     digitalWrite(Reverse[i], LOW);
   }
 
+  // Flag for the while loop when turning to determine whether or not we are starting our speed at 0
   fromZero = true;
+  overflowFlag = false;
+
+  // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error
   currAngle = YawValue();
+  prevAngle = currAngle;
   targetAngle = currAngle + angle;
-  lowerTargetAngle = targetAngle - errorAngle;
   upperTargetAngle = targetAngle + errorAngle;
+  lowerTargetAngle = targetAngle - errorAngle;
+
+  // Account for overflow of 360 to 0 degrees
+  if (upperTargetAngle >= 360) {
+    rightTurnOverflow = true;
+  }
 
   for (i = 0; i < 2; ++i) {
     digitalWrite(LeftForward[i], HIGH);
     digitalWrite(RightReverse[i], HIGH);
   }
-  
-  while((currAngle < lowerTargetAngle) ^ (currAngle > upperTargetAngle)) {
-    angleDifference = targetAngle - currAngle;
-    angleDifference = abs(angleDifference);
 
-    if (fromZero) {
-      if (angleDifference > angle) {
-        for (i = 0; i <= 50; ++i) {
-          for (j = 0; j < 4; ++j) {
-            analogWrite(PWM[j], i);
-          }
-          delay(6);
-        }
+  // Target angle overflows past 360 degrees
+  if (rightTurnOverflow == true) {
+    // Increase error margins when we do have to overflow
+    //lowerTargetAngle -= errorAngle;
+    //upperTargetAngle += errorAngle;         
+    while (((currAngle + 360) < lowerTargetAngle) || ((currAngle + 360) > upperTargetAngle)) {
+      // Checks if the IMU overflowed from 360 to 0
+      if (abs(prevAngle - currAngle) > 150) {
+        overflowFlag = true;
+      }
+      if (overflowFlag == true) {
+        // We can add 360 here since it will be temporary until it is recaptured at the end of the while loop
+        currAngle += 360;
+        overflowFlag = false;
+      }     
+      
+      // Calculate remaining distance from target angle
+      angleDifference = targetAngle - currAngle;
+      angleDifference = abs(angleDifference); // This just accounts for overshoot or left turns 
+  
+      // Set speed based on percent distance remaining
+      if (angleDifference/angle >= 1) {
+        turnSpeed = 50;
       }
       else {
-        for (i = 0; i <= (angleDifference/angle); ++i) {
+        turnSpeed = ((angleDifference/angle) * 50);   
+      }
+
+      // If the rover is beginning to move, we will start the PWM from i = 0
+      if (fromZero) {
+        if ((angleDifference/angle) > 1) {
+          for (i = 0; i <= 50; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        else {
+          for (i = 0; i <= turnSpeed; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        fromZero = false;
+      }
+      // Otherwise, we will slow down from the previous speed
+      else {
+        for (i = brakeVar; i > turnSpeed; --i) {
           for (j = 0; j < 4; ++j) {
             analogWrite(PWM[j], i);
           }
-          delay(6);
+          delay(2);
         }
       }
-      fromZero = false;
+      // Update variables and recapture the current compass reading
+      prevAngle = currAngle;
+      brakeVar = turnSpeed;
+      currAngle = YawValue();
     }
-    else {
-      for (i = 0; i <= (angleDifference/angle); ++i) {
-        for (j = 0; j < 4; ++j) {
-          analogWrite(PWM[j], i);
-        }
-        delay(6);
+  }
+  // No overflow
+  else {
+    while((currAngle < lowerTargetAngle) || (currAngle > upperTargetAngle)) {
+      // Calculate remaining distance from target angle
+      angleDifference = targetAngle - currAngle;
+      angleDifference = abs(angleDifference); // This just accounts for overshoot or left turns 
+  
+      // Set speed based on percent distance remaining      
+      if (angleDifference/angle >= 1) {
+        turnSpeed = 50;
       }
+      else {
+        turnSpeed = ((angleDifference/angle) * 50);   
+      }
+  
+      // If the rover is beginning to move, we will start the PWM from i = 0
+      if (fromZero) {
+        if ((angleDifference/angle) >= 1) {
+          for (i = 0; i <= 50; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        else {
+          for (i = 0; i <= turnSpeed; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        fromZero = false;
+      }
+      // Otherwise, we will slow down from the previous speed
+      else {
+        for (i = brakeVar; i > turnSpeed; --i) {
+          for (j = 0; j < 4; ++j) {
+            analogWrite(PWM[j], turnSpeed);
+          }
+          delay(2);
+        }
+      }
+      // Update variables and recapture the current compass reading
+      brakeVar = turnSpeed;
+      currAngle = YawValue();
     }
-    currAngle = YawValue();
   }
 
   for (i = 0; i < 2; ++i) {
@@ -197,7 +293,7 @@ void TurnRight(int angle) {
 }
 
 // Turn Left at a default speed
-void TurnLeft(int angle) {
+void TurnLeft(float angle) {
   // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
@@ -210,51 +306,140 @@ void TurnLeft(int angle) {
     digitalWrite(Reverse[i], LOW);
   }
 
+  // Flag for the while loop when turning to determine whether or not we are starting our speed at 0
   fromZero = true;
-  currAngle = YawValue();
-  targetAngle = currAngle + angle;
+  overflowFlag = false;
+
+  // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error  
+  currAngle = YawValue();  
+  prevAngle = currAngle;
+  targetAngle = currAngle - angle;
   lowerTargetAngle = targetAngle - errorAngle;
   upperTargetAngle = targetAngle + errorAngle;
-  
+
+  // Account for overflow of 0 to 360 degrees
+  if (lowerTargetAngle <= 0) {
+    leftTurnOverflow = true;
+  }  
+
   for (i = 0; i < 2; ++i) {
     digitalWrite(RightForward[i], HIGH);
     digitalWrite(LeftReverse[i], HIGH);
   }
   
-  while((currAngle < lowerTargetAngle) ^ (currAngle > upperTargetAngle)) {
-    angleDifference = targetAngle - currAngle;
-    angleDifference = abs(angleDifference);
+  // Target angle overflows past 0 degrees
+  if (leftTurnOverflow == true) {
+    // Increase error margins when we do have to overflow
+    //lowerTargetAngle -= errorAngle;
+    //upperTargetAngle += errorAngle; 
+    while ((currAngle < (lowerTargetAngle + 360)) || (currAngle > (upperTargetAngle + 360))) {
+      // Checks if the IMU overflowed from 360 to 0
+      if (abs(prevAngle - currAngle) > 150) {
+        overflowFlag = true;
+      }
+      if (overflowFlag == true) {
+        // We can add 360 here since it will be temporary until it is recaptured at the end of the while loop
+        currAngle += 360;
+        overflowFlag = false;
+      }
 
-    if (fromZero) {
-      if (angleDifference > angle) {
-        for (i = 0; i <= 50; ++i) {
-          for (j = 0; j < 4; ++j) {
-            analogWrite(PWM[j], i);
-          }
-          delay(6);
-        }
+      // Calculate remaining distance from target angle
+      angleDifference = targetAngle - currAngle;
+      angleDifference = abs(angleDifference); // This just accounts for overshoot or left turns
+      
+      // Set speed based on percent distance remaining
+      if (angleDifference/angle >= 1) {
+        turnSpeed = 50;
       }
       else {
-        for (i = 0; i <= (angleDifference/angle); ++i) {
+        turnSpeed = ((angleDifference/angle) * 50);   
+      }
+                  
+      // If the rover is beginning to move, we will start the PWM from i = 0
+      if (fromZero) {
+        if ((angleDifference/angle) > 1) {
+          for (i = 0; i <= 50; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        else {
+          for (i = 0; i <= turnSpeed; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        fromZero = false;
+      }
+      // Otherwise, we will slow down from the previous speed
+      else {
+        for (i = brakeVar; i > turnSpeed; --i) {
           for (j = 0; j < 4; ++j) {
             analogWrite(PWM[j], i);
           }
-          delay(6);
+          delay(2);
         }
       }
-      fromZero = false;
+      // Update variables and recapture the current compass reading
+      prevAngle = currAngle;
+      brakeVar = turnSpeed;
+      currAngle = YawValue();        
     }
-    else {
-      for (i = 0; i <= (angleDifference/angle); ++i) {
-        for (j = 0; j < 4; ++j) {
-          analogWrite(PWM[j], i);
-        }
-        delay(6);
-      }
-    }
-    currAngle = YawValue();
   }
-
+  // No overflow
+  else {
+    while ((currAngle < lowerTargetAngle) || (currAngle > upperTargetAngle)) {
+       // Calculate remaining distance from target angle
+      angleDifference = targetAngle - currAngle;
+      angleDifference = abs(angleDifference); // This just accounts for overshoot or left turns 
+  
+      // Set speed based on percent distance remaining      
+      if (angleDifference/angle >= 1) {
+        turnSpeed = 50;
+      }
+      else {
+        turnSpeed = ((angleDifference/angle) * 50);   
+      }
+  
+      // If the rover is beginning to move, we will start the PWM from i = 0
+      if (fromZero) {
+        if ((angleDifference/angle) >= 1) {
+          for (i = 0; i <= 50; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        else {
+          for (i = 0; i <= turnSpeed; ++i) {
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], i);
+            }
+            delay(6);
+          }
+        }
+        fromZero = false;
+      }
+      // Otherwise, we will slow down from the previous speed
+      else {
+        for (i = brakeVar; i > turnSpeed; --i) {
+          for (j = 0; j < 4; ++j) {
+            analogWrite(PWM[j], turnSpeed);
+          }
+          delay(2);
+        }
+      }
+      // Update variables and recapture the current compass reading
+      brakeVar = turnSpeed;
+      currAngle = YawValue();  
+    }    
+  }
+  
   for (i = 0; i < 2; ++i) {
     digitalWrite(RightForward[i], LOW);
     digitalWrite(LeftReverse[i], LOW);

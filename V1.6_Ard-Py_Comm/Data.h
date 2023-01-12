@@ -12,6 +12,7 @@ related to data such as GPS values and Roll/Pitch/Yaw.
 
 #include "MPU9250.h"
 
+// Setup IMU connection
 MPU9250 IMU(Wire,0x68);
 
 int status;
@@ -24,11 +25,11 @@ float Yh, Xh;
 void initData() {
   status = IMU.begin();
   if (status < 0) {
-    Serial.println("IMU initialization unsuccessful");
-    Serial.println("Check IMU wiring or try cycling power");
-    Serial.print("Status: ");
-    Serial.println(status);
-    while(1) {}
+    // Serial.println("IMU initialization unsuccessful");
+    // Serial.println("Check IMU wiring or try cycling power");
+    // Serial.print("Status: ");
+    // Serial.println(status);
+    // while(1) {}
   }
   // setting the accelerometer full scale range to +/-2G 
   IMU.setAccelRange(MPU9250::ACCEL_RANGE_2G);
@@ -42,9 +43,11 @@ void initData() {
 
 void updateValues() {
   if (status >= 0){
+    // Read values from sensors
     IMU.readSensor();
     
     // Fill variables with sensor values
+    // IMU Values
     accelX = IMU.getAccelX_mss();
     accelY = IMU.getAccelY_mss();
     accelZ = IMU.getAccelZ_mss();
@@ -94,7 +97,8 @@ void updateValues() {
 String IMUValues() {
   updateValues();
   // The "~" is to split the data when it's sent back to the RPi
-  return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw));
+  // Check if Long/Lat
+  return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw) + "~");
 }
 
 // Function to send just the Yaw value (compass heading)

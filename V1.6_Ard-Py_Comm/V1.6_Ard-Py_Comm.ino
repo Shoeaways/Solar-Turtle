@@ -3,12 +3,18 @@
 
   Rev 1.6 Changes
   - Changed "msg" to "command"
-  Todo
+  - Revised turning code, made a decent amount of mistakes
+  Todo 
+  (Current Rev)
+  - Check the bounds of the IMU
+  - Determine what the compass heading points toward (what degree is N/E/S/W)
+  (Future Revs)
+  1.7
+  - Integrate GPS into the data.h file  
+  - Check what happens if the GPS does not initiate
+  1.8
+  - Implement sensors into data.h file (voltage and current)
   - Check to see if we can call functions directly from data.h since we included Movement.h
-  - If data is called, implement how to specify which data we are looking for
-    - ie "data compassheading" or something similar
-  - Integrate GPS into the data.h file
-  - 
 */
 
 #include "Movement.h"
@@ -64,7 +70,7 @@ void loop() {
       TurnLeft(num);
     }
     else if (command == "right") {
-      Serial.print(nom + "Turning to the Left ");
+      Serial.print(nom + "Turning to the Right ");
       TurnRight(num);
     }
     else if (command == "panel") {
