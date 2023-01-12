@@ -8,7 +8,8 @@ if __name__ == '__main__':
             print("Solar Turtle connected!".format(arduino.port))
             try:
                 while True:
-                    cmd=input("Enter command : ")
+                    #implement a help list
+                    cmd=input("Enter command: ")
                     arduino.write(cmd.encode())
                     
                     while arduino.inWaiting()==0: pass
