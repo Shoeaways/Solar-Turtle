@@ -45,7 +45,7 @@ int j = 0;
 
 // Turning Variables
 bool fromZero;
-bool overflowFlag;
+bool overflowPast360;
 bool rightTurnOverflow;
 bool leftTurnOverflow;
 float tempOverflow = 0;
@@ -61,7 +61,7 @@ float turnSpeed = 0;
 // Initialize function
 void initMovement() {
   // Default pins 2-15 to output
-  for (i = 2; i <=15; ++i) {
+  for (i = 2; i <= 15; ++i) {
     pinMode(i, OUTPUT);
   }
   
@@ -71,11 +71,11 @@ void initMovement() {
   }
   
   // Defaults Servo to ~90 degrees which sits our solar panel flat
-  for (j = 170; j <= 180; ++j) {
+  for (j = 80; j <= 100; j += 3) {
       analogWrite(PanelServo, j);
-      delay(25);
+      delay(100);
   }
-  currPanelAngle = 180;
+  currPanelAngle = 100;
 }
 
 // Send GPS coords/RPY/etc.
@@ -154,7 +154,7 @@ void TurnRight(float angle) {
 
   // Flag for the while loop when turning to determine whether or not we are starting our speed at 0
   fromZero = true;
-  overflowFlag = false;
+  overflowPast360 = false;
 
   // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error
   currAngle = YawValue();
@@ -181,12 +181,12 @@ void TurnRight(float angle) {
     while (((currAngle + 360) < lowerTargetAngle) || ((currAngle + 360) > upperTargetAngle)) {
       // Checks if the IMU overflowed from 360 to 0
       if (abs(prevAngle - currAngle) > 150) {
-        overflowFlag = true;
+        overflowPast360 = true;
       }
-      if (overflowFlag == true) {
+      if (overflowPast360 == true) {
         // We can add 360 here since it will be temporary until it is recaptured at the end of the while loop
         currAngle += 360;
-        overflowFlag = false;
+        overflowPast360 = false;
       }     
       
       // Calculate remaining distance from target angle
@@ -308,7 +308,7 @@ void TurnLeft(float angle) {
 
   // Flag for the while loop when turning to determine whether or not we are starting our speed at 0
   fromZero = true;
-  overflowFlag = false;
+  overflowPast360 = false;
 
   // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error  
   currAngle = YawValue();  
@@ -335,12 +335,12 @@ void TurnLeft(float angle) {
     while ((currAngle < (lowerTargetAngle + 360)) || (currAngle > (upperTargetAngle + 360))) {
       // Checks if the IMU overflowed from 360 to 0
       if (abs(prevAngle - currAngle) > 150) {
-        overflowFlag = true;
+        overflowPast360 = true;
       }
-      if (overflowFlag == true) {
+      if (overflowPast360 == true) {
         // We can add 360 here since it will be temporary until it is recaptured at the end of the while loop
         currAngle += 360;
-        overflowFlag = false;
+        overflowPast360 = false;
       }
 
       // Calculate remaining distance from target angle
@@ -448,18 +448,28 @@ void TurnLeft(float angle) {
 
 // Moves the solar panel servo to a called angle 
 void MovePanel(int angle) {
+  // Determine if called angle is out of the reachable bounds
+  // Set to 125 if the angle called is greater than 125
+  if (angle > 125) {
+    angle = 125;
+  }
+  // Set to 80 if the angle called is less than 80
+  if (angle < 80) {
+    angle = 80;
+  }
+
   // Case where the called angle is greater than the current angle
   if (currPanelAngle < angle) {
-    for (i = currAngle; i <= angle; ++i) {
+    for (i = currAngle; i <= angle; i += 3) {
       analogWrite(PanelServo, i);
-      delay(25);
+      delay(100);
     }
   }
   // Case where the called angle is smaller than the current angle
   else if (currPanelAngle > angle) {
-    for (i = currPanelAngle; i >= angle; --i) {
+    for (i = currPanelAngle; i >= angle; i -= 3) {
       analogWrite(PanelServo, i);
-      delay(25);
+      delay(100);
     }
   }
   // Update the current Angle

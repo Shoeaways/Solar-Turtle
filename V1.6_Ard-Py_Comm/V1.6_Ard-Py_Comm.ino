@@ -4,6 +4,7 @@
   Rev 1.6 Changes
   - Changed "msg" to "command"
   - Revised turning code, made a decent amount of mistakes
+  - Revised Solar Panel code
   Todo 
   (Current Rev)
   - Check the bounds of the IMU
