@@ -26,14 +26,17 @@
 		.footer {
 			position: fixed;
 			bottom: 0px;
-			width: 100vw;
-			height: 18vw;
+			width: 100%;
+			height: 250px;
 			background: url(Images/Grass.png) no-repeat;
 			opacity: 1.0;
 			padding: 0px;
 			text-align: center;
+
 		}
-		.turtle {
+		
+		/*
+			.turtle {
 			position: fixed;
 			bottom: -15px;
 			right: 20px;
@@ -46,6 +49,8 @@
 			text-align: center;
 			background: bottom right url(Images/SolarTurtle_Cutout.png) no-repeat ;
 		}
+		*/
+		
 
 		/* Style the top navigation bar */
 		.navbar {
@@ -78,22 +83,26 @@
 			padding: 15px;
 		}
 		
-		.MainRow {
+		.MainGrid {
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(2, 1fr);
+			margin-top: 20px;
 		}
-		.MainRowColumn {
+		.MainColumn {
 			float: left;
 			padding: 15px;
 		}
-		
-		.WhatIsRow {
-			display: grid;
-		}
-		.WhatIsColumn {
-			padding: 10px;
-			margin: 10px;
+		.MainFullColumn {
+			grid-column-start: 1;
+			grid-column-end: 3;
 			float: left;
+			margin: 10px;
+			padding: 15px;
+		}
+
+		.GroupMembersGrid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
 		}
 		
 		.iframe-container {
@@ -122,101 +131,75 @@
 	<script>
         $(document).ready(function(){
             $(window).scroll(function(){
-                $('.footer').css("opacity", 1- $(window).scrollTop() / 400)
-            })
-        })
-    </script>
-	
-	<script>
-        $(document).ready(function(){
-            $(window).scroll(function(){
-                $('.turtle').css("opacity", (0 + $(window).scrollTop() / 600) * 75/100)
+				$('.footer').css('opacity', 1 - $(window).scrollTop() / 400);
+				var scrollPercentage = $(window).scrollTop() / (documentHeight - windowHeight);
+				var newHeight = scrollPercentage * (-250);
+				$('.footer').css('translateY', newHeight);
             })
         })
     </script>
 </head>
 
 <body>
-	<div class="header">
-		<h1 style="font-size:2.5vw; font-family: brush script mt, cursive;">Le Solar Hub</h1>
-		<p style="font-size:1vw; font-family: brush script mt, cursive;"> for all your solar turtle needs </p>
-	</div>
-	
-	<!--
-	<div class="turtle">
-	
-	</div>
-	-->
-	
-	<!--
-		When refreshed, the opacity returns to 100 even when scrolled down
-	-->
-	<div class="footer">
-		
-	</div>
+    <div class="header">
+        <h1 style="font-size:2.5vw; font-family: brush script mt, cursive;">Le Solar Hub</h1>
+        <p style="font-size:1vw; font-family: brush script mt, cursive;"> for all your Solar Turtle needs </p>
+    </div>
 
-	<div style = "overflow: hidden"; class="navbar">
-		<div class ="NavbarRow">
-			<a style = "font-size: 20px" class="NavbarColumn" href="#What is">What is S.O.L.A.R. Turtle?</a>
-			<a style = "font-size: 20px" class="NavbarColumn" href="#">Demo Video - Updated DD/MM/YY</a>
-			<a style = "float: right; font-size: 20px" class="NavbarColumn" href="#">Group Members & Contributors</a>
-		</div>
-	</div>
+    <div style="overflow: hidden" ; class="navbar">
+        <div class="NavbarRow">
+            <a style="font-size: 20px" class="NavbarColumn" href="#What is">What is S.O.L.A.R. Turtle?</a>
+            <a style="font-size: 20px" class="NavbarColumn" href="#Demo Video">Demo Video - Updated DD/MM/YY</a>
+            <a style="float: right; font-size: 20px" class="NavbarColumn" href="#Group Members">Group Members & Contributors</a>
+        </div>
+    </div>
 
-	<div class="MainRow">
-		<div style = "text-align: center;" class="MainRowColumn">
-			<h2>Placeholder</h2>
-			<textarea style = "resize: none;" class = "Input">Input a command...</textarea>
-		</div>
-	  
-		<div style = "text-align: center; width: 45vw;" class="MainRowColumn">
-			<h2>Live Feed</h2><br>
-				<div class = "iframe-container">
-					<iframe class="responsive-iframe" width="800vw" height="525vw" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-				</div>
-			<p></p>
-		</div>
-	</div>
-	
-	<br><br><br><br><br><br><br><br><br><br><br>
-	
-	<div class = "WhatIsRow">
-		<div class = "WhatIsColumn">
-			<h1 id = "What is">
-				What is S.O.L.A.R. Turtle?
+    <div style="text-align: center;" class="MainGrid">
+        <div class="MainColumn">
+            <h2>Control Panel</h2>
+			<form name = "form" action ="" method="get">
+				<input type="text" name = "test" id = "test" value = "">
+			</form>
+        </div>
+
+        <div style="width: 45vw;" class="MainColumn">
+            <h2>Live Feed</h2><br>
+            <div class="iframe-container">
+                <iframe class="responsive-iframe" width="800vw" height="525vw" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <p></p>
+        </div>
+
+		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+		<div style="text-align: center;" class="MainFullColumn">
+            <h1 id="What is">
+                What is S.O.L.A.R. Turtle?
+            </h1>
+            <hr style="width: 425px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
+			Placeholder
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+			<h1 id = "Demo Video">
+				Demo Video
 			</h1>
-			<hr style = "width: 450px; margin-left: 0;">
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<hr style="width: 200px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
+			Place Holder
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
+			<h1 id = "Group Members">
+				Group Members & Contributors
+			</h1>
+			<hr style="width: 485px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
+			Place Holder
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 		</div>
-	</div>
+    </div>
 
-	<br><br><br><br><br><br><br><br><br><br><br><br>
-	
+    <div class="footer">
+
+    </div>
+
 
 </body>
 </html>
