@@ -1,30 +1,19 @@
 """
 Main file for the communication between our Raspberry Pi to Arduino and Webserver
-Rev 1.8 Changes
-- Implement Flask
+Rev 1.7 Changes
+- Added Stop levels (Quick, Normal, Slow)
 
 TODO:
 (Current Rev)
-- Define app route with base serial comm and html render
+-
 (Future Rev)
-- Define multiple app routes to allow user to go through webpages
+- 
 
 """
 import serial,time
-from flask import Flask, render_template, jsonify
-app = Flask(__name__)
-
-@app.route('/', methods = ['POST', 'GET'])
-def index():
-    if request.method == 'GET':
-        print("Rendering main page...")
-        return render_template('helloworld.html')
-    if request.method == 'POST':
-        print("Command recieved, processing...")
-    
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port = '6969', debug = 'true')
+    print('Running. Press CTRL-C to exit...')
     with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
         time.sleep(0.1)
         if arduino.isOpen():
