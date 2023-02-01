@@ -1,6 +1,6 @@
 /*
   Main file for the communication between our Arduino to Raspbery Pi
-  Rev 1.11 Changes
+  Rev 1.12 Changes
   - Update Movement function
     - If user calls the same function but at a different speed, instead of slowing down to zero and 
       restarting, directly slow down or speed up to the new called speed

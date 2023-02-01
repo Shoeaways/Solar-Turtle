@@ -1,6 +1,6 @@
 /*
   Main file for the communication between our Arduino to Raspbery Pi
-  Rev 1.11 Changes
+  Rev 1.12 Changes
   - Update Movement function
     - If user calls the same function but at a different speed, instead of slowing down to zero and 
       restarting, directly slow down or speed up to the new called speed
@@ -54,9 +54,8 @@ void loop() {
       Serial.print(nom + "Slow Stopping...");
       Stop(1);
     }
-
     // Data command sends important values such as GPS coordinates or current Roll/Pitch/Yaw
-    if (message == "data") {
+    else if (message == "data") {
       sendData();
     } 
     // If the command is none of the above, it will contain a number, space, then the command (XXX COMMAND)

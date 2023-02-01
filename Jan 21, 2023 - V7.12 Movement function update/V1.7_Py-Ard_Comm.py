@@ -1,6 +1,6 @@
 """
 Main file for the communication between our Raspberry Pi to Arduino and Webserver
-Rev 1.6 Changes
+Rev 1.7 Changes
 - Added Stop levels (Quick, Normal, Slow)
 
 TODO:
@@ -24,21 +24,22 @@ if __name__ == '__main__':
                     validCommand = 0
                     while validCommand == 0:
                         # Request command from user
-                        cmdinput=input("Enter command: Type 'help' for a list of commands")
+                        cmdinput=input("Enter command: Type 'help' for a list of commands\n")
                         # Split the input into an array (splits at every space " ")
                         cmdtemp = cmdinput.split()
 
                         # If the array is just the command, continue
                         if len(cmdtemp) == 1:
                             tempcmd = cmdtemp[0]
-                            num = ""
+                            num = 0
                             validCommand = 1
                         elif len(cmdtemp) == 2:
-                            tempcmd = cmdtemp[1].lower()
-                            if tempcmd == "quick" or "slow":
-                                num = cmdtemp[0]
+                            tempcmd = cmdtemp[0].lower()
+                            if tempcmd == "quick" or tempcmd == "slow":
+                                num = tempcmd
                             else:
                                 num = int(cmdtemp[0])
+                            tempcmd = cmdtemp[1]
                             validCommand = 1
                         else:
                             print("Invalid Command entered try again... Type 'help for a list of commands")
@@ -77,11 +78,11 @@ if __name__ == '__main__':
                         # Use tempcmd for the next line to be allowed
                         tempcmd = cmd
                         # Recombine the num and cmd message
-                        cmd = (str(num) + " " + tempcmd)
+                        cmd = (str(num) + " " + tempcmd)                       
                         readyToEncode = 1 
 
                     # If forward or reverse command is called
-                    elif cmd == "forward" or "reverse":
+                    elif cmd == "forward" or cmd == "reverse":
                         # Ensure that num is within bounds
                         if num > 100:
                             print("Provided speed " + str(num) + " is out of upper bounds, setting the speed to 100%")
@@ -96,7 +97,7 @@ if __name__ == '__main__':
                         readyToEncode = 1 
 
                     # If left or right turn command is called
-                    elif cmd == "left" or "right":
+                    elif cmd == "left" or cmd == "right":
                         # Ensure that num is within bounds
                         if num > 360:
                             print("Provided angle " + str(num) + " is out of upper bounds, setting the turn to 360º")
@@ -120,13 +121,9 @@ if __name__ == '__main__':
 
                     # If stop command is called
                     elif cmd == "stop":
-                        
-                        if num == "":
-                            cmd = "stop"
-                        else:
-                            # Use tempcmd for the next line to be allowed
+                        # Check if this is a quick or slow stop
+                        if num == "quick" or num == "slow":
                             tempcmd = cmd
-                            # Recombine the num and cmd message    
                             cmd = (num + " " + tempcmd)
                         readyToEncode = 1 
                     

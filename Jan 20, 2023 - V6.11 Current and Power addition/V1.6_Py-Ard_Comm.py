@@ -1,7 +1,7 @@
 """
 Main file for the communication between our Raspberry Pi to Arduino and Webserver
 Rev 1.6 Changes
-- Add Current and Power to the data function
+- Add Current and Power to the data function 
 
 TODO:
 (Current Rev)
@@ -24,13 +24,14 @@ if __name__ == '__main__':
                     validCommand = 0
                     while validCommand == 0:
                         # Request command from user
-                        cmdinput=input("Enter command: Type 'help' for a list of commands")
+                        cmdinput=input("Enter command: Type 'help' for a list of commands\n")
                         # Split the input into an array (splits at every space " ")
                         cmdtemp = cmdinput.split()
 
                         # If the array is just the command, continue
                         if len(cmdtemp) == 1:
                             tempcmd = cmdtemp[0]
+                            num = 0
                             validCommand = 1
                         elif len(cmdtemp) == 2:
                             tempcmd = cmdtemp[1]
@@ -77,7 +78,7 @@ if __name__ == '__main__':
                         readyToEncode = 1 
 
                     # If forward or reverse command is called
-                    elif cmd == "forward" or "reverse":
+                    elif cmd == "forward" or cmd == "reverse":
                         # Ensure that num is within bounds
                         if num > 100:
                             print("Provided speed " + str(num) + " is out of upper bounds, setting the speed to 100%")
@@ -92,7 +93,7 @@ if __name__ == '__main__':
                         readyToEncode = 1 
 
                     # If left or right turn command is called
-                    elif cmd == "left" or "right":
+                    elif cmd == "left" or cmd == "right":
                         # Ensure that num is within bounds
                         if num > 360:
                             print("Provided angle " + str(num) + " is out of upper bounds, setting the turn to 360º")
@@ -115,7 +116,7 @@ if __name__ == '__main__':
                         readyToEncode = 1 
 
                     # If any valid command is called
-                    elif cmd == "stop" or "data":
+                    elif cmd == "stop" or cmd == "data":
                         readyToEncode = 1 
                         
                     # If any other command is called, it is invalid and runs back around to the top code  

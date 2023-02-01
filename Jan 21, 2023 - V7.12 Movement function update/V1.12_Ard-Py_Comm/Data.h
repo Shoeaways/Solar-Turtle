@@ -105,6 +105,7 @@ void updateSystemVA() {
 
   AVGsystemVoltage = AVGsystemVoltage / SensorIterator;
   AVGsystemCurrent = ((AVGsystemCurrent / SensorIterator) - (ref_voltage / 2)) / 0.066;
+  AVGsystemCurrent = abs(AVGsystemCurrent);
   systemPower = AVGsystemVoltage * AVGsystemCurrent;
 }
 
@@ -128,6 +129,7 @@ void updatePanelVA() {
 
   AVGpanelVoltage = AVGpanelVoltage / SensorIterator;
   AVGpanelCurrent = ((AVGpanelCurrent / SensorIterator) - (ref_voltage / 2)) / 0.066;
+  AVGpanelCurrent = abs(AVGpanelCurrent);
   panelPower = AVGpanelVoltage * AVGpanelCurrent;
 }
 

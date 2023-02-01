@@ -57,7 +57,7 @@ void initMovement() {
   }
   
   // Defaults Servo to ~90 degrees which sits our solar panel flat
-  for (i = 90; i <= 100; i += 3) {
+  for (i = 95; i <= 100; i += 3) {
       analogWrite(PanelServo, i);
       delay(100);
   }
