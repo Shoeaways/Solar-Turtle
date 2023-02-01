@@ -1,21 +1,15 @@
 /*
   Main file for the communication between our Arduino to Raspbery Pi
-  Rev 1.10 Changes
-  - Moved initialization to the loop with a flag rather than having it in void setup()
-  Todo
+  Rev 1.12 Changes
+  - Update Movement function
+    - If user calls the same function but at a different speed, instead of slowing down to zero and 
+      restarting, directly slow down or speed up to the new called speed
+    - Added 3 levels of stopping (Quick, Normal, Slow)
   (Current Rev)
   (Future Rev)
-  - Create Current update in the VA functions
-  - Create Power calculation from the Voltage and Current function
   - Review IMU calibration
     - Check the bounds of the IMU
     - Determine what the compass heading points toward (what degree is N/E/S/W)
-  - Review GPS initialization
-  
-  - Check to see if we can call functions directly from data.h since we included Movement.h
-  - For errors, start the string with Error:~ so that the Rpi can read that there was an 
-    error and work accordingly
-  - Account for noise in voltage/current sensors (This is very minimal but still noticable)
 */
 
 #include "Movement.h"
@@ -48,13 +42,20 @@ void loop() {
   }
   else {
     // Stop command stops the robots movement
-    if (message == "stop") {
-      Serial.print(nom + "Stopping...");
-      Stop();
+    if (message == "quick stop") {
+      Serial.print(nom + "Quick Stopping...");
+      Stop(3);
     }
-
+    else if (message == "stop") {
+      Serial.print(nom + "Stopping...");
+      Stop(2);
+    }
+    else if (message == "slow stop") {
+      Serial.print(nom + "Slow Stopping...");
+      Stop(1);
+    }
     // Data command sends important values such as GPS coordinates or current Roll/Pitch/Yaw
-    if (message == "data") {
+    else if (message == "data") {
       sendData();
     } 
     // If the command is none of the above, it will contain a number, space, then the command (XXX COMMAND)

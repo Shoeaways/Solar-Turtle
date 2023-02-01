@@ -47,8 +47,10 @@ float R2 = 7500.0;
 // Float for Reference Voltage (Arduino GPIO voltage)
 float ref_voltage = 5;
 // Adc_value variable
-int adc_value = 0;
+int Vadc_value = 0;
+int Aadc_value = 0;
 float adc_voltage = 0;
+float adc_current = 0;
 // Vsense and Asense variables:
 float panelVoltage = 0, panelCurrent = 0;
 float AVGpanelVoltage = 0, AVGpanelCurrent = 0;
@@ -87,36 +89,48 @@ void initData() {
 void updateSystemVA() {
   // Read the Analog Input
   for (SensorIterator = 0; SensorIterator < 10; ++SensorIterator) {
-    adc_value = analogRead(VSENSE_SYSTEM);
-   
+    Vadc_value = analogRead(VSENSE_SYSTEM);
+    Aadc_value = analogRead(ASENSE_SYSTEM);
+
     // Determine voltage at ADC input
-    adc_voltage  = (adc_value * ref_voltage) / 1023.0; 
+    adc_voltage = (Vadc_value * ref_voltage) / 1023.0;
+    adc_current = (Aadc_value * ref_voltage) / 1023.0;
 
     systemVoltage = adc_voltage / (R2/(R1+R2));
 
     // Use the iteration to get an average voltage at the end
     AVGsystemVoltage += systemVoltage;
+    AVGsystemCurrent += adc_current;
   }
 
   AVGsystemVoltage = AVGsystemVoltage / SensorIterator;
+  AVGsystemCurrent = ((AVGsystemCurrent / SensorIterator) - (ref_voltage / 2)) / 0.066;
+  AVGsystemCurrent = abs(AVGsystemCurrent);
+  systemPower = AVGsystemVoltage * AVGsystemCurrent;
 }
 
 // Function will update the Voltage/Current/Power of the Solar Panel
 void updatePanelVA() {
   // Read the Analog Input
   for (SensorIterator = 0; SensorIterator < 10; ++SensorIterator) {
-    adc_value = analogRead(VSENSE_PANEL);
+    Vadc_value = analogRead(VSENSE_PANEL);
+    Aadc_value = analogRead(ASENSE_PANEL);
    
     // Determine voltage at ADC input
-    adc_voltage  = (adc_value * ref_voltage) / 1023.0; 
+    adc_voltage  = (Vadc_value * ref_voltage) / 1023.0; 
+    adc_current = (Aadc_value * ref_voltage) / 1023.0;
 
     panelVoltage = adc_voltage / (R2/(R1+R2));
 
     // Use the iteration to get an average voltage at the end
     AVGpanelVoltage += panelVoltage;
+    AVGpanelCurrent += adc_current;
   }
 
   AVGpanelVoltage = AVGpanelVoltage / SensorIterator;
+  AVGpanelCurrent = ((AVGpanelCurrent / SensorIterator) - (ref_voltage / 2)) / 0.066;
+  AVGpanelCurrent = abs(AVGpanelCurrent);
+  panelPower = AVGpanelVoltage * AVGpanelCurrent;
 }
 
 void updateIMUandGPSValues() {
@@ -187,13 +201,13 @@ String IMUandGPSValues() {
 String systemVA() {
   updateSystemVA();
   // Return the average voltage/current/power of the system  
-  return(String(AVGsystemVoltage));
+  return(String(AVGsystemVoltage) + "~" + String(AVGsystemCurrent) + "~" + String(systemPower));
 }
 
 String panelVA() {
   updatePanelVA();
   // Return the average voltage/current/power of the system  
-  return(String(AVGpanelVoltage));
+  return(String(AVGpanelVoltage) + "~" + String(AVGpanelCurrent) + "~" + String(panelPower));
 }
 
 // Function to send just the Yaw value (compass heading)

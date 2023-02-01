@@ -28,12 +28,9 @@ static const int Forward[] = {Motor1Forward, Motor2Forward, Motor3Forward, Motor
 static const int Reverse[] = {Motor1Reverse, Motor2Reverse, Motor3Reverse, Motor4Reverse};
 static const int PWM[] = {Motor4PWM, Motor3PWM, Motor2PWM, Motor1PWM};
 
-// Variables
-float PWMinput = 0;
-int brakeVar = 0;
-int currPanelAngle = 0;
-int i = 0;
-int j = 0;
+// Running Function Flags
+bool movingForward = false, movingReverse = false;
+int tempForwardPWM = 0, tempReversePWM = 0;
 
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
@@ -44,9 +41,16 @@ float errorAngle = 2.0;
 float tempOverflow = 0;
 float turnSpeed = 0;
 
+// Misc Variables
+float PWMinput = 0;
+int brakeVar = 0;
+int currPanelAngle = 0;
+int i = 0;
+int j = 0;
+
 // Initialize function
 void initMovement() {
-  // Default pins 2-15 to output
+  // Default pins 2-15 to OUTPUT
   for (i = 2; i <=15; ++i) {
     pinMode(i, OUTPUT);
   }
@@ -57,7 +61,7 @@ void initMovement() {
   }
   
   // Defaults Servo to ~90 degrees which sits our solar panel flat
-  for (i = 90; i <= 100; i += 3) {
+  for (i = 90; i >= 100; i -= 3) {
       analogWrite(PanelServo, i);
       delay(100);
   }
@@ -80,28 +84,54 @@ void MoveForward(int num) {
     PWMinput = num * 2.55;
   }
 
-  //Sets speed to 0 before starting to account for calling the function while the robot is already moving
-  for (brakeVar = i; brakeVar >= 0; --brakeVar) {
-    for (j = 0; j < 4; ++j) {
-      analogWrite(PWM[j], brakeVar);
+  // Check if the rover is already moving forward or not
+  if (movingForward == true) {
+    // Check if the previous speed is >, <, or = the new speed
+    if (tempForwardPWM > PWMinput) {
+      for (i = tempForwardPWM; i >= PWMinput; --i) {
+        for (j = 0; j < 4; ++j) {
+          analogWrite(PWM[j], i);
+        }
+        delay(8);
+      }
     }
-    delay(8);
-  }
-  for (i = 0; i < 4; ++i) {
-    digitalWrite(Forward[i], LOW);
-    digitalWrite(Reverse[i], LOW);
-  }
-  
-  for (i = 0; i < 4; ++i) {
-    digitalWrite(Forward[i], HIGH);
-    digitalWrite(Reverse[i], LOW);
-  }
-  for (i = 0; i < PWMinput; ++i) {
-    for (j = 0; j < 4; ++j) {
-      analogWrite(PWM[j], i);
+    else if (tempForwardPWM < PWMinput) {
+      for (i = tempForwardPWM; i <= PWMinput; ++i) {
+        for (j = 0; j < 4; ++j) {
+          analogWrite(PWM[j], i);
+        }
+        delay(8);
+      }
     }
-    delay(8);
   }
+  // If not, stop the current movement and start moving forward from zero
+  else {
+    movingReverse = false;
+    tempReversePWM = 0; 
+    // Sets speed to 0 before starting to account for calling the function while the robot is moving in any direction other than forward
+    for (brakeVar = i; brakeVar >= 0; --brakeVar) {
+      for (j = 0; j < 4; ++j) {
+        analogWrite(PWM[j], brakeVar);
+      }
+      delay(8);
+    }
+    for (i = 0; i < 4; ++i) {
+      digitalWrite(Forward[i], LOW);
+      digitalWrite(Reverse[i], LOW);
+    } 
+    for (i = 0; i < 4; ++i) {
+      digitalWrite(Forward[i], HIGH);
+      digitalWrite(Reverse[i], LOW);
+    }
+    for (i = 0; i <= PWMinput; ++i) {
+      for (j = 0; j < 4; ++j) {
+        analogWrite(PWM[j], i);
+      }
+      delay(8);
+    }
+  }
+  tempForwardPWM = i;
+  movingForward = true;
 }
 
 // Move backward at a given speed (num is a 0-100 speed input)
@@ -114,28 +144,55 @@ void MoveReverse(int num) {
     PWMinput = num * 2.55;  
   }
 
-  // Sets speed to 0 before starting to account for calling the function while the robot is already moving
-  for (brakeVar = i; brakeVar >= 0; --brakeVar) {
-    for (j = 0; j < 4; ++j) {
-      analogWrite(PWM[j], brakeVar);
+  // Check if the rover is already moving backward or not
+  if (movingReverse == true) {
+    // Check if the previous speed is >, <, or = the new speed
+    if (tempReversePWM > PWMinput) {
+      for (i = tempReversePWM; i >= PWMinput; --i) {
+        for (j = 0; j < 4; ++j) {
+          analogWrite(PWM[j], i);
+        }
+        delay(8);
+      }
     }
-    delay(8);
-  }
-  for (i = 0; i < 4; ++i) {
-    digitalWrite(Forward[i], LOW);
-    digitalWrite(Reverse[i], LOW);
-  }
-  
-  for (i = 0; i < 4; ++i) {
-    digitalWrite(Forward[i], LOW);
-    digitalWrite(Reverse[i], HIGH);
-  }
-  for (i = 0; i < PWMinput; ++i) {
-    for (j = 0; j < 4; ++j) {
-      analogWrite(PWM[j], i);
+    else if (tempReversePWM < PWMinput) {
+      for (i = tempReversePWM; i <= PWMinput; ++i) {
+        for (j = 0; j < 4; ++j) {
+          analogWrite(PWM[j], i);
+        }
+        delay(8);
+      }
     }
-    delay(8);
   }
+  // If not, stop the current movement and start moving forward from zero
+  else {
+    movingForward = false;
+    tempForwardPWM = 0; 
+    // Sets speed to 0 before starting to account for calling the function while the robot is already moving
+    for (brakeVar = i; brakeVar >= 0; --brakeVar) {
+      for (j = 0; j < 4; ++j) {
+        analogWrite(PWM[j], brakeVar);
+      }
+      delay(8);
+    }
+    for (i = 0; i < 4; ++i) {
+      digitalWrite(Forward[i], LOW);
+      digitalWrite(Reverse[i], LOW);
+    }
+    
+    for (i = 0; i < 4; ++i) {
+      digitalWrite(Forward[i], LOW);
+      digitalWrite(Reverse[i], HIGH);
+    }
+    for (i = 0; i <= PWMinput; ++i) {
+      for (j = 0; j < 4; ++j) {
+        analogWrite(PWM[j], i);
+      }
+      delay(8);
+    }
+  }
+  tempReversePWM = i;
+  movingReverse = true;
 }
 
 // Turn Right x amount of degrees
@@ -477,12 +534,14 @@ void MovePanel(int angle) {
 }
 
 // Slow down and stop 
-void Stop() { 
+void Stop(int num) { 
+  movingForward = false;
+  movingReverse = false;
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
       analogWrite(PWM[j], brakeVar);
     }
-    delay(8);
+    delay(12/num);
   }
   
   for (i = 0; i < 4; ++i) {
