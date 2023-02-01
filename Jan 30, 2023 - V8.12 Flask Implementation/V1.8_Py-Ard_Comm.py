@@ -2,25 +2,58 @@
 Main file for the communication between our Raspberry Pi to Arduino and Webserver
 Rev 1.8 Changes
 - Implement Flask
+- Defined app errorhandlers
 
 TODO:
 (Current Rev)
 - Define app route with base serial comm and html render
 (Future Rev)
 - Define multiple app routes to allow user to go through webpages
+- Make the templates for the errors)
+
 
 """
 import serial,time
 from flask import Flask, render_template, jsonify
 app = Flask(__name__)
 
-@app.route('/', methods = ['POST', 'GET'])
-def index():
-    if request.method == 'GET':
-        print("Rendering main page...")
-        return render_template('helloworld.html')
-    if request.method == 'POST':
-        print("Command recieved, processing...")
+# App Error handlers
+"""
+@app.errorhandler(400)
+def bad_request():
+    return make_response(render_template("400.html"))
+
+@app.errorhandler(404)
+def not_found():
+    return make_response(render_template("404.html"))
+
+@app.errorhandler(500)
+def server_error():
+    return make_response(render_template("500.html"))
+
+@app.errorhandler(503)
+def service_unav():
+    return make_response(render_template("503.html"))
+"""
+
+# Defining home page of app 
+@app.route('/')
+def home():
+    print("Running initialization...")
+    # Connect to Arduino port ACM0 with baud rate of 9600 through serial comm
+    with serial.Serial("/dev/ttyACM0", 9600, timeout=1) as arduino:
+        time.sleep(0.1)
+        # If connection was successful, reroute to initialized website
+        if arduino.isOpen():
+            print("Solar Turtle connected!".format(arduino.port))
+            return redirect("/initialized")
+        else:
+            print("Failed to connect to Arduino. Retrying...")
+            return redirect("/")
+
+@app.route('/initialized')
+def initialized():
+    form
     
 
 if __name__ == '__main__':
