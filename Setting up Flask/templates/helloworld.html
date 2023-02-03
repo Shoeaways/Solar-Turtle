@@ -4,8 +4,21 @@
     <title>Solar Hub</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="static/Images/bingchilling.ico">
+    <link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
 
-    Hello World
+    <script>
+        userInput = {{value|tojson}};
+        if (userInput == "Sunny") {
+            nameID = "Sunny";
+            document.getElementById(nameID).innerHTML = "Hello ABG";
+        }
+        else {
+            nameID = "Sunny"
+            document.getElementById(nameID).innerHTML = "You aren't Sunny, get out of here " + userInput;
+        }
+    </script>
 </head>
+<body>
+    <p id = "Sunny"></p>
+</body>
 </html>
