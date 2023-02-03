@@ -7,18 +7,13 @@
     <link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
 
     <script>
-        userInput = {{value|tojson}};
-        if (userInput == "Sunny") {
-            nameID = "Sunny";
-            document.getElementById(nameID).innerHTML = "Hello ABG";
-        }
-        else {
-            nameID = "Sunny"
-            document.getElementById(nameID).innerHTML = "You aren't Sunny, get out of here " + userInput;
+        function myFunction() {
+          var name = {{value}};
+          document.getElementById("name").innerHTML = "ABG";
         }
     </script>
 </head>
-<body>
-    <p id = "Sunny"></p>
+<body onload = "myFunction()">
+    <p>Hello <span id="name"></p>
 </body>
 </html>
