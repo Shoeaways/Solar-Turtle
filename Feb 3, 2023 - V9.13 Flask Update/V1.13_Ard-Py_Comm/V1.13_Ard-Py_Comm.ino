@@ -1,10 +1,8 @@
 /*
   Main file for the communication between our Arduino to Raspbery Pi
-  Rev 1.12 Changes
+  Rev 1.13 Changes
   - Update Movement function
-    - If user calls the same function but at a different speed, instead of slowing down to zero and 
-      restarting, directly slow down or speed up to the new called speed
-    - Added 3 levels of stopping (Quick, Normal, Slow)
+    - Remove serial prints
   (Current Rev)
   (Future Rev)
   - Review IMU calibration
@@ -43,15 +41,12 @@ void loop() {
   else {
     // Stop command stops the robots movement
     if (message == "quick stop") {
-      Serial.print(nom + "Quick Stopping...");
       Stop(3);
     }
     else if (message == "stop") {
-      Serial.print(nom + "Stopping...");
       Stop(2);
     }
     else if (message == "slow stop") {
-      Serial.print(nom + "Slow Stopping...");
       Stop(1);
     }
     // Data command sends important values such as GPS coordinates or current Roll/Pitch/Yaw
@@ -67,27 +62,21 @@ void loop() {
       command = message.substring((spaceIndex + 1), message.length());
       
       if (command == "forward") {
-        Serial.print(nom + "Schmooving Forward at " + String(num) + "% speed");
         MoveForward(num);    
       } 
       else if (command == "reverse") {
-        Serial.print(nom + "Reverse Reverse at " + String(num) + "% speed");
         MoveReverse(num);
       }
       else if (command == "left") {
-        Serial.print(nom + "Turning to the Left " + String(num) + " degrees");
         TurnLeft(num);
       }
       else if (command == "right") {
-        Serial.print(nom + "Turning to the Right " + String(num) + " degrees");
         TurnRight(num);
       }
       else if (command == "panel") {
-        Serial.print("Schmooving the Panel to " + String(num) + " degrees");
         MovePanel(num);
       }
       else if (command == "error") {
-        Serial.print("New error margin of " + String(num) + "applied, I hope you know what you're doing...");
         changeErrorMargin(num);
       }
 

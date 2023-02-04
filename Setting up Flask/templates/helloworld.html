@@ -2,18 +2,39 @@
 <html lang="en">
 <head>
     <title>Solar Hub</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
 
     <script>
         function myFunction() {
-          var name = {{value}};
-          document.getElementById("name").innerHTML = "ABG";
+          var result = {{ result|tojson }};
+          var cmd = {{ cmd|tojson }}
+
+          if (result == "initialized") {
+            document.getElementById("InitCheck").innerHTML = "Initialized";
+          }
+
+          if (cmd == "blinking") {
+            document.getElementById("cmd").innerHTML = "Currently blinking";
+          }
+          else if (cmd == "stop") {
+            document.getElementById("cmd").innerHTML = "Stopping";
+          }
+          else if (cmd == "invalid") {
+            document.getElementById("cmd").innerHTML = "Invalid command, try again";
+          }
+          
         }
     </script>
 </head>
 <body onload = "myFunction()">
-    <p>Hello <span id="name"></p>
+    <h1><span id="InitCheck"></h1>
+    <h1><span id="cmd"></h1>
+      
+    <form action = "{{ url_for("getcommand")}}" method="post">
+    <label for = "command">Enter a command:</label>
+    <input type = "text" id="command" name = "command" placeholder = "Type help for command list">
+    <button type = "submit">Submit</button>
 </body>
 </html>

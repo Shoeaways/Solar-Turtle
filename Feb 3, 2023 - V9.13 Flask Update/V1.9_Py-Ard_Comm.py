@@ -1,15 +1,13 @@
 """
 Main file for the communication between our Raspberry Pi to Arduino and Webserver
-Rev 1.8 Changes
-- Implement Flask
-- Defined app errorhandlers
+Rev 1.9 Changes
+- Flesh out data function
 
 TODO:
 (Current Rev)
-- Define app route with base serial comm and html render
 (Future Rev)
 - Define multiple app routes to allow user to go through webpages
-- Make the templates for the errors)
+- Make the templates for the errors
 
 
 """
@@ -45,6 +43,7 @@ def service_unav():
 def home():
     return render_template("Solar Turtle.html", result = "initialized", cmd = "")
 
+# Defining the page that awaits a user input
 @app.route('/getcommand', methods = ['GET', 'POST'])
 def getcommand():
     if request.method == 'POST':

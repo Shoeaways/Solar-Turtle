@@ -4,7 +4,7 @@
 	<title>Solar Hub</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/x-icon" href="Images/bingchilling.ico">
+	<link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
 	
 	<style>
 		* {
@@ -28,29 +28,12 @@
 			bottom: 0px;
 			width: 100%;
 			height: 250px;
-			background: url(Images/Grass.png) no-repeat;
+			background: url(static/Grass.png) no-repeat;
 			opacity: 1.0;
 			padding: 0px;
 			text-align: center;
 
 		}
-		
-		/*
-			.turtle {
-			position: fixed;
-			bottom: -15px;
-			right: 20px;
-			float: right;
-			size: 10vw;
-			width: 100vw;
-			height: 18vw;
-			opacity: 0;
-			padding: 0px;
-			text-align: center;
-			background: bottom right url(Images/SolarTurtle_Cutout.png) no-repeat ;
-		}
-		*/
-		
 
 		/* Style the top navigation bar */
 		.navbar {
@@ -138,9 +121,57 @@
             })
         })
     </script>
+
+	<script>
+        function myFunction() {
+          var result = {{ result|tojson }};
+          var cmd = {{ cmd|tojson }};
+
+			if (result == "initialized") {
+			document.getElementById("InitCheck").innerHTML = " - Initialized";
+			}
+			else if (result == "not initialized") {
+				document.getElementById("InitCheck").innerHTML = " - Not Initialized, please initialize";
+			}
+			
+			if (cmd == "help") {
+				document.getElementById("cmd").innerHTML = "Current list of commands: ";
+			}
+			else if (cmd == "panel") {
+				document.getElementById("cmd").innerHTML = "Moving the solar panel";
+			}
+			else if (cmd == "forward") {
+				document.getElementById("cmd").innerHTML = "Moving forward";
+			}
+			else if (cmd == "reverse") {
+				document.getElementById("cmd").innerHTML = "Moving reverse";
+			}
+			else if (cmd == "left") {
+				document.getElementById("cmd").innerHTML = "Turning left";
+			}
+			else if (cmd == "right") {
+				document.getElementById("cmd").innerHTML = "Turning right";
+			}
+			else if (cmd == "error") {
+				document.getElementById("cmd").innerHTML = "Changing error";
+			}
+			else if (cmd == "stop") {
+				document.getElementById("cmd").innerHTML = "Stopping";
+			}
+			else if (cmd == "data") {
+				document.getElementById("cmd").innerHTML = "Here is the data";
+			}
+			else if (cmd == "invalid") {
+				document.getElementById("cmd").innerHTML = "Invalid command, try again";
+			}
+	  		else {
+				document.getElementById("cmd").innerHTML = "test";
+          	}
+        }
+    </script>
 </head>
 
-<body>
+<body onload = "myFunction()">
     <div class="header">
         <h1 style="font-size:2.5vw; font-family: brush script mt, cursive;">Le Solar Hub</h1>
         <p style="font-size:1vw; font-family: brush script mt, cursive;"> for all your Solar Turtle needs </p>
@@ -156,9 +187,12 @@
 
     <div style="text-align: center;" class="MainGrid">
         <div class="MainColumn">
-            <h2>Control Panel</h2>
-			<form name = "form" action ="" method="get">
-				<input type="text" name = "test" id = "test" value = "">
+            <h2>Control Panel<span id="InitCheck"></h2>
+			<h3>Test: <span id="cmd"></h3>
+			<form action = "{{ url_for("getcommand")}}" method="post">
+				<label for = "command">Enter a command:</label>
+				<input type = "text" id="command" name = "command" placeholder = "Type help for command list">
+				<button type = "submit">Submit</button>
 			</form>
         </div>
 
