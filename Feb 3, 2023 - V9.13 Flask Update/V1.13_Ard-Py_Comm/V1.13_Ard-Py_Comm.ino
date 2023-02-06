@@ -8,12 +8,15 @@
   - Review IMU calibration
     - Check the bounds of the IMU
     - Determine what the compass heading points toward (what degree is N/E/S/W)
+  - Create a Reinit function (Check for user command "reinitialize" which then sets the initFlag to true in order to reinit)
+  - Set a low power mode/sleep mode for when the rover needs to charge
+  - Create a SOC/SOH function
+  - 
 */
  
 #include "Movement.h"
 
 // String variables for the serial message
-String nom = "Solar Turtle is ";
 String message = "";
 String command;
 String tempString; 

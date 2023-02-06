@@ -3,10 +3,10 @@ Main file for the communication between our Raspberry Pi to Arduino and Webserve
 Rev 1.8 Changes
 - Implement Flask
 - Defined app errorhandlers
+- Define app route with base serial comm and html render
 
 TODO:
 (Current Rev)
-- Define app route with base serial comm and html render
 (Future Rev)
 - Define multiple app routes to allow user to go through webpages
 - Make the templates for the errors)
