@@ -12,8 +12,20 @@
 		}
 
 		body {
+			font-size: 16px;
 			margin: 0;
-			background-color: #f4f4f4;
+			padding: 0;
+		}
+		h1, h2 {
+			font-weight: 700;
+			margin: 15px;
+			padding: 0;
+		}
+		h3 {
+			font-weight: 700;
+			margin-top: 0;
+			margin-bottom: 10px;
+			padding: 0;
 		}
 
 		/* Style the header */
@@ -68,12 +80,13 @@
 		
 		.MainGrid {
 			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			margin-top: 20px;
+			grid-template-columns: 1fr 1fr;
+			margin-top: 0px;
+			border: 2px solid #333;
 		}
 		.MainColumn {
-			float: left;
 			padding: 15px;
+			border: 2px solid #333;
 		}
 		.MainFullColumn {
 			grid-column-start: 1;
@@ -81,6 +94,23 @@
 			float: left;
 			margin: 10px;
 			padding: 15px;
+			border: 2px solid #333;
+		}
+
+		.ControlPanelGrid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.terminalbox {
+			font-family: monospace;
+			margin: 18px;
+			padding: 10px;
+			background-color: #333;
+			color: #fff;
+			border: none;
+			width: 30vw;
+			height: 26.7vw;
 		}
 
 		.GroupMembersGrid {
@@ -102,7 +132,7 @@
 			left: 0;
 			bottom: 0;
 			right: 0;
-			width: 100%;
+			width: 95%;
 			height: 100%;
 		}
 	</style>
@@ -135,38 +165,39 @@
 			}
 			
 			if (cmd == "help") {
-				document.getElementById("cmd").innerHTML = "Current list of commands: ";
+				outputString = "Current list of commands: ";
 			}
 			else if (cmd == "panel") {
-				document.getElementById("cmd").innerHTML = "Moving the solar panel";
+				outputString = "Moving the solar panel";
 			}
 			else if (cmd == "forward") {
-				document.getElementById("cmd").innerHTML = "Moving forward";
+				outputString = "Moving forward";
 			}
 			else if (cmd == "reverse") {
-				document.getElementById("cmd").innerHTML = "Moving reverse";
+				outputString = "Moving reverse";
 			}
 			else if (cmd == "left") {
-				document.getElementById("cmd").innerHTML = "Turning left";
+				outputString = "Turning left";
 			}
 			else if (cmd == "right") {
-				document.getElementById("cmd").innerHTML = "Turning right";
+				outputString = "Turning right";
 			}
 			else if (cmd == "error") {
-				document.getElementById("cmd").innerHTML = "Changing error";
+				outputString = "Changing error";
 			}
 			else if (cmd == "stop") {
-				document.getElementById("cmd").innerHTML = "Stopping";
+				outputString = "Stopping";
 			}
 			else if (cmd == "data") {
-				document.getElementById("cmd").innerHTML = "Here is the data";
+				outputString = "Here is the data";
 			}
 			else if (cmd == "invalid") {
-				document.getElementById("cmd").innerHTML = "Invalid command, try again";
+				outputString = "Invalid command, try again";
 			}
 	  		else {
-				document.getElementById("cmd").innerHTML = "test";
+				outputString = "test";
           	}
+			  document.getElementById("cmd").innerHTML = outputString;
         }
     </script>
 </head>
@@ -186,24 +217,27 @@
     </div>
 
     <div style="text-align: center;" class="MainGrid">
+		<div class="MainColumn">
+            <h2>Live Feed</h2><br>
+            <div  class="iframe-container">
+                <iframe class="responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <p></p>
+        </div>
+
         <div class="MainColumn">
             <h2>Control Panel<span id="InitCheck"></h2>
-			<h3>Test: <span id="cmd"></h3>
+				<div class = "ControlPanelGrid">
+					<textarea class="terminalbox" readonly>This is some text</textarea>				
+				</div>
+			<h3>Manual Control</h3>
 			<form action = "{{ url_for("getcommand")}}" method="post">
 				<label for = "command">Enter a command:</label>
 				<input type = "text" id="command" name = "command" placeholder = "Type help for command list">
 				<button type = "submit">Submit</button>
 			</form>
         </div>
-
-        <div style="width: 45vw;" class="MainColumn">
-            <h2>Live Feed</h2><br>
-            <div class="iframe-container">
-                <iframe class="responsive-iframe" width="800vw" height="525vw" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-            <p></p>
-        </div>
-
+        
 		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 		<div style="text-align: center;" class="MainFullColumn">

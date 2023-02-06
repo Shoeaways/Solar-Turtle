@@ -1,18 +1,23 @@
 """
 Main file for the communication between our Raspberry Pi to Arduino and Webserver
 Rev 1.9 Changes
-- Flesh out data function
+- 
 
 TODO:
 (Current Rev)
+- Create a terminal style text box to display outputs on html
+    - When a function is calledm trigger an event handler to update the terminal without refreshing the page
+- Display data in the html file
+    - When data is called, trigger an event handler which then uses AJAX to refresh the data to update
+- Fill out the text outputs for each function
 (Future Rev)
-- Define multiple app routes to allow user to go through webpages
+- Define multiple app routes to allow user to go through webpages 
 - Make the templates for the errors
 
 
 """
 import serial,time
-from flask import Flask, render_template, request, flash, redirect, url_for, make_response, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 app = Flask(__name__)
 
 # Set global variable "arduino" as the serial connection to the arduino
@@ -175,7 +180,7 @@ def getcommand():
         else:
             return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd)                    
     else:
-        return redirect('/')
+        return redirect(url_for(home))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port = '6969', debug = 'true')
