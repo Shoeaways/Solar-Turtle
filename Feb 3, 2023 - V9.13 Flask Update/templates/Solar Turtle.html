@@ -115,12 +115,13 @@
 		}
 		/* Define and style the individual Group Members columns */
 		.GroupMembersColumn {
-			border: 2px solid #333;
+			margin: auto;
 		}
 		/* Define and style the individual Group Members images */
 		.GroupMembersImage {
-			height: 10vw;
-			width: 10vw;
+			height: 12vw;
+			width: 12vw;
+			border-radius: 50%;
 		}
 
 		/* Define a ControlPanel subgrid within the ControlPanel Column */
@@ -234,51 +235,50 @@
 </head>
 
 <body onload = "myFunction()">
-    <div class="header">
-        <h1 style="font-size:2.5vw; font-family: brush script mt, cursive; margin: 25px;">Le Solar Hub</h1>
-        <p style="font-size:1vw; font-family: brush script mt, cursive; margin: 5px;"> for all your Solar Turtle needs </p>
+    <div class = "header">
+        <h1 style = "font-size:2.5vw; font-family: brush script mt, cursive; margin: 25px;">Le Solar Hub</h1>
+        <p style = "font-size:1vw; font-family: brush script mt, cursive; margin: 5px;"> for all your Solar Turtle needs </p>
     </div>
 
     <div style="overflow: hidden" ; class="navbar">
         <div class="NavbarRow">
-            <a style="font-size: 20px" class="NavbarColumn" href="#What is">What is S.O.L.A.R. Turtle?</a>
-            <a style="font-size: 20px" class="NavbarColumn" href="#Demo Video">Demo Video - Updated DD/MM/YY</a>
-            <a style="float: right; font-size: 20px" class="NavbarColumn" href="#Group Members">Group Members & Contributors</a>
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#What is">What is S.O.L.A.R. Turtle?</a>
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#Demo Video">Demo Video - Updated DD/MM/YY</a>
+            <a style = "float: right; font-size: 20px" class = "NavbarColumn" href = "#Group Members">Group Members & Contributors</a>
         </div>
     </div>
 
-    <div style="text-align: center;" class="MainGrid">
-		<div class="MainColumn">
+    <div style = "text-align: center; margin-top: 20px;" class = "MainGrid">
+		<div class = "MainColumn">
             <h2>Live Feed</h2><br>
-            <div  class="iframe-container">
+            <div  class = "iframe-container">
                 <iframe class="responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <p></p>
         </div>
 
         <div class="MainColumn">
-            <h2>Control Panel<span id="InitCheck"></h2>
+            <h2>Control Panel<span id = "InitCheck"></h2>
 				<div class = "ControlPanelGrid">
 					<div>
 						<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
 						<textarea class="terminalbox" readonly>Test</textarea>	
 					</div>
 				</div>
-			<h3>Manual Control</h3>
-			<form action = "{{ url_for('getcommand')}}" method="post">
-				<label for = "command">Enter a command:</label>
-				<input type = "text" id="command" name = "command" placeholder = "Type help for command list">
+			<form action = "{{ url_for('getcommand')}}" method = "post">
+				<label for = "command">Manual Control:</label>
+				<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
 				<button type = "submit">Submit</button>
 			</form>
         </div>
         
 		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-		<div style="text-align: center; font-size: 24px;" class="SecondaryGrid">
-            <h1 id="What is">
+		<div style = "text-align: center; font-size: 24px;" class = "SecondaryGrid">
+            <h1 id = "What is">
                 What is S.O.L.A.R. Turtle?
             </h1>
-            <hr style="width: 575px;">
+            <hr style = "width: 575px;">
 			The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area.
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
@@ -292,17 +292,17 @@
 			<h1 id = "Group Members">
 				Group Members & Contributors
 			</h1>
-			<hr style="width: 715px;">
-			<div class="GroupMembersRow">
-				<div>
+			<hr style = "width: 715px;">
+			<div class = "GroupMembersRow" style = "margin-top: 50px">
+				<div class = "GroupMembersColumn" style = "margin-right: -50px;">
 					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
 					<p>Dennis Kang</p>
 				</div>
-				<div>
+				<div class = "GroupMembersColumn">
 					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
 					<p>Eric Shu</p>
 				</div>
-				<div>
+				<div class = "GroupMembersColumn" style = "margin-left: -50px;">
 					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
 					<p>Patrick Webb</p>
 				</div>
@@ -311,7 +311,7 @@
 		</div>
     </div>
 
-    <div class="footer">
+    <div class = "footer">
 
     </div>
 
