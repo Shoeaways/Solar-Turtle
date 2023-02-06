@@ -117,9 +117,14 @@
 		}
 		/* Define and style the individual Group Members images */
 		.GroupMembersImage {
+			position: relative;
 			height: 12vw;
 			width: 12vw;
 			border-radius: 50%;
+		}
+		/* Make images lower opacity when hovered */
+		.GroupMembersImage:hover {
+			opacity: 0.3;
 		}
 
 		/* Define a ControlPanel subgrid within the ControlPanel Column */
@@ -137,6 +142,10 @@
 			resize: none;
 			margin-bottom: 5px;
 		}
+		/* Don't change pointer when hovering over read only text box */
+		.terminalbox:hover {
+			cursor: default;
+		}
 		/* Define the another textbox 'terminalboxtitle' to act as the title box */
 		.terminalboxtitle {
 			font-family: monospace;
@@ -146,18 +155,23 @@
 			height: 1vw;
 			resize: none;
 			overflow: hidden;
-			margin-top: 16px;
+			margin-top: 19px;
 			margin-bottom: -5px;
+		}
+		/* Don't change pointer when hovering over read only text box */
+		.terminalboxtitle:hover {
+			cursor: default;
 		}
 		/* Define and style the data table */
 		.datatable {
 			grid-template-columns: 1fr;
 			margin-top: 16px;
 			margin-bottom: 9px;
-			border: 2px solid #333;
 		}
 		.datatableRow {
-			border: 2px solid #333;
+			text-align: left;
+			margin-left: 3px;
+			margin-bottom: 5px;
 		}
 		
 		/* Define the iframe containter for the Youtube Embedded Video */
@@ -273,24 +287,22 @@
 						<textarea class="terminalbox" readonly>Test</textarea>	
 					</div>
 					<div class = "datatable">
-						<h2 style = "margin-top: -5px;">Test</h2>
-						<div class = "datatableRow">1</div>
-						<div class = "datatableRow">2</div>
-						<div class = "datatableRow">3</div>
-						<div class = "datatableRow">4</div>
-						<div class = "datatableRow">5</div>
-						<div class = "datatableRow">6</div>
-						<div class = "datatableRow">7</div>
-						<div class = "datatableRow">8</div>
-						<div class = "datatableRow">9</div>
-						<div class = "datatableRow">10</div>
+						<h3 style = "margin-top: 0px; margin-bottom: 0px;">Test</h3>
+						<div class = "datatableRow">Longitude/Latitude: </div>
+						<div class = "datatableRow">Compass Heading: </div>
+						<div class = "datatableRow">Speed: </div>
+						<div class = "datatableRow">Solar Panel Angle: </div>
+						<div class = "datatableRow">System Power Draw: </div>
+						<div class = "datatableRow">Panel Power Gen: </div>
+						<div class = "datatableRow">Roll: </div>
+						<div class = "datatableRow">Pitch: </div>
+						<form action = "{{ url_for('getcommand')}}" method = "post">
+							<label for = "command">Manual Control:</label>
+							<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
+							<button type = "submit">Submit</button>
+						</form>
 					</div>
 				</div>
-			<form action = "{{ url_for('getcommand')}}" method = "post">
-				<label for = "command">Manual Control:</label>
-				<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
-				<button type = "submit">Submit</button>
-			</form>
         </div>
         
 		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
