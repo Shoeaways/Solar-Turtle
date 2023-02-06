@@ -8,5 +8,5 @@
 <br>  
   
 <body>
-  ReadMe file
+  The project is currently under construction... Final version will be released by the end of 2023
 </body>
