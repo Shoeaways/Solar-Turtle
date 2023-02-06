@@ -30,11 +30,12 @@
 
 		/* Style the header */
 		.header {
-			background: #f1f1f1;
+			background: #F2F2F2;
 			padding: 6px;
 			text-align: center;
 			line-height: 12px;
 		}
+		/* Style the footer (Our case it's the grass that disappears) */
 		.footer {
 			position: fixed;
 			bottom: 0px;
@@ -44,7 +45,6 @@
 			opacity: 1.0;
 			padding: 0px;
 			text-align: center;
-
 		}
 
 		/* Style the top navigation bar */
@@ -52,43 +52,49 @@
 			overflow: hidden;
 			background-color: #bca89f;
 		}
+		/* Define grid for how many boxes are in the navbar */
+		.NavbarRow {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+		/* Style the navbar boxes */
+		.NavbarColumn {
+			float: left;
+			padding: 15px;
+		}
 		/* Style the navbar links */
 		.navbar a {
 			resize: both;
 			float: left;
 			display: block;
-			color: #f2f2f2;
+			color: #F2F2F2;
 			text-align: center;
 			padding: 5px;
 			margin: 7px;
-			text-decoration: none;		  
+			text-decoration: none;
+			text-shadow: 2px 2px 1px gray;		  
 		}
 		/* Change on hover */
 		.navbar a:hover {
-			border: 3px solid #f2f2f2;
+			border: 3px solid #F2F2F2;
 			border-radius: 20px;
 			padding: 1px;
 		}
-		.NavbarRow {
-			display: grid;
-			grid-template-columns: 1fr 1fr 1fr;
-		}
-		.NavbarColumn {
-			float: left;
-			padding: 15px;
-		}
 		
+		/* Define the Main Grid (Consists of Live Feed and Control Panel) */
 		.MainGrid {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			margin-top: 0px;
 			border: 2px solid #333;
 		}
+		/* Style the Main Grid Columns */
 		.MainColumn {
 			padding: 15px;
 			border: 2px solid #333;
 		}
-		.MainFullColumn {
+		/* Define the Secondary Grid */
+		.SecondaryGrid {
 			grid-column-start: 1;
 			grid-column-end: 3;
 			float: left;
@@ -96,36 +102,63 @@
 			padding: 15px;
 			border: 2px solid #333;
 		}
+		/* Style the lines under the titles */
+		.SecondaryGrid hr {
+			margin: auto; 
+			margin-bottom: 20px; 
+			margin-top: -10px;
+		}		
+		/* Define the Group Members row */
+		.GroupMembersRow {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+		}
+		/* Define and style the individual Group Members columns */
+		.GroupMembersColumn {
+			border: 2px solid #333;
+		}
+		/* Define and style the individual Group Members images */
+		.GroupMembersImage {
+			height: 10vw;
+			width: 10vw;
+		}
 
+		/* Define a ControlPanel subgrid within the ControlPanel Column */
 		.ControlPanelGrid {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 		}
-
+		/* Define the textbox 'terminalbox' */
 		.terminalbox {
-			font-family: monospace;
-			margin: 18px;
-			padding: 10px;
-			background-color: #333;
-			color: #fff;
-			border: none;
+			font-family: "Lucida Console", "Courier New", monospace;
+			background-color: #000000;
+			color: #FFF;
 			width: 30vw;
-			height: 26.7vw;
+			height: 26vw;
+			resize: none;
+			margin-bottom: 5px;
 		}
-
-		.GroupMembersGrid {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
+		/* Define the another textbox 'terminalboxtitle' to act as the title box */
+		.terminalboxtitle{
+			font-family: monospace;
+			background-color: gray;
+			color: #FFF;
+			width: 30vw;
+			height: 1vw;
+			resize: none;
+			overflow: hidden;
+			margin-top: 16px;
+			margin-bottom: -5px;
 		}
 		
+		/* Define the iframe containter for the Youtube Embedded Video */
 		.iframe-container {
 			position: relative;
 			overflow: hidden;
 			width: 100%;
 			padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
 		}
-
-		/* Then style the iframe to fit in the container div with full height and width */
+		/* Style the iframe to fit in the container div with full height and width */
 		.responsive-iframe {
 			position: absolute;
 			top: 0;
@@ -137,9 +170,7 @@
 		}
 	</style>
 	
-	<script src=
-		"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	
 	<script>
         $(document).ready(function(){
@@ -204,8 +235,8 @@
 
 <body onload = "myFunction()">
     <div class="header">
-        <h1 style="font-size:2.5vw; font-family: brush script mt, cursive;">Le Solar Hub</h1>
-        <p style="font-size:1vw; font-family: brush script mt, cursive;"> for all your Solar Turtle needs </p>
+        <h1 style="font-size:2.5vw; font-family: brush script mt, cursive; margin: 25px;">Le Solar Hub</h1>
+        <p style="font-size:1vw; font-family: brush script mt, cursive; margin: 5px;"> for all your Solar Turtle needs </p>
     </div>
 
     <div style="overflow: hidden" ; class="navbar">
@@ -228,10 +259,13 @@
         <div class="MainColumn">
             <h2>Control Panel<span id="InitCheck"></h2>
 				<div class = "ControlPanelGrid">
-					<textarea class="terminalbox" readonly>This is some text</textarea>				
+					<div>
+						<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
+						<textarea class="terminalbox" readonly>Test</textarea>	
+					</div>
 				</div>
 			<h3>Manual Control</h3>
-			<form action = "{{ url_for("getcommand")}}" method="post">
+			<form action = "{{ url_for('getcommand')}}" method="post">
 				<label for = "command">Enter a command:</label>
 				<input type = "text" id="command" name = "command" placeholder = "Type help for command list">
 				<button type = "submit">Submit</button>
@@ -240,26 +274,39 @@
         
 		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-		<div style="text-align: center;" class="MainFullColumn">
+		<div style="text-align: center; font-size: 24px;" class="SecondaryGrid">
             <h1 id="What is">
                 What is S.O.L.A.R. Turtle?
             </h1>
-            <hr style="width: 425px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
-			Placeholder
+            <hr style="width: 575px;">
+			The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area.
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 			<h1 id = "Demo Video">
 				Demo Video
 			</h1>
-			<hr style="width: 200px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
+			<hr style="width: 275px;">
 			Place Holder
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 			<h1 id = "Group Members">
 				Group Members & Contributors
 			</h1>
-			<hr style="width: 485px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
-			Place Holder
+			<hr style="width: 715px;">
+			<div class="GroupMembersRow">
+				<div>
+					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
+					<p>Dennis Kang</p>
+				</div>
+				<div>
+					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
+					<p>Eric Shu</p>
+				</div>
+				<div>
+					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
+					<p>Patrick Webb</p>
+				</div>
+			</div>
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 		</div>
     </div>
