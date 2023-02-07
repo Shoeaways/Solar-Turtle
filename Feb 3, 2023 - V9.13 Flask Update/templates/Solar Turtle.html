@@ -333,7 +333,7 @@
 				<div class = "ControlPanelGrid">
 					<div>
 						<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
-						<textarea id = "terminalbox" class="terminalbox" readonly>Test</textarea>	
+						<textarea id = "terminalbox" class="terminalbox" readonly></textarea>	
 					</div>
 					<div class = "datatable">
 						<h3 style = "margin-top: 0px; margin-bottom: 0px;">Test</h3>
@@ -354,8 +354,8 @@
 								let terminallog = [];
 
 								document.getElementById("submitcommand").addEventListener("click, function()") {
-									let commandInput = document.getElementById("cmd");
-									terminallog.unshift(new Date().toLocaleString() + ": " + textInput.value);
+									let commandInput = document.getElementById("command");
+									terminallog.unshift(new Date().toLocaleString() + ": " + commandInput.value);
 									if (terminallog.length > 20) {
 										terminallog.pop();
 									}
