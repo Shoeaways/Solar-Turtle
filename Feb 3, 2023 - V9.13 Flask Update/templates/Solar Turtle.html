@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Solar Hub</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
+	
+	<style>
+		* {
+		  box-sizing: border-box;
+		}
+
+		body {
+			font-size: 16px;
+			margin: 0;
+			padding: 0;
+		}
+		h1, h2 {
+			font-weight: 700;
+			margin: 15px;
+			padding: 0;
+		}
+		h3 {
+			font-weight: 700;
+			margin-top: 0;
+			margin-bottom: 10px;
+			padding: 0;
+		}
+
+		/* Style the header */
+		.header {
+			background: #F2F2F2;
+			padding: 6px;
+			text-align: center;
+			line-height: 12px;
+		}
+		/* Style the footer (Our case it's the grass that disappears) */
+		.footer {
+			position: fixed;
+			bottom: 0px;
+			width: 100%;
+			height: 180px;
+			background: url(static/Grass.png) no-repeat;
+			opacity: 1.0;
+			padding: 0px;
+			text-align: center;
+		}
+
+		/* Style the top navigation bar */
+		.navbar {
+			overflow: hidden;
+			background-color: #bca89f;
+		}
+		/* Define grid for how many boxes are in the navbar */
+		.NavbarRow {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+		/* Style the navbar boxes */
+		.NavbarColumn {
+			float: left;
+			padding: 15px;
+		}
+		/* Style the navbar links */
+		.navbar a {
+			resize: both;
+			float: left;
+			display: block;
+			color: #F2F2F2;
+			text-align: center;
+			padding: 5px;
+			margin: 7px;
+			text-decoration: none;
+			text-shadow: 2px 2px 1px gray;		  
+		}
+		/* Change on hover */
+		.navbar a:hover {
+			border: 3px solid #F2F2F2;
+			border-radius: 20px;
+			padding: 1px;
+		}
+		
+		/* Define the Main Grid (Consists of Live Feed and Control Panel) */
+		.MainGrid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			margin-top: 0px;
+		}
+		/* Style the Main Grid Columns */
+		.MainColumn {
+			padding: 15px;
+			border: 2px solid #333;
+		}
+		/* Define the Secondary Grid */
+		.SecondaryGrid {
+			grid-column-start: 1;
+			grid-column-end: 3;
+			float: left;
+			margin: 10px;
+			padding: 15px;
+		}
+		/* Style the lines under the titles */
+		.SecondaryGrid hr {
+			margin: auto; 
+			margin-bottom: 20px; 
+			margin-top: -10px;
+		}		
+		/* Define the Group Members row */
+		.GroupMembersRow {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+		}
+		/* Define and style the individual Group Members columns */
+		.GroupMembersColumn {
+			margin: auto;
+		}
+		/* Define and style the individual Group Members images */
+		.GroupMembersImage {
+			position: relative;
+			height: 12vw;
+			width: 12vw;
+			border-radius: 50%;
+		}
+		/* Make images lower opacity when hovered */
+		.GroupMembersImage:hover {
+			opacity: 0.3;
+		}
+
+		/* Define a ControlPanel subgrid within the ControlPanel Column */
+		.ControlPanelGrid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+		/* Define the textbox 'terminalbox' */
+		.terminalbox {
+			font-family: "Lucida Console", "Courier New", monospace;
+			background-color: #000000;
+			color: #FFF;
+			width: 30vw;
+			height: 26vw;
+			resize: none;
+			margin-bottom: 5px;
+		}
+		/* Don't change pointer when hovering over read only text box */
+		.terminalbox:hover {
+			cursor: default;
+		}
+		/* Define the another textbox 'terminalboxtitle' to act as the title box */
+		.terminalboxtitle {
+			font-family: monospace;
+			background-color: gray;
+			color: #FFF;
+			width: 30vw;
+			height: 1vw;
+			resize: none;
+			overflow: hidden;
+			margin-top: 19px;
+			margin-bottom: -5px;
+		}
+		/* Don't change pointer when hovering over read only text box */
+		.terminalboxtitle:hover {
+			cursor: default;
+		}
+		/* Define and style the data table */
+		.datatable {
+			grid-template-columns: 1fr;
+			margin-top: 16px;
+			margin-bottom: 9px;
+		}
+		.datatableRow {
+			text-align: left;
+			margin-left: 3px;
+			margin-bottom: 5px;
+		}
+		
+		/* Define the iframe containter for the Youtube Embedded Video */
+		.iframe-container {
+			position: relative;
+			overflow: hidden;
+			width: 100%;
+			padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+		}
+		/* Style the iframe to fit in the container div with full height and width */
+		.responsive-iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			width: 95%;
+			height: 100%;
+		}
+	</style>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	
+	<script>
+        $(document).ready(function(){
+            $(window).scroll(function(){
+				$('.footer').css('opacity', 1 - $(window).scrollTop() / 400);
+				var scrollPercentage = $(window).scrollTop() / (documentHeight - windowHeight);
+				var newHeight = scrollPercentage * (-250);
+				$('.footer').css('translateY', newHeight);
+            })
+        })
+    </script>
+
+	<script>
+        function myFunction() {
+          var result = {{ result|tojson }};
+          var cmd = {{ cmd|tojson }};
+		  var num = {{ num|tojson }};
+
+			if (result == "initialized") {
+			document.getElementById("InitCheck").innerHTML = " - Initialized";
+			}
+			else if (result == "not initialized") {
+				document.getElementById("InitCheck").innerHTML = " - Not Initialized, please initialize";
+			}
+			
+			if (cmd == "data") {
+				/* Update data table */
+				/*
+				tempString = "{}".format(dataList[0])
+				print("Roll: {}º".format(dataList[1]))
+				print("Pitch: {}º".format(dataList[2]))
+				print("Yaw: {}º".format(dataList[3]))
+				print("Long: {}º".format(dataList[4]))
+				print("Lat: {}º".format(dataList[5]))
+				print("Speed: {}º".format(dataList[6]))
+				print("Current Solar Panel Angle: {}º".format(dataList[7]))
+				print("System Voltage: {}V".format(dataList[8]))
+				print("System Current Draw: {}A".format(dataList[9]))
+				print("System Power Draw: {}W".format(dataList[10]))
+				print("Panel Voltage: {}V".format(dataList[11]))
+				print("Panel Current Draw: {}A".format(dataList[12])) 
+				print("Panel Power Draw: {}W".format(dataList[13]))    
+				*/
+			}
+			else {
+				if (cmd == "help") {
+					outputString = "Current list of commands: ";
+					/*
+					print("Current list of commands - Page 1 of 2")
+					print("NOTE: Any command with NUM requires a numerical value in place of NUM\n")
+					print("NUM Forward - Moves the turtle forward at a NUM speed of 0 - 100%")
+					print("NUM Reverse - Moves the turtle backwards at a NUM speed of 0 - 100%")
+					print("NUM Left - Turn the turtle left a given NUM angle of degrees from 0 - 360º")
+					print("NUM Right - Turn the turtle right a given NUM angle of degrees from 0 - 360º")
+					print("NUM Panel - Turn the solar panel to an angle between 80-125")
+					print("Stop - Stops the turtle")
+					print("Data - Displays the informational data of the turtle (RPY, Panel Angle, GPS coordinates, etc.)")
+					print("NUM Error - Changes the IMU error margin to the given NUM... BE CAREFUL, CHANGING THIS NUMBER CAN CAUSE MAJOR ISSUES")
+					*/
+				}
+				else if (cmd == "panel") {
+					outputString = "Moving the solar panel to " + " degrees";
+				}
+				else if (cmd == "forward") {
+					outputString = "Moving forward at " + "% speed";
+				}
+				else if (cmd == "reverse") {
+					outputString = "Moving reverse at " + "% speed";
+				}
+				else if (cmd == "left") {
+					outputString = "Turning left " + " degrees";
+				}
+				else if (cmd == "right") {
+					outputString = "Turning right " + " degrees";
+				}
+				else if (cmd == "error") {
+					outputString = "Changing error";
+				}
+				else if (cmd == "stop") {
+					outputString = "Stopping";
+				}
+				else if (cmd == "invalid") {
+					outputString = "Invalid command, try again";
+				}
+				else {
+					outputString = "test";
+				}
+				document.getElementById("cmd").innerHTML = outputString;
+			}
+        }
+    </script>
+</head>
+
+<body onload = "myFunction()">
+    <div class = "header">
+        <h1 style = "font-size:2.5vw; font-family: brush script mt, cursive; margin: 25px;">Le Solar Hub</h1>
+        <p style = "font-size:1vw; font-family: brush script mt, cursive; margin: 5px;"> for all your Solar Turtle needs </p>
+    </div>
+
+    <div style="overflow: hidden" ; class="navbar">
+        <div class="NavbarRow">
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#What is">What is S.O.L.A.R. Turtle?</a>
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#Demo Video">Demo Video - Updated DD/MM/YY</a>
+            <a style = "float: right; font-size: 20px" class = "NavbarColumn" href = "#Group Members">Group Members & Contributors</a>
+        </div>
+    </div>
+
+    <div style = "text-align: center; margin-top: 20px;" class = "MainGrid">
+		<div class = "MainColumn">
+            <h2>Live Feed</h2><br>
+            <div  class = "iframe-container">
+                <iframe class="responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <p></p>
+        </div>
+
+        <div class="MainColumn">
+            <h2>Control Panel<span id = "InitCheck"></h2>
+				<div class = "ControlPanelGrid">
+					<div>
+						<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
+						<textarea class="terminalbox" readonly>Test</textarea>	
+					</div>
+					<div class = "datatable">
+						<h3 style = "margin-top: 0px; margin-bottom: 0px;">Test</h3>
+						<div class = "datatableRow">Longitude/Latitude: </div>
+						<div class = "datatableRow">Compass Heading: </div>
+						<div class = "datatableRow">Speed: </div>
+						<div class = "datatableRow">Solar Panel Angle: </div>
+						<div class = "datatableRow">System Power Draw: </div>
+						<div class = "datatableRow">Panel Power Gen: </div>
+						<div class = "datatableRow">Roll: </div>
+						<div class = "datatableRow">Pitch: </div>
+						<form action = "{{ url_for('getcommand')}}" method = "post">
+							<label for = "command">Manual Control:</label>
+							<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
+							<button type = "submit">Submit</button>
+						</form>
+					</div>
+				</div>
+        </div>
+        
+		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+		<div style = "text-align: center; font-size: 24px;" class = "SecondaryGrid">
+            <h1 id = "What is">
+                What is S.O.L.A.R. Turtle?
+            </h1>
+            <hr style = "width: 575px;">
+			The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area. 
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+			<h1 id = "Demo Video">
+				Demo Video
+			</h1>
+			<hr style="width: 275px;">
+			Place Holder
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+			<h1 id = "Group Members">
+				Group Members & Contributors
+			</h1>
+			<hr style = "width: 715px;">
+			<div class = "GroupMembersRow" style = "margin-top: 50px">
+				<div class = "GroupMembersColumn" style = "margin-right: -50px;">
+					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
+					<p>Dennis Kang</p>
+				</div>
+				<div class = "GroupMembersColumn">
+					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
+					<p>Eric Shu</p>
+				</div>
+				<div class = "GroupMembersColumn" style = "margin-left: -50px;">
+					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
+					<p>Patrick Webb</p>
+				</div>
+			</div>
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+		</div>
+    </div>
+
+    <div class = "footer">
+
+    </div>
+
+
+</body>
+</html>

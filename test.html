@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .log {
+        font-family: monospace;
+        padding: 10px;
+        background-color: #0A0A0A;
+        color: #fff;
+        border: none;
+        width: 500px;
+        height: 300px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea class="log" id="log" readonly></textarea>
+    <br>
+    <input type="text" id="text-input">
+    <button id="submit-button">Submit</button>
+    <script>
+      let log = document.getElementById("log");
+      let logLines = [];
+
+      document.getElementById("submit-button").addEventListener("click", function() {
+        let textInput = document.getElementById("text-input");
+        logLines.unshift(new Date().toLocaleString() + ": " + textInput.value);
+        if (logLines.length > 20) {
+          logLines.pop();
+        }
+        log.value = logLines.join("\n");
+        textInput.value = "";
+      });
+    </script>
+  </body>
+</html>
