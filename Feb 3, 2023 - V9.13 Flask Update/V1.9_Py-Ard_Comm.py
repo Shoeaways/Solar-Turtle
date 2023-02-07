@@ -74,20 +74,7 @@ def getcommand():
         cmd = tempcmd.lower()
 
         if cmd == "help":
-            print("help")
             return render_template("Solar Turtle.html", result = "initialized", cmd = "help", num = str(num))
-            """
-            print("Current list of commands - Page 1 of 2")
-            print("NOTE: Any command with NUM requires a numerical value in place of NUM\n")
-            print("NUM Forward - Moves the turtle forward at a NUM speed of 0 - 100%")
-            print("NUM Reverse - Moves the turtle backwards at a NUM speed of 0 - 100%")
-            print("NUM Left - Turn the turtle left a given NUM angle of degrees from 0 - 360º")
-            print("NUM Right - Turn the turtle right a given NUM angle of degrees from 0 - 360º")
-            print("NUM Panel - Turn the solar panel to an angle between 80-125")
-            print("Stop - Stops the turtle")
-            print("Data - Displays the informational data of the turtle (RPY, Panel Angle, GPS coordinates, etc.)")
-            print("NUM Error - Changes the IMU error margin to the given NUM... BE CAREFUL, CHANGING THIS NUMBER CAN CAUSE MAJOR ISSUES")
-            """
 
         # If panel command is called, update the panel text
         elif cmd == "panel":
@@ -156,7 +143,6 @@ def getcommand():
         # Send arduino the command
         arduino.write(cmd.encode())     
         arduino.flushInput()
-        print(tempcmd)
         # If data is called, split the string into our data list and output
         if cmd == "data":
             answer = str(arduino.readline())

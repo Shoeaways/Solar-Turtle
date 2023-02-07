@@ -221,7 +221,7 @@
 			
 			if (cmd == "data") {
 				/* Update data table */
-				```
+				/*
 				tempString = "{}".format(dataList[0])
 				print("Roll: {}º".format(dataList[1]))
 				print("Pitch: {}º".format(dataList[2]))
@@ -236,11 +236,23 @@
 				print("Panel Voltage: {}V".format(dataList[11]))
 				print("Panel Current Draw: {}A".format(dataList[12])) 
 				print("Panel Power Draw: {}W".format(dataList[13]))    
-				```
+				*/
 			}
 			else {
 				if (cmd == "help") {
 					outputString = "Current list of commands: ";
+					/*
+					print("Current list of commands - Page 1 of 2")
+					print("NOTE: Any command with NUM requires a numerical value in place of NUM\n")
+					print("NUM Forward - Moves the turtle forward at a NUM speed of 0 - 100%")
+					print("NUM Reverse - Moves the turtle backwards at a NUM speed of 0 - 100%")
+					print("NUM Left - Turn the turtle left a given NUM angle of degrees from 0 - 360º")
+					print("NUM Right - Turn the turtle right a given NUM angle of degrees from 0 - 360º")
+					print("NUM Panel - Turn the solar panel to an angle between 80-125")
+					print("Stop - Stops the turtle")
+					print("Data - Displays the informational data of the turtle (RPY, Panel Angle, GPS coordinates, etc.)")
+					print("NUM Error - Changes the IMU error margin to the given NUM... BE CAREFUL, CHANGING THIS NUMBER CAN CAUSE MAJOR ISSUES")
+					*/
 				}
 				else if (cmd == "panel") {
 					outputString = "Moving the solar panel to " + " degrees";
