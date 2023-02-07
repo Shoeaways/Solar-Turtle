@@ -30,21 +30,21 @@
 
 		/* Style the header */
 		.header {
-			background: #f1f1f1;
+			background: #F2F2F2;
 			padding: 6px;
 			text-align: center;
 			line-height: 12px;
 		}
+		/* Style the footer (Our case it's the grass that disappears) */
 		.footer {
 			position: fixed;
 			bottom: 0px;
 			width: 100%;
-			height: 250px;
+			height: 180px;
 			background: url(static/Grass.png) no-repeat;
 			opacity: 1.0;
 			padding: 0px;
 			text-align: center;
-
 		}
 
 		/* Style the top navigation bar */
@@ -52,43 +52,48 @@
 			overflow: hidden;
 			background-color: #bca89f;
 		}
+		/* Define grid for how many boxes are in the navbar */
+		.NavbarRow {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+		/* Style the navbar boxes */
+		.NavbarColumn {
+			float: left;
+			padding: 15px;
+		}
 		/* Style the navbar links */
 		.navbar a {
 			resize: both;
 			float: left;
 			display: block;
-			color: #f2f2f2;
+			color: #F2F2F2;
 			text-align: center;
 			padding: 5px;
 			margin: 7px;
-			text-decoration: none;		  
+			text-decoration: none;
+			text-shadow: 2px 2px 1px gray;		  
 		}
 		/* Change on hover */
 		.navbar a:hover {
-			border: 3px solid #f2f2f2;
+			border: 3px solid #F2F2F2;
 			border-radius: 20px;
 			padding: 1px;
 		}
-		.NavbarRow {
-			display: grid;
-			grid-template-columns: 1fr 1fr 1fr;
-		}
-		.NavbarColumn {
-			float: left;
-			padding: 15px;
-		}
 		
+		/* Define the Main Grid (Consists of Live Feed and Control Panel) */
 		.MainGrid {
 			display: grid;
-			grid-template-columns: 1fr 1fr;
-			margin-top: 0px;
-			border: 2px solid #333;
+			grid-template-columns: repeat(2, 1fr);
+			margin-top: 20px;
 		}
+		/* Style the Main Grid Columns */
 		.MainColumn {
 			padding: 15px;
 			border: 2px solid #333;
 		}
-		.MainFullColumn {
+		/* Define the Secondary Grid */
+		.SecondaryGrid {
 			grid-column-start: 1;
 			grid-column-end: 3;
 			float: left;
@@ -112,20 +117,88 @@
 			width: 30vw;
 			height: 26.7vw;
 		}
-
-		.GroupMembersGrid {
+		/* Style the lines under the titles */
+		.SecondaryGrid hr {
+			margin: auto; 
+			margin-bottom: 20px; 
+			margin-top: -10px;
+		}		
+		/* Define the Group Members row */
+		.GroupMembersRow {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
 		}
+		/* Define and style the individual Group Members columns */
+		.GroupMembersColumn {
+			margin: auto;
+		}
+		/* Define and style the individual Group Members images */
+		.GroupMembersImage {
+			position: relative;
+			height: 12vw;
+			width: 12vw;
+			border-radius: 50%;
+		}
+		/* Make images lower opacity when hovered */
+		.GroupMembersImage:hover {
+			opacity: 0.3;
+		}
+
+		/* Define a ControlPanel subgrid within the ControlPanel Column */
+		.ControlPanelGrid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+		/* Define the textbox 'terminalbox' */
+		.terminalbox {
+			font-family: "Lucida Console", "Courier New", monospace;
+			background-color: #000000;
+			color: #FFF;
+			width: 30vw;
+			height: 26vw;
+			resize: none;
+			margin-bottom: 5px;
+		}
+		/* Don't change pointer when hovering over read only text box */
+		.terminalbox:hover {
+			cursor: default;
+		}
+		/* Define the another textbox 'terminalboxtitle' to act as the title box */
+		.terminalboxtitle {
+			font-family: monospace;
+			background-color: gray;
+			color: #FFF;
+			width: 30vw;
+			height: 1vw;
+			resize: none;
+			overflow: hidden;
+			margin-top: 19px;
+			margin-bottom: -5px;
+		}
+		/* Don't change pointer when hovering over read only text box */
+		.terminalboxtitle:hover {
+			cursor: default;
+		}
+		/* Define and style the data table */
+		.datatable {
+			grid-template-columns: 1fr;
+			margin-top: 16px;
+			margin-bottom: 9px;
+		}
+		.datatableRow {
+			text-align: left;
+			margin-left: 3px;
+			margin-bottom: 5px;
+		}
 		
+		/* Define the iframe containter for the Youtube Embedded Video */
 		.iframe-container {
 			position: relative;
 			overflow: hidden;
 			width: 100%;
 			padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
 		}
-
-		/* Then style the iframe to fit in the container div with full height and width */
+		/* Style the iframe to fit in the container div with full height and width */
 		.responsive-iframe {
 			position: absolute;
 			top: 0;
@@ -137,9 +210,7 @@
 		}
 	</style>
 	
-	<script src=
-		"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	
 	<script>
         $(document).ready(function(){
@@ -156,6 +227,7 @@
         function myFunction() {
           var result = {{ result|tojson }};
           var cmd = {{ cmd|tojson }};
+		  var num = {{ num|tojson }};
 
 			if (result == "initialized") {
 			document.getElementById("InitCheck").innerHTML = " - Initialized";
@@ -165,106 +237,115 @@
 			}
 			
 			if (cmd == "help") {
-				outputString = "Current list of commands: ";
+				document.getElementById("cmd").innerHTML = "Current list of commands: ";
 			}
 			else if (cmd == "panel") {
-				outputString = "Moving the solar panel";
+				document.getElementById("cmd").innerHTML = "Moving the solar panel";
 			}
 			else if (cmd == "forward") {
-				outputString = "Moving forward";
+				document.getElementById("cmd").innerHTML = "Moving forward";
 			}
 			else if (cmd == "reverse") {
-				outputString = "Moving reverse";
+				document.getElementById("cmd").innerHTML = "Moving reverse";
 			}
 			else if (cmd == "left") {
-				outputString = "Turning left";
+				document.getElementById("cmd").innerHTML = "Turning left";
 			}
 			else if (cmd == "right") {
-				outputString = "Turning right";
+				document.getElementById("cmd").innerHTML = "Turning right";
 			}
 			else if (cmd == "error") {
-				outputString = "Changing error";
+				document.getElementById("cmd").innerHTML = "Changing error";
 			}
 			else if (cmd == "stop") {
-				outputString = "Stopping";
+				document.getElementById("cmd").innerHTML = "Stopping";
 			}
 			else if (cmd == "data") {
-				outputString = "Here is the data";
+				document.getElementById("cmd").innerHTML = "Here is the data";
 			}
 			else if (cmd == "invalid") {
-				outputString = "Invalid command, try again";
+				document.getElementById("cmd").innerHTML = "Invalid command, try again";
 			}
 	  		else {
-				outputString = "test";
+				document.getElementById("cmd").innerHTML = "test";
           	}
-			  document.getElementById("cmd").innerHTML = outputString;
         }
     </script>
 </head>
 
 <body onload = "myFunction()">
-    <div class="header">
-        <h1 style="font-size:2.5vw; font-family: brush script mt, cursive;">Le Solar Hub</h1>
-        <p style="font-size:1vw; font-family: brush script mt, cursive;"> for all your Solar Turtle needs </p>
+    <div class = "header">
+        <h1 style = "font-size:2.5vw; font-family: brush script mt, cursive; margin: 25px;">Le Solar Hub</h1>
+        <p style = "font-size:1vw; font-family: brush script mt, cursive; margin: 5px;"> for all your Solar Turtle needs </p>
     </div>
 
     <div style="overflow: hidden" ; class="navbar">
         <div class="NavbarRow">
-            <a style="font-size: 20px" class="NavbarColumn" href="#What is">What is S.O.L.A.R. Turtle?</a>
-            <a style="font-size: 20px" class="NavbarColumn" href="#Demo Video">Demo Video - Updated DD/MM/YY</a>
-            <a style="float: right; font-size: 20px" class="NavbarColumn" href="#Group Members">Group Members & Contributors</a>
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#What is">What is S.O.L.A.R. Turtle?</a>
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#Demo Video">Demo Video - Updated DD/MM/YY</a>
+            <a style = "float: right; font-size: 20px" class = "NavbarColumn" href = "#Group Members">Group Members & Contributors</a>
         </div>
     </div>
 
     <div style="text-align: center;" class="MainGrid">
-		<div class="MainColumn">
-            <h2>Live Feed</h2><br>
-            <div  class="iframe-container">
-                <iframe class="responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-            <p></p>
-        </div>
-
         <div class="MainColumn">
             <h2>Control Panel<span id="InitCheck"></h2>
-				<div class = "ControlPanelGrid">
-					<textarea class="terminalbox" readonly>This is some text</textarea>				
-				</div>
-			<h3>Manual Control</h3>
+			<h3>Test: <span id="cmd"></h3>
 			<form action = "{{ url_for("getcommand")}}" method="post">
 				<label for = "command">Enter a command:</label>
 				<input type = "text" id="command" name = "command" placeholder = "Type help for command list">
 				<button type = "submit">Submit</button>
 			</form>
         </div>
-        
+
+        <div style="width: 45vw;" class="MainColumn">
+            <h2>Live Feed</h2><br>
+            <div class="iframe-container">
+                <iframe class="responsive-iframe" width="800vw" height="525vw" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <p></p>
+        </div>
+
 		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-		<div style="text-align: center;" class="MainFullColumn">
-            <h1 id="What is">
+		<div style = "text-align: center; font-size: 24px;" class = "SecondaryGrid">
+            <h1 id = "What is">
                 What is S.O.L.A.R. Turtle?
             </h1>
-            <hr style="width: 425px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
-			Placeholder
+            <hr style = "width: 575px;">
+			The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area. 
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 			<h1 id = "Demo Video">
 				Demo Video
 			</h1>
-			<hr style="width: 200px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
+			<hr style="width: 275px;">
 			Place Holder
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 			<h1 id = "Group Members">
 				Group Members & Contributors
 			</h1>
-			<hr style="width: 485px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
-			Place Holder
+			<hr style = "width: 715px;">
+			<div class = "GroupMembersRow" style = "margin-top: 50px">
+				<div class = "GroupMembersColumn" style = "margin-right: -50px;">
+					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
+					<p>Dennis Kang</p>
+				</div>
+				<div class = "GroupMembersColumn">
+					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
+					<p>Eric Shu</p>
+				</div>
+				<div class = "GroupMembersColumn" style = "margin-left: -50px;">
+					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
+					<p>Patrick Webb</p>
+				</div>
+			</div>
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 		</div>
     </div>
 
-    <div class="footer">
+    <div class = "footer">
 
     </div>
 

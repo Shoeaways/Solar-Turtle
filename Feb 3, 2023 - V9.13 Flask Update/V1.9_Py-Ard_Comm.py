@@ -46,7 +46,7 @@ def service_unav():
 # Defining home page of app 
 @app.route('/')
 def home():
-    return render_template("Solar Turtle.html", result = "initialized", cmd = "")
+    return render_template("Solar Turtle.html", result = "initialized", cmd = "", num = "0")
 
 # Defining the page that awaits a user input
 @app.route('/getcommand', methods = ['GET', 'POST'])
@@ -69,25 +69,12 @@ def getcommand():
             tempcmd = cmdtemp[1]
         # If none of the above are true, return incorrect command message
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid")
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid", num = "0")
         
         cmd = tempcmd.lower()
 
         if cmd == "help":
-            print("help")
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "help")
-            """
-            print("Current list of commands - Page 1 of 2")
-            print("NOTE: Any command with NUM requires a numerical value in place of NUM\n")
-            print("NUM Forward - Moves the turtle forward at a NUM speed of 0 - 100%")
-            print("NUM Reverse - Moves the turtle backwards at a NUM speed of 0 - 100%")
-            print("NUM Left - Turn the turtle left a given NUM angle of degrees from 0 - 360º")
-            print("NUM Right - Turn the turtle right a given NUM angle of degrees from 0 - 360º")
-            print("NUM Panel - Turn the solar panel to an angle between 80-125")
-            print("Stop - Stops the turtle")
-            print("Data - Displays the informational data of the turtle (RPY, Panel Angle, GPS coordinates, etc.)")
-            print("NUM Error - Changes the IMU error margin to the given NUM... BE CAREFUL, CHANGING THIS NUMBER CAN CAUSE MAJOR ISSUES")
-            """
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "help", num = str(num))
 
         # If panel command is called, update the panel text
         elif cmd == "panel":
@@ -151,34 +138,18 @@ def getcommand():
 
         # If any other command is called, it is invalid and runs back around to the top code  
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid")
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid", num = "0")
 
         # Send arduino the command
         arduino.write(cmd.encode())     
         arduino.flushInput()
-        print(tempcmd)
         # If data is called, split the string into our data list and output
         if cmd == "data":
             answer = str(arduino.readline())
             dataList = answer.split("~")
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", dataList = dataList) 
-            tempString = "{}".format(dataList[0])
-            print("Roll: {}º".format(dataList[1]))
-            print("Pitch: {}º".format(dataList[2]))
-            print("Yaw: {}º".format(dataList[3]))
-            print("Long: {}º".format(dataList[4]))
-            print("Lat: {}º".format(dataList[5]))
-            print("Speed: {}º".format(dataList[6]))
-            print("Current Solar Panel Angle: {}º".format(dataList[7]))
-            print("System Voltage: {}V".format(dataList[8]))
-            print("System Current Draw: {}A".format(dataList[9]))
-            print("System Power Draw: {}W".format(dataList[10]))
-            print("Panel Voltage: {}V".format(dataList[11]))
-            print("Panel Current Draw: {}A".format(dataList[12])) 
-            print("Panel Power Draw: {}W".format(dataList[13]))                               
-            #Add the System Current/Power and Panel Voltage/Current/Power here
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = dataList)                            
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd)                    
+            return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd, num = str(num))                    
     else:
         return redirect(url_for(home))
 
