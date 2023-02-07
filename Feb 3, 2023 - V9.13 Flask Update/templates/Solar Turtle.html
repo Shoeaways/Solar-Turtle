@@ -220,7 +220,6 @@
 			}
 			
 			if (cmd == "data") {
-				var dataList = {{ dataList|tojson }};
 				var Roll = dataList[1] + "º";
 				var Pitch = dataList[2] + "º";
 				var Yaw = dataList[3] + "º";
@@ -334,7 +333,7 @@
 				<div class = "ControlPanelGrid">
 					<div>
 						<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
-						<textarea class="terminalbox" readonly>Test</textarea>	
+						<textarea id = "terminalbox" class="terminalbox" readonly>Test</textarea>	
 					</div>
 					<div class = "datatable">
 						<h3 style = "margin-top: 0px; margin-bottom: 0px;">Test</h3>
@@ -349,7 +348,21 @@
 						<form action = "{{ url_for('getcommand')}}" method = "post">
 							<label for = "command">Manual Control:</label>
 							<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
-							<button type = "submit">Submit</button>
+							<button id = "submitcommand" type = "submit">Submit</button>
+							<script>
+								let terminalbox = document.getElementById("terminalbox");
+								let terminallog = [];
+
+								document.getElementById("submitcommand").addEventListener("click, function()") {
+									let commandInput = document.getElementById("cmd");
+									terminallog.unshift(new Date().toLocaleString() + ": " + textInput.value);
+									if (terminallog.length > 20) {
+										terminallog.pop();
+									}
+									terminalbox.value = terminallog.join("\n");
+									commandInput = "";
+								}
+							</script>
 						</form>
 					</div>
 				</div>
