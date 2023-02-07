@@ -210,6 +210,7 @@
         function myFunction() {
           var result = {{ result|tojson }};
           var cmd = {{ cmd|tojson }};
+		  var num = {{ num|tojson }};
 
 			if (result == "initialized") {
 			document.getElementById("InitCheck").innerHTML = " - Initialized";
@@ -218,40 +219,42 @@
 				document.getElementById("InitCheck").innerHTML = " - Not Initialized, please initialize";
 			}
 			
-			if (cmd == "help") {
-				outputString = "Current list of commands: ";
+			if (cmd == "data") {
+				/* Update data table */
 			}
-			else if (cmd == "panel") {
-				outputString = "Moving the solar panel";
+			else {
+				if (cmd == "help") {
+					outputString = "Current list of commands: ";
+				}
+				else if (cmd == "panel") {
+					outputString = "Moving the solar panel to " + " degrees";
+				}
+				else if (cmd == "forward") {
+					outputString = "Moving forward at " + "% speed";
+				}
+				else if (cmd == "reverse") {
+					outputString = "Moving reverse at " + "% speed";
+				}
+				else if (cmd == "left") {
+					outputString = "Turning left " + " degrees";
+				}
+				else if (cmd == "right") {
+					outputString = "Turning right " + " degrees";
+				}
+				else if (cmd == "error") {
+					outputString = "Changing error";
+				}
+				else if (cmd == "stop") {
+					outputString = "Stopping";
+				}
+				else if (cmd == "invalid") {
+					outputString = "Invalid command, try again";
+				}
+				else {
+					outputString = "test";
+				}
+				document.getElementById("cmd").innerHTML = outputString;
 			}
-			else if (cmd == "forward") {
-				outputString = "Moving forward";
-			}
-			else if (cmd == "reverse") {
-				outputString = "Moving reverse";
-			}
-			else if (cmd == "left") {
-				outputString = "Turning left";
-			}
-			else if (cmd == "right") {
-				outputString = "Turning right";
-			}
-			else if (cmd == "error") {
-				outputString = "Changing error";
-			}
-			else if (cmd == "stop") {
-				outputString = "Stopping";
-			}
-			else if (cmd == "data") {
-				outputString = "Here is the data";
-			}
-			else if (cmd == "invalid") {
-				outputString = "Invalid command, try again";
-			}
-	  		else {
-				outputString = "test";
-          	}
-			  document.getElementById("cmd").innerHTML = outputString;
         }
     </script>
 </head>

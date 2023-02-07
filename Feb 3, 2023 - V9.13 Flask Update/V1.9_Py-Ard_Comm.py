@@ -46,7 +46,7 @@ def service_unav():
 # Defining home page of app 
 @app.route('/')
 def home():
-    return render_template("Solar Turtle.html", result = "initialized", cmd = "")
+    return render_template("Solar Turtle.html", result = "initialized", cmd = "", num = "0")
 
 # Defining the page that awaits a user input
 @app.route('/getcommand', methods = ['GET', 'POST'])
@@ -69,13 +69,13 @@ def getcommand():
             tempcmd = cmdtemp[1]
         # If none of the above are true, return incorrect command message
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid")
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid", num = "0")
         
         cmd = tempcmd.lower()
 
         if cmd == "help":
             print("help")
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "help")
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "help", num = str(num))
             """
             print("Current list of commands - Page 1 of 2")
             print("NOTE: Any command with NUM requires a numerical value in place of NUM\n")
@@ -151,7 +151,7 @@ def getcommand():
 
         # If any other command is called, it is invalid and runs back around to the top code  
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid")
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid", num = "0")
 
         # Send arduino the command
         arduino.write(cmd.encode())     
@@ -161,7 +161,7 @@ def getcommand():
         if cmd == "data":
             answer = str(arduino.readline())
             dataList = answer.split("~")
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", dataList = dataList) 
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = dataList) 
             tempString = "{}".format(dataList[0])
             print("Roll: {}º".format(dataList[1]))
             print("Pitch: {}º".format(dataList[2]))
@@ -178,7 +178,7 @@ def getcommand():
             print("Panel Power Draw: {}W".format(dataList[13]))                               
             #Add the System Current/Power and Panel Voltage/Current/Power here
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd)                    
+            return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd, num = str(num))                    
     else:
         return redirect(url_for(home))
 
