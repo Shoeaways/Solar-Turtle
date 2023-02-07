@@ -161,22 +161,7 @@ def getcommand():
         if cmd == "data":
             answer = str(arduino.readline())
             dataList = answer.split("~")
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = dataList) 
-            tempString = "{}".format(dataList[0])
-            print("Roll: {}º".format(dataList[1]))
-            print("Pitch: {}º".format(dataList[2]))
-            print("Yaw: {}º".format(dataList[3]))
-            print("Long: {}º".format(dataList[4]))
-            print("Lat: {}º".format(dataList[5]))
-            print("Speed: {}º".format(dataList[6]))
-            print("Current Solar Panel Angle: {}º".format(dataList[7]))
-            print("System Voltage: {}V".format(dataList[8]))
-            print("System Current Draw: {}A".format(dataList[9]))
-            print("System Power Draw: {}W".format(dataList[10]))
-            print("Panel Voltage: {}V".format(dataList[11]))
-            print("Panel Current Draw: {}A".format(dataList[12])) 
-            print("Panel Power Draw: {}W".format(dataList[13]))                               
-            #Add the System Current/Power and Panel Voltage/Current/Power here
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = dataList)                            
         else:
             return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd, num = str(num))                    
     else:
