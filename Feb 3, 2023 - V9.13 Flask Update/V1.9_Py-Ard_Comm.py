@@ -17,7 +17,7 @@ TODO:
 
 """
 import serial,time
-from flask import Flask, render_template, request, redirect, url_for, flash, make_response
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response, jsonify
 app = Flask(__name__)
 
 # Set global variable "arduino" as the serial connection to the arduino
@@ -147,7 +147,7 @@ def getcommand():
         if cmd == "data":
             answer = str(arduino.readline())
             dataList = answer.split("~")
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = dataList)                            
+            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = jsonify(dataList))                            
         else:
             return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd, num = str(num))                    
     else:
