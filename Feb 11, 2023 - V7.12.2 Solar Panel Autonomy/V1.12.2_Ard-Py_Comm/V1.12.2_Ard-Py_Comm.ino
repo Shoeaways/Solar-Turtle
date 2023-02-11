@@ -64,15 +64,15 @@ void loop() {
       // Realistically we would poll this every 3-5 minutes (can change based on our load usage) instead of every ~30 seconds
       if (checkSOCIterator > 120) {
         checkSOCIterator = 0;
-        // Check SOC
-        // If SOC is < X%
+        checkSOC();
+        // If SOC is < ~25% (12.9V @ Open Circuit)
           // Finish all short functions
           // Pause and remember all long functions
           // Enter Sleep Mode (set isSleep to true)
             // Means all functions cannot be called except for data to save power
       }
       else {
-        ++ checkSOCIterator;
+        ++checkSOCIterator;
       }
     }
     else {
