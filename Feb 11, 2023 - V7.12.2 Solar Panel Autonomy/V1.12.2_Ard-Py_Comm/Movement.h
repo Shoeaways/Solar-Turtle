@@ -35,6 +35,11 @@ int tempForwardPWM = 0, tempReversePWM = 0;
 // Sleep Flag
 bool isSleep;
 
+// Autonomous Solar Panel Variables
+float optimalPower = 0;
+float optimalAngle = 0;
+float readPower = 0;
+
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
 bool fromZero;
@@ -510,17 +515,31 @@ void TurnLeft(float angle) {
 
 // Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
 void AutonomousSolarPanel() {
-  if (currPanelAngle < 90) {
-    for (i = currAngle; i <= angle; i += 1) {
-      analogWrite(PanelServo, i);
-      delay(50);
+  // Reset panel to 60 degrees
+  for (i = currPanelAngle; i >= 60; i -= 1) {
+    analogWrite(PanelServo, i);
+    delay(25);
+  }
+  currPanelAngle = 60;
+  
+  optimalPower = readPanelPower();
+  optimalAngle = currPanelAngle;
+  // Poll angles between 60-120 at 5 degree increments for the most optimal charging rate
+  for (i = currPanelAngle; i <= 120; i += 5) {
+    analogWrite(PanelServo, i);
+    delay(25);
+    readPower = readPanelPower();
+    if (readPower > optimalPower) {
+      optimalAngle = i;
+      optimalPower = readPower;
     }
   }
-  else if (currPanelAngle > 90) {
-    for (i = currPanelAngle; i >= angle; i -= 1) {
-      analogWrite(PanelServo, i);
-      delay(50);
-    }
+  currPanelAngle = i;
+
+  // Move panel to recorded optimal angle
+  for (i = currPanelAngle; i >= optimalAngle; i -= 1) {
+    analogWrite(PanelServo, i);
+    delay(25);
   }
 }
 
