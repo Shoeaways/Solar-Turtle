@@ -7,7 +7,9 @@
   - Review IMU calibration
     - Check the bounds of the IMU (240/290/270/290)
     - Determine what the compass heading points toward (what degree is N/E/S/W)
-  - When the Rover lost comms, flag it and find a safe spot
+  - When the Rover lost comms, flag it and find a safe spot - Should then put rover in a wait mode for comms for a short period
+    - If comms are not regained, return to last known position with comms
+      - This means we would need a log recording if we still have comms and the coordinates that it was at 
   - Code SOC check for power percent
   - When rover is stopped for charging, code the solar panel power check to work alongside with the rover turning
 */
