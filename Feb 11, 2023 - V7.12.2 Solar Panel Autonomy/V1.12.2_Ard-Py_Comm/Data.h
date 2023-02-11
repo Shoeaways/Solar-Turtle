@@ -58,7 +58,10 @@ float systemVoltage = 0, systemCurrent = 0;
 float AVGsystemVoltage = 0, AVGsystemCurrent = 0;
 float panelPower = 0, systemPower = 0;
 
-// Misc Variables
+// SOC variables
+int SOC;
+
+// Misc variables
 int SensorIterator = 0;
 
 void initData() {
@@ -216,6 +219,86 @@ String panelVA() {
   return(String(AVGpanelVoltage) + "~" + String(AVGpanelCurrent) + "~" + String(panelPower));
 }
 
+// Function to return SOC of battery as an int (accuracy of about +-5%)
+// SOC IS BASED ON THE BATTERY SPECS. IF THIS IS UNKNOWN TO YOU, PLEASE REFERENCE THE OPEN CIRCUIT VOLTAGE VS SOC% CHART FOR THE BATTERY
+int checkSOC() {
+  AVGsystemVoltage = 0;
+  // Use 100 Iterations to try to make the SOC as accurate as possible
+  for (SensorIterator = 0; SensorIterator < 100; ++SensorIterator) {
+    Vadc_value = analogRead(VSENSE_SYSTEM);
+
+    // Determine voltage at ADC input
+    adc_voltage = (Vadc_value * ref_voltage) / 1023.0;
+
+    systemVoltage = adc_voltage / (R2/(R1+R2));
+
+    // Use the iteration to get an average voltage at the end
+    AVGsystemVoltage += systemVoltage;
+  }
+  AVGsystemVoltage = AVGsystemVoltage / SensorIterator;
+
+  if (AVGsystemVoltage > 13.36) {
+    SOC = 100;
+  }
+  else if (AVGsystemVoltage > 13.35) {
+    SOC = 95;
+  }
+  else if (AVGsystemVoltage > 13.34) {
+    SOC = 90;
+  }
+  else if (AVGsystemVoltage > 13.32) {
+    SOC = 85;
+  }
+  else if (AVGsystemVoltage > 13.3) {
+    SOC = 80;
+  }
+  else if (AVGsystemVoltage > 13.28) {
+    SOC = 75;
+  }
+  else if (AVGsystemVoltage > 13.26) {
+    SOC = 70;
+  }
+  else if (AVGsystemVoltage > 13.24) {
+    SOC = 65;
+  }
+  else if (AVGsystemVoltage > 13.22) {
+    SOC = 60;
+  }
+  else if (AVGsystemVoltage > 13.2) {
+    SOC = 55;
+  }
+  else if (AVGsystemVoltage > 13.18) {
+    SOC = 50;
+  }
+  else if (AVGsystemVoltage > 13.14) {
+    SOC = 45;
+  }
+  else if (AVGsystemVoltage > 13.1) {
+    SOC = 40;
+  }
+  else if (AVGsystemVoltage > 13.05) {
+    SOC = 35;
+  }
+  else if (AVGsystemVoltage > 13) {
+    SOC = 30;
+  }
+  else if (AVGsystemVoltage > 12.97) {
+    SOC = 25;
+  }
+  else if (AVGsystemVoltage > 12.87) {
+    SOC = 20;
+  }
+  else if (AVGsystemVoltage > 12.75) {
+    SOC = 15;
+  }
+  else if (AVGsystemVoltage > 12.6) {
+    SOC = 10;
+  }
+
+  return SOC;
+}
+
+// Function sends Panel Power back as a float
 float readPanelPower() {
   updatePanelVA();
   return(panelPower);
