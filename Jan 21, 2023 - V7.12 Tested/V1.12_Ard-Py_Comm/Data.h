@@ -87,6 +87,8 @@ void initData() {
 
 // Function will update the Voltage/Current/Power of the System
 void updateSystemVA() {
+  AVGsystemVoltage = 0;
+  AVGsystemCurrent = 0;
   // Read the Analog Input
   for (SensorIterator = 0; SensorIterator < 10; ++SensorIterator) {
     Vadc_value = analogRead(VSENSE_SYSTEM);
@@ -112,6 +114,8 @@ void updateSystemVA() {
 // Function will update the Voltage/Current/Power of the Solar Panel
 void updatePanelVA() {
   // Read the Analog Input
+  AVGpanelVoltage = 0;
+  AVGpanelCurrent = 0;
   for (SensorIterator = 0; SensorIterator < 10; ++SensorIterator) {
     Vadc_value = analogRead(VSENSE_PANEL);
     Aadc_value = analogRead(ASENSE_PANEL);
