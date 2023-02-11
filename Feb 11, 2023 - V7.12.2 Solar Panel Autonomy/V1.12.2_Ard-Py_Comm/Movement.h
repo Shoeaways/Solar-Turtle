@@ -81,7 +81,7 @@ void initMovement() {
 // Send GPS coords/RPY/etc.
 // The "~" is to split the data when it's sent back to the RPi
 void sendData() {
-  Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~");
+  Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" string(checkSOC()) + "~");
 }
 
 // Move forward at a given speed (num is a 0-100 speed input)
