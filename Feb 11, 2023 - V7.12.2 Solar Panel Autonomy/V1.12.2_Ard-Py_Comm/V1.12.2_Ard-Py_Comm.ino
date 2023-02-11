@@ -10,7 +10,9 @@
   - When the Rover lost comms, flag it and find a safe spot - Should then put rover in a wait mode for comms for a short period
     - If comms are not regained, return to last known position with comms
       - This means we would need a log recording if we still have comms and the coordinates that it was at 
-  - Code SOC check for power percent
+  - Poll Power percent remaining every x minutes
+    - Code SOC check for power percent (Added to data for now)
+    - Can make sort of dynamic by including load and usage time of load for power remaining
   - When rover is stopped for charging, code the solar panel power check to work alongside with the rover turning
 */
 
@@ -25,7 +27,8 @@ int spaceIndex;
 int num;
 bool initFlag = true;
 
-int initPanelIterator = 0;
+int checkPanelIterator = 0;
+int checkSOCIterator = 0;
 
 // Start serial on Arduino power up
 void setup() {
@@ -39,7 +42,7 @@ void loop() {
 
   // Initialization check
   if (initFlag == true) {
-    initPanelIterator = 0;
+    checkPanelIterator = 0;
     initMovement();
     initData();
     initFlag = false;
@@ -48,13 +51,25 @@ void loop() {
     // Autonomous solar panel (Checks while the robot is idle/waiting for command)
     if (message == "") {
       // Panel Iterator will allow us to delay how often the solar panel runs automation
-      // Realistically we would poll this every 30-45 minutes instead of 5 minutes
-      if (initPanelIterator > 20) {
-        initPanelIterator = 0;
+      // Realistically we would poll this every ~30-45 minutes instead of every ~30 seconds
+      if (checkPanelIterator > 120) {
+        checkPanelIterator = 0;
         AutonomousSolarPanel();
       }
       else {
-        ++initPanelIterator;
+        ++checkPanelIterator;
+      }
+
+      // SOC Iterator will allow us to delay how often the SOC check runs
+      // Realistically we would poll this every 3-5 minutes (can change based on our load usage) instead of every ~30 seconds
+      if (checkSOCIterator > 120) {
+        checkSOCIterator = 0;
+        // Check SOC
+        // If SOC is < X%
+          // Finish all short functions
+          // Pause and remember all long functions
+          // Enter Sleep Mode (set isSleep to true)
+            // Means all functions cannot be called except for data to save power
       }
     }
     else {
@@ -116,6 +131,7 @@ void loop() {
       }
     }
   }
+  // DO NOT CHANGE THIS DELAY UNLESS WE HAVE CONSIDERED THAT IT AFFECTS THE SOC AND PANEL CHECKS
   delay(250);
 }
 
