@@ -46,6 +46,7 @@ void loop() {
     // Autonomous solar panel (Checks while the robot is idle/waiting for command)
     if (message == "") {
       // Panel Iterator will allow us to delay how often the solar panel runs automation
+      // Realistically we would poll this every 30-45 minutes instead of 5 minutes
       if (initPanelIterator > 20) {
         initPanelIterator = 0;
         AutonomousSolarPanel();
