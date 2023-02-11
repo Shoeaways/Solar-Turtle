@@ -62,7 +62,6 @@ float panelPower = 0, systemPower = 0;
 int SensorIterator = 0;
 
 void initData() {
-
   // Initialize IMU
   status = IMU.begin();
   if (status < 0) {
@@ -137,6 +136,7 @@ void updatePanelVA() {
   panelPower = AVGpanelVoltage * AVGpanelCurrent;
 }
 
+// Function will update IMU and GPS values
 void updateIMUandGPSValues() {
   if (status >= 0){
     // Read values from IMU and GPS sensors
@@ -195,19 +195,21 @@ void updateIMUandGPSValues() {
   }
 }
 
-// Function to send Roll/Pitch/Yaw values
+// Function to send Roll/Pitch/Yaw and Long/Lat values
 String IMUandGPSValues() {
   updateIMUandGPSValues();
   // The "~" is to split the data when it's sent back to the RPi
   return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw) + "~" + String(Longitude) + "~" + String(Latitude) + "~" + String(roverSpeed));
 }
 
+// Function to return system Voltage, Current, and Power as a string
 String systemVA() {
   updateSystemVA();
   // Return the average voltage/current/power of the system  
   return(String(AVGsystemVoltage) + "~" + String(AVGsystemCurrent) + "~" + String(systemPower));
 }
 
+// Function to return panel Voltage, Current, and Power as a string
 String panelVA() {
   updatePanelVA();
   // Return the average voltage/current/power of the system  
