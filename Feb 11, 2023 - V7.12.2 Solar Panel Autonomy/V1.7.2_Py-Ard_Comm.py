@@ -152,6 +152,7 @@ if __name__ == '__main__':
                                 print("Lat: {}º".format(dataList[5]))
                                 print("Speed: {}º".format(dataList[6]))
                                 print("Current Solar Panel Angle: {}º".format(dataList[7]))
+                                print("SoC: {}%".format(dataList[14]))
                                 print("System Voltage: {}V".format(dataList[8]))
                                 print("System Current Draw: {}A".format(dataList[9]))
                                 print("System Power Draw: {}W".format(dataList[10]))
