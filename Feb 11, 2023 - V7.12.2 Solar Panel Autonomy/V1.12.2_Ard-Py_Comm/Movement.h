@@ -28,9 +28,12 @@ static const int Forward[] = {Motor1Forward, Motor2Forward, Motor3Forward, Motor
 static const int Reverse[] = {Motor1Reverse, Motor2Reverse, Motor3Reverse, Motor4Reverse};
 static const int PWM[] = {Motor4PWM, Motor3PWM, Motor2PWM, Motor1PWM};
 
-// Running Function Flags
+// Movement Function Flags
 bool movingForward = false, movingReverse = false;
 int tempForwardPWM = 0, tempReversePWM = 0;
+
+// Sleep Flag
+bool isSleep;
 
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
@@ -50,6 +53,8 @@ int j = 0;
 
 // Initialize function
 void initMovement() {
+  isSleep = false; 
+
   // Default pins 2-15 to OUTPUT
   for (i = 2; i <=15; ++i) {
     pinMode(i, OUTPUT);
@@ -503,21 +508,37 @@ void TurnLeft(float angle) {
   }
 }
 
+// Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
+void AutonomousSolarPanel() {
+  if (currPanelAngle < 90) {
+    for (i = currAngle; i <= angle; i += 1) {
+      analogWrite(PanelServo, i);
+      delay(50);
+    }
+  }
+  else if (currPanelAngle > 90) {
+    for (i = currPanelAngle; i >= angle; i -= 1) {
+      analogWrite(PanelServo, i);
+      delay(50);
+    }
+  }
+}
+
 // Moves the solar panel servo to a called angle 
 void MovePanel(int angle) {
   // Determine if called angle is out of the reachable bounds
-  // Set to 125 if the angle called is greater than 125
-  if (angle > 125) {
-    angle = 125;
+  // Set to 120 if the angle called is greater than 120
+  if (angle > 120) {
+    angle = 120;
   }
-  // Set to 80 if the angle called is less than 80
+  // Set to 60 if the angle called is less than 60
   if (angle < 60) {
     angle = 60;
   }
 
   // Case where the called angle is greater than the current angle
   if (currPanelAngle < angle) {
-    for (i = currAngle; i <= angle; i += 1) {
+    for (i = currPanelAngle; i <= angle; i += 1) {
       analogWrite(PanelServo, i);
       delay(50);
     }
