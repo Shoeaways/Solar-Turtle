@@ -71,6 +71,9 @@ void loop() {
           // Enter Sleep Mode (set isSleep to true)
             // Means all functions cannot be called except for data to save power
       }
+      else {
+        ++ checkSOCIterator;
+      }
     }
     else {
     // Stop command stops the robots movement
