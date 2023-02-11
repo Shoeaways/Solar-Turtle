@@ -75,8 +75,8 @@ void initData() {
   IMU.setAccelRange(MPU9250::ACCEL_RANGE_2G);
   // setting the gyroscope full scale range to +/-250 deg/s
   IMU.setGyroRange(MPU9250::GYRO_RANGE_250DPS);
-  // setting DLPF bandwidth to 5 Hz
-  IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_5HZ);
+  // setting DLPF bandwidth to 100 Hz
+  IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_100HZ);
   // setting SRD to 19 for a 50 Hz update rate
   IMU.setSrd(19);
 
@@ -214,6 +214,11 @@ String panelVA() {
   updatePanelVA();
   // Return the average voltage/current/power of the system  
   return(String(AVGpanelVoltage) + "~" + String(AVGpanelCurrent) + "~" + String(panelPower));
+}
+
+float readPanelPower() {
+  updatePanelVA();
+  return(panelPower);
 }
 
 // Function to send just the Yaw value (compass heading)
