@@ -62,7 +62,6 @@ float panelPower = 0, systemPower = 0;
 int SensorIterator = 0;
 
 void initData() {
-
   // Initialize IMU
   status = IMU.begin();
   if (status < 0) {
