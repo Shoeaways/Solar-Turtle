@@ -49,7 +49,7 @@ if __name__ == '__main__':
                     
                     # Reinitialize Arduino
                     if cmd == "init":
-                        readyToEncode
+                        readyToEncode = 1
 
                     # Help display if user requests it
                     elif cmd == "help":
