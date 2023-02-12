@@ -118,7 +118,7 @@ void updatePanelVA() {
   // Read the Analog Input
   AVGpanelVoltage = 0;
   AVGpanelCurrent = 0;
-  for (SensorIterator = 0; SensorIterator < 10; ++SensorIterator) {
+  for (SensorIterator = 0; SensorIterator < 100; ++SensorIterator) {
     Vadc_value = analogRead(VSENSE_PANEL);
     Aadc_value = analogRead(ASENSE_PANEL);
    
@@ -190,7 +190,7 @@ void updateIMUandGPSValues() {
       // setting the gyroscope full scale range to +/-250 deg/s
       IMU.setGyroRange(MPU9250::GYRO_RANGE_250DPS);
       // setting DLPF bandwidth to 5 Hz
-      IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_5HZ);
+      IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_92HZ);
       // setting SRD to 19 for a 50 Hz update rate
       IMU.setSrd(19);
       //Serial.print("IMU connected, retry command.")
@@ -276,6 +276,7 @@ int checkSOC() {
   else if (AVGsystemVoltage > 13.1) {
     SOC = 40;
   }
+  // Currently seeing 12.25
   else if (AVGsystemVoltage > 13.05) {
     SOC = 35;
   }

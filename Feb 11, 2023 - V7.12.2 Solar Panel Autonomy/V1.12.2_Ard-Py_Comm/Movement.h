@@ -71,17 +71,17 @@ void initMovement() {
   }
   
   // Defaults Servo to ~90 degrees which sits our solar panel flat
-  for (i = 85; i >= 90; i += 1) {
+  for (i = 65; i < 70; i += 1) {
       analogWrite(PanelServo, i);
       delay(50);
   }
-  currPanelAngle = 90;
+  currPanelAngle = i;
 }
 
 // Send GPS coords/RPY/etc.
 // The "~" is to split the data when it's sent back to the RPi
 void sendData() {
-  Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" string(checkSOC()) + "~");
+  Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
 }
 
 // Move forward at a given speed (num is a 0-100 speed input)
@@ -515,19 +515,20 @@ void TurnLeft(float angle) {
 
 // Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
 void AutonomousSolarPanel() {
-  // Reset panel to 60 degrees
-  for (i = currPanelAngle; i >= 60; i -= 1) {
+  // Reset panel to 30 degrees
+  for (i = currPanelAngle; i > 30; i -= 1) {
     analogWrite(PanelServo, i);
-    delay(25);
+    delay(40);
   }
-  currPanelAngle = 60;
+  currPanelAngle = 30;
   
   optimalPower = readPanelPower();
   optimalAngle = currPanelAngle;
-  // Poll angles between 60-120 at 5 degree increments for the most optimal charging rate
-  for (i = currPanelAngle; i <= 120; i += 5) {
+  // Poll angles between 30-105 at 5 degree increments for the most optimal charging rate
+  for (i = currPanelAngle; i < 105; i += 5) {
     analogWrite(PanelServo, i);
-    delay(25);
+    // fiddle w this number
+    delay(100);
     readPower = readPanelPower();
     if (readPower > optimalPower) {
       optimalAngle = i;
@@ -537,34 +538,35 @@ void AutonomousSolarPanel() {
   currPanelAngle = i;
 
   // Move panel to recorded optimal angle
-  for (i = currPanelAngle; i >= optimalAngle; i -= 1) {
+  for (i = currPanelAngle; i > optimalAngle; i -= 1) {
     analogWrite(PanelServo, i);
-    delay(25);
+    delay(40);
   }
+  currPanelAngle = i;
 }
 
 // Moves the solar panel servo to a called angle 
 void MovePanel(int angle) {
   // Determine if called angle is out of the reachable bounds
-  // Set to 120 if the angle called is greater than 120
-  if (angle > 120) {
-    angle = 120;
+  // Set to 105 if the angle called is greater than 105
+  if (angle > 105) {
+    angle = 105;
   }
-  // Set to 60 if the angle called is less than 60
-  if (angle < 60) {
-    angle = 60;
+  // Set to 30 if the angle called is less than 30
+  if (angle < 30) {
+    angle = 30;
   }
 
   // Case where the called angle is greater than the current angle
   if (currPanelAngle < angle) {
-    for (i = currPanelAngle; i <= angle; i += 1) {
+    for (i = currPanelAngle; i < angle; i += 1) {
       analogWrite(PanelServo, i);
       delay(50);
     }
   }
   // Case where the called angle is smaller than the current angle
   else if (currPanelAngle > angle) {
-    for (i = currPanelAngle; i >= angle; i -= 1) {
+    for (i = currPanelAngle; i > angle; i -= 1) {
       analogWrite(PanelServo, i);
       delay(50);
     }
