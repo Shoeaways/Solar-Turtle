@@ -30,6 +30,10 @@ static const int Forward[] = {Motor1Forward, Motor2Forward, Motor3Forward, Motor
 static const int Reverse[] = {Motor1Reverse, Motor2Reverse, Motor3Reverse, Motor4Reverse};
 static const int PWM[] = {Motor4PWM, Motor3PWM, Motor2PWM, Motor1PWM};
 
+// Sleep Pin Arrays
+int InitSleepArray[] = {13, 18, 19};
+int FunctionSleepArray[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15};
+
 // Movement Function Flags
 bool movingForward = false, movingReverse = false;
 int tempForwardPWM = 0, tempReversePWM = 0;
@@ -65,6 +69,14 @@ void initMovement() {
   // Default pins 2-15 to OUTPUT
   for (i = 2; i <=15; ++i) {
     pinMode(i, OUTPUT);
+  }
+  for (i = 0; i <3; ++i) {
+    pinMode(InitSleepArray[i], OUTPUT);
+    digitalWrite(InitSleepArray[i], LOW);
+  }
+  for (i = 22; i < 54; ++i) {
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
   }
   
   // Default all PWMs to 0
@@ -117,8 +129,15 @@ void changeErrorMargin (float newErrorMargin) {
   errorAngle = newErrorMargin;  
 }
 
-void exitSleep() {
+void enterSleep() {
+  // Check what function is running
+    // Finish Short functions
+    // Remember Long functions
+  // Set Motor Pins to low
+}
 
+void exitSleep() {
+  // Reset all used pins back to their previous setting
 }
 
 // Move forward at a given speed (num is a 0-100 speed input)
@@ -275,10 +294,6 @@ void MoveReverse(int num) {
 // Send GPS coords/RPY/etc. The "~" is to split the data when it's sent back to the RPi
 void sendData() {
   Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
-}
-
-void sleepMode() {
-  
 }
 
 // Slow down and stop 
