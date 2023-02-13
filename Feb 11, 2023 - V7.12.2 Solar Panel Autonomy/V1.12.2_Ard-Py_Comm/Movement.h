@@ -4,7 +4,7 @@ Movement.h
 The purpose of this file is a library for any function 
 related to movement using our DC/Servo Motors.
 
-ALL FUNCTIONS ARE IN ALPHABETICAL ORDER
+ALL FUNCTIONS ARE IN ALPHABETICAL ORDER EXCEPT FOR INIT
 */
 
 #ifndef Movement_h
@@ -597,4 +597,5 @@ void TurnLeft(float angle) {
     digitalWrite(LeftReverse[i], LOW);
   }
 }
+
 #endif
