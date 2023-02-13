@@ -3,6 +3,8 @@ Movement.h
 
 The purpose of this file is a library for any function 
 related to movement using our DC/Servo Motors.
+
+ALL FUNCTIONS ARE IN ALPHABETICAL ORDER
 */
 
 #ifndef Movement_h
@@ -78,10 +80,41 @@ void initMovement() {
   currPanelAngle = i;
 }
 
-// Send GPS coords/RPY/etc.
-// The "~" is to split the data when it's sent back to the RPi
-void sendData() {
-  Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
+// Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
+void AutonomousSolarPanel() {
+  // Reset panel to 30 degrees
+  for (i = currPanelAngle; i > 30; i -= 1) {
+    analogWrite(PanelServo, i);
+    delay(40);
+  }
+  currPanelAngle = 30;
+  
+  optimalPower = readPanelPower();
+  optimalAngle = currPanelAngle;
+  // Poll angles between 30-105 at 5 degree increments for the most optimal charging rate
+  for (i = currPanelAngle; i < 105; i += 5) {
+    analogWrite(PanelServo, i);
+    // fiddle w this number
+    delay(100);
+    readPower = readPanelPower();
+    if (readPower > optimalPower) {
+      optimalAngle = i;
+      optimalPower = readPower;
+    }
+  }
+  currPanelAngle = i;
+
+  // Move panel to recorded optimal angle
+  for (i = currPanelAngle; i > optimalAngle; i -= 1) {
+    analogWrite(PanelServo, i);
+    delay(40);
+  }
+  currPanelAngle = i;
+}
+
+// Change the error margin of the IMU with the new input one
+void changeErrorMargin (float newErrorMargin) {
+  errorAngle = newErrorMargin;  
 }
 
 // Move forward at a given speed (num is a 0-100 speed input)
@@ -144,6 +177,36 @@ void MoveForward(int num) {
   movingForward = true;
 }
 
+// Moves the solar panel servo to a called angle 
+void MovePanel(int angle) {
+  // Determine if called angle is out of the reachable bounds
+  // Set to 105 if the angle called is greater than 105
+  if (angle > 105) {
+    angle = 105;
+  }
+  // Set to 30 if the angle called is less than 30
+  if (angle < 30) {
+    angle = 30;
+  }
+
+  // Case where the called angle is greater than the current angle
+  if (currPanelAngle < angle) {
+    for (i = currPanelAngle; i < angle; i += 1) {
+      analogWrite(PanelServo, i);
+      delay(50);
+    }
+  }
+  // Case where the called angle is smaller than the current angle
+  else if (currPanelAngle > angle) {
+    for (i = currPanelAngle; i > angle; i -= 1) {
+      analogWrite(PanelServo, i);
+      delay(50);
+    }
+  }
+  // Update the current Angle
+  currPanelAngle = angle;
+}
+
 // Move backward at a given speed (num is a 0-100 speed input)
 void MoveReverse(int num) {
   if (num > 100) {
@@ -203,6 +266,28 @@ void MoveReverse(int num) {
   }
   tempReversePWM = i;
   movingReverse = true;
+}
+
+// Send GPS coords/RPY/etc. The "~" is to split the data when it's sent back to the RPi
+void sendData() {
+  Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
+}
+
+// Slow down and stop 
+void Stop(int num) { 
+  movingForward = false;
+  movingReverse = false;
+  for (brakeVar = i; brakeVar >= 0; --brakeVar) {
+    for (j = 0; j < 4; ++j) {
+      analogWrite(PWM[j], brakeVar);
+    }
+    delay(12/num);
+  }
+  
+  for (i = 0; i < 4; ++i) {
+    digitalWrite(Forward[i], LOW);
+    digitalWrite(Reverse[i], LOW);
+  }
 }
 
 // Turn Right x amount of degrees
@@ -512,89 +597,4 @@ void TurnLeft(float angle) {
     digitalWrite(LeftReverse[i], LOW);
   }
 }
-
-// Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
-void AutonomousSolarPanel() {
-  // Reset panel to 30 degrees
-  for (i = currPanelAngle; i > 30; i -= 1) {
-    analogWrite(PanelServo, i);
-    delay(40);
-  }
-  currPanelAngle = 30;
-  
-  optimalPower = readPanelPower();
-  optimalAngle = currPanelAngle;
-  // Poll angles between 30-105 at 5 degree increments for the most optimal charging rate
-  for (i = currPanelAngle; i < 105; i += 5) {
-    analogWrite(PanelServo, i);
-    // fiddle w this number
-    delay(100);
-    readPower = readPanelPower();
-    if (readPower > optimalPower) {
-      optimalAngle = i;
-      optimalPower = readPower;
-    }
-  }
-  currPanelAngle = i;
-
-  // Move panel to recorded optimal angle
-  for (i = currPanelAngle; i > optimalAngle; i -= 1) {
-    analogWrite(PanelServo, i);
-    delay(40);
-  }
-  currPanelAngle = i;
-}
-
-// Moves the solar panel servo to a called angle 
-void MovePanel(int angle) {
-  // Determine if called angle is out of the reachable bounds
-  // Set to 105 if the angle called is greater than 105
-  if (angle > 105) {
-    angle = 105;
-  }
-  // Set to 30 if the angle called is less than 30
-  if (angle < 30) {
-    angle = 30;
-  }
-
-  // Case where the called angle is greater than the current angle
-  if (currPanelAngle < angle) {
-    for (i = currPanelAngle; i < angle; i += 1) {
-      analogWrite(PanelServo, i);
-      delay(50);
-    }
-  }
-  // Case where the called angle is smaller than the current angle
-  else if (currPanelAngle > angle) {
-    for (i = currPanelAngle; i > angle; i -= 1) {
-      analogWrite(PanelServo, i);
-      delay(50);
-    }
-  }
-  // Update the current Angle
-  currPanelAngle = angle;
-}
-
-// Slow down and stop 
-void Stop(int num) { 
-  movingForward = false;
-  movingReverse = false;
-  for (brakeVar = i; brakeVar >= 0; --brakeVar) {
-    for (j = 0; j < 4; ++j) {
-      analogWrite(PWM[j], brakeVar);
-    }
-    delay(12/num);
-  }
-  
-  for (i = 0; i < 4; ++i) {
-    digitalWrite(Forward[i], LOW);
-    digitalWrite(Reverse[i], LOW);
-  }
-}
-
-// Change the error margin of the IMU with the new input one
-void changeErrorMargin (float newErrorMargin) {
-  errorAngle = newErrorMargin;  
-}
-
 #endif
