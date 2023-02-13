@@ -3,15 +3,15 @@
 <head>
 	<title>Solar Hub</title>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1" /> 
 	<link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
 	
 	<style>
 		/*
 		TODO:
 		- Test the domain name with the static IP (48 hours of connecting the domain should be around 6PM 2/8/2023)
-		- Test the form inputs and see if they save the command input
-			- If this works, change the terminal input to be the string that we need
+		- Test the form inputs and see if they save the command input (Command is sent to rover correctly, no output in terminal though)
+			- If this works, change the terminal output to be the string that we need 
 		- Make Youtube display on the live feed portion
 			- Check CROS or what is holding us back from embedding the Youtube Live (COMPLETE - Solution was that the website needed to be through a domain)
 		- Make the data numbers display as needed
@@ -21,7 +21,7 @@
 			- Test on:
 				- Data 
 				- Terminal inputs
-		- 
+		- Change the anchors for jumping to the sections to be a little bit before the title itself so it's 10/20/70-white/title/text
 		*/
 		* {
 		  box-sizing: border-box;
@@ -36,21 +36,22 @@
 			font-weight: 700;
 			margin: 15px;
 			padding: 0;
+			font-family: Georgia, 'Times New Roman', Times, serif;
 		}
 		h3 {
 			font-weight: 700;
 			margin-top: 0;
 			margin-bottom: 10px;
 			padding: 0;
+			font-family: Georgia, 'Times New Roman', Times, serif;
+		}
+		div {
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
+		}
+		p {
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
 		}
 
-		/* Style the header */
-		.header {
-			background: #F2F2F2;
-			padding: 6px;
-			text-align: center;
-			line-height: 12px;
-		}
 		/* Style the footer (Our case it's the grass that disappears) */
 		.footer {
 			position: fixed;
@@ -88,7 +89,8 @@
 			padding: 5px;
 			margin: 7px;
 			text-decoration: none;
-			text-shadow: 2px 2px 1px gray;		  
+			text-shadow: 2px 2px 1px gray;
+			font-family: Georgia, 'Times New Roman', Times, serif;		  
 		}
 		/* Change on hover */
 		.navbar a:hover {
@@ -106,7 +108,6 @@
 		/* Style the Main Grid Columns */
 		.MainColumn {
 			padding: 15px;
-			border: 2px solid #333;
 		}
 		/* Define the Secondary Grid */
 		.SecondaryGrid {
@@ -173,6 +174,7 @@
 			overflow: hidden;
 			margin-top: 19px;
 			margin-bottom: -5px;
+			font-family: Georgia, 'Times New Roman', Times, serif;
 		}
 		/* Don't change pointer when hovering over read only text box */
 		.terminalboxtitle:hover {
@@ -322,11 +324,6 @@
 </head>
 
 <body onload = "myFunction()">
-    <div class = "header">
-        <h1 style = "font-size:2.5vw; font-family: brush script mt, cursive; margin: 25px;">Le Solar Hub</h1>
-        <p style = "font-size:1vw; font-family: brush script mt, cursive; margin: 5px;"> for all your Solar Turtle needs </p>
-    </div>
-
     <div style="overflow: hidden" ; class="navbar">
         <div class="NavbarRow">
             <a style = "font-size: 20px" class = "NavbarColumn" href = "#What is">What is S.O.L.A.R. Turtle?</a>
@@ -346,47 +343,47 @@
 
         <div class="MainColumn">
             <h2>Control Panel<span id = "InitCheck"></h2>
-				<div class = "ControlPanelGrid">
-					<div>
-						<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
-						<textarea id = "terminalbox" class="terminalbox" readonly></textarea>	
-					</div>
-					<div class = "datatable">
-						<h3 style = "margin-top: 0px; margin-bottom: 0px;">Test</h3>
-						<div class = "datatableRow">Longitude/Latitude: <span id = "LongLat"></div>
-						<div class = "datatableRow">Compass Heading: <span id = "Yaw"></div>
-						<div class = "datatableRow">Speed: <span id = "Speed"></div>
-						<div class = "datatableRow">Solar Panel Angle: <span id = "PanelAngle"></div>
-						<div class = "datatableRow">System Power Draw: <span id = "SystemPower"></div>
-						<div class = "datatableRow">Panel Power Gen:<span id = "PanelPower"></div>
-						<div class = "datatableRow">Roll: <span id = "Roll"></div>
-						<div class = "datatableRow">Pitch: <span id = "Pitch"></div>
-						<form action = "{{ url_for('getcommand')}}" method = "post">
-							<label for = "command">Manual Control:</label>
-							<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
-							<button id = "submitcommand" type = "submit">Submit</button>
-						</form>
-						<script>
-							let terminalbox = document.getElementById("terminalbox");
-							let terminallog = [];
-							let form = document.querySelector("form");
-
-							form.addEventListener("submit", function(event) {
-								event.preventDefault();
-								let terminalInput = document.getElementById("command");
-								let now = new Date();
-								let timestamp = now.toLocaleTimeString();
-
-								logLines.unshift(timestamp + ": " + textInput.value);
-								if (logLines.length > 20) {
-									logLines.pop();
-								}
-								log.value = logLines.join("\n");
-								terminalInput.value = "";
-							});
-						</script>
-					</div>
+			<div class = "ControlPanelGrid">
+				<div>
+					<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
+					<textarea id = "terminalbox" class="terminalbox" readonly></textarea>	
 				</div>
+				<div class = "datatable">
+					<h3 style = "margin-top: 0px; margin-bottom: 0px;">Test</h3>
+					<div class = "datatableRow">Longitude/Latitude: <span id = "LongLat"></div>
+					<div class = "datatableRow">Compass Heading: <span id = "Yaw"></div>
+					<div class = "datatableRow">Speed: <span id = "Speed"></div>
+					<div class = "datatableRow">Solar Panel Angle: <span id = "PanelAngle"></div>
+					<div class = "datatableRow">System Power Draw: <span id = "SystemPower"></div>
+					<div class = "datatableRow">Panel Power Gen:<span id = "PanelPower"></div>
+					<div class = "datatableRow">Roll: <span id = "Roll"></div>
+					<div class = "datatableRow">Pitch: <span id = "Pitch"></div>
+					<form action = "{{ url_for('getcommand')}}" method = "post">
+						<label for = "command">Manual Control:</label>
+						<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
+						<button id = "submitcommand" type = "submit">Submit</button>
+					</form>
+					<script>
+						let terminalbox = document.getElementById("terminalbox");
+						let terminallog = [];
+						let form = document.querySelector("form");
+
+						form.addEventListener("submit", function(event) {
+							event.preventDefault();
+							let terminalInput = document.getElementById("command");
+							let now = new Date();
+							let timestamp = now.toLocaleTimeString();
+
+							logLines.unshift(timestamp + ": " + textInput.value);
+							if (logLines.length > 20) {
+								logLines.pop();
+							}
+							log.value = logLines.join("\n");
+							terminalInput.value = "";
+						});
+					</script>
+				</div>
+			</div>
         </div>
         
 		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
