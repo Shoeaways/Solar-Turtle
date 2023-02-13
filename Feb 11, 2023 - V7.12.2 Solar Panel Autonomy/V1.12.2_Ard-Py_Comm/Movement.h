@@ -117,6 +117,10 @@ void changeErrorMargin (float newErrorMargin) {
   errorAngle = newErrorMargin;  
 }
 
+void exitSleep() {
+
+}
+
 // Move forward at a given speed (num is a 0-100 speed input)
 void MoveForward(int num) {
   if (num > 100) {
@@ -271,6 +275,10 @@ void MoveReverse(int num) {
 // Send GPS coords/RPY/etc. The "~" is to split the data when it's sent back to the RPi
 void sendData() {
   Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
+}
+
+void sleepMode() {
+  
 }
 
 // Slow down and stop 
