@@ -2,20 +2,20 @@
   Main file for the communication between our Arduino to Raspbery Pi
   Rev 1.12.2 Changes
   - Added autonomous solar panel movement
+
   (Current Rev)
-  (Future Rev)
-  - Review IMU calibration
-    - Check the bounds of the IMU (240/290/270/290)
-    - Determine what the compass heading points toward (what degree is N/E/S/W)
-  - When the Rover lost comms, flag it and find a safe spot - Should then put rover in a wait mode for comms for a short period
-    - If comms are not regained, return to last known position with comms
-      - This means we would need a log recording if we still have comms and the coordinates that it was at 
   - Poll Power percent remaining every x minutes (Grab Test data)
     - Code SOC check for power percent (Added to data for now)
     - Can make sort of dynamic by including load and usage time of load for power remaining
   - Code Sleep mode and exit sleep mode
     - Need to account for if the robot stops under something (Can check with Panel V but there's no way to distinguish night and cover)
-  - When rover is stopped for charging, code the solar panel power check to work alongside with the rover turning
+  - Review IMU calibration (Use quarternions)
+    - Check the bounds of the IMU (240/290/270/290)
+    - Determine what the compass heading points toward (what degree is N/E/S/W)
+  (Future Rev) 
+  - When the Rover lost comms, flag it and find a safe spot - Should then put rover in a wait mode for comms for a short period
+    - If comms are not regained, return to last known position with comms
+      - This means we would need a log recording if we still have comms and the coordinates that it was at 
 */
 
 #include "Movement.h"
