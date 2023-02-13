@@ -72,7 +72,7 @@
 		/* Define grid for how many boxes are in the navbar */
 		.NavbarRow {
 			display: grid;
-			grid-template-columns: 1fr 1fr 1fr;
+			grid-template-columns: repeat(3,minmax(33vw, 1fr));
 		}
 		/* Style the navbar boxes */
 		.NavbarColumn {
@@ -114,8 +114,7 @@
 			grid-column-start: 1;
 			grid-column-end: 3;
 			float: left;
-			margin: 10px;
-			padding: 15px;
+			padding: 25px;
 		}
 		/* Style the lines under the titles */
 		.SecondaryGrid hr {
@@ -125,8 +124,13 @@
 		}		
 		/* Define the Group Members row */
 		.GroupMembersRow {
+			position: relative;
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
+			padding-top: 3vw;
+			padding-bottom: 10vw;
+			padding-left: 15vw;
+			padding-right: 15vw;
 		}
 		/* Define and style the individual Group Members columns */
 		.GroupMembersColumn {
@@ -138,10 +142,40 @@
 			height: 12vw;
 			width: 12vw;
 			border-radius: 50%;
+			transition: 0.3s ease-in-out;
+  			backface-visibility: hidden;
 		}
 		/* Make images lower opacity when hovered */
 		.GroupMembersImage:hover {
 			opacity: 0.3;
+			transform:scale(1.07);
+		}
+		/* Make overlay appear when image is hovered */
+		.GroupMembersImageOverlay:hover {
+			opacity: 1;
+		}
+
+		/* Define the Special Thanks row */
+		.SpecialThanksRow {
+			position: relative;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
+			padding-top: 1.5vw;
+			padding-bottom: 10vw;
+			padding-left: 15vw;
+			padding-right: 15vw;
+		}
+		/* Define the Special Thanks Column */
+		.SpecialThanksColumn {
+			margin: auto;
+		}
+		.SpecialThanksImage {
+			position: relative;
+			height: 6vw;
+			width: 6vw;
+			border-radius: 50%;
+			transition: 0.3s ease-in-out;
+  			backface-visibility: hidden;
 		}
 
 		/* Define a ControlPanel subgrid within the ControlPanel Column */
@@ -192,12 +226,19 @@
 			margin-bottom: 5px;
 		}
 		
-		/* Define the iframe containter for the Youtube Embedded Video */
+		/* Define the iframe containter for the Youtube Embedded Stream */
 		.iframe-container {
 			position: relative;
 			overflow: hidden;
 			width: 100%;
 			padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+		}
+		/* Define the iframe containter for the Youtube Embedded Demo Video */
+		.demoiframe-container {
+			position: relative;
+			overflow: hidden;
+			width: 100%;
+			padding-top: 40%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
 		}
 		/* Style the iframe to fit in the container div with full height and width */
 		.responsive-iframe {
@@ -392,23 +433,24 @@
             <h1 id = "What is">
                 What is S.O.L.A.R. Turtle?
             </h1>
-            <hr style = "width: 575px;">
+            <hr style = "width: 33vw;">
 			The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area. 
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 			<h1 id = "Demo Video">
 				Demo Video
 			</h1>
-			<hr style="width: 275px;">
-			Place Holder
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+			<hr style="width: 15vw;">
+			<div  class = "demoiframe-container" style = "width: 75vw; margin: auto; margin-top: 50px; margin-bottom: 50px;" >
+				<iframe class = "responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+			</div>
 
 			<h1 id = "Group Members">
-				Group Members & Contributors
+				Meet the Team
 			</h1>
-			<hr style = "width: 715px;">
-			<div class = "GroupMembersRow" style = "margin-top: 50px">
-				<div class = "GroupMembersColumn" style = "margin-right: -50px;">
+			<hr style = "width: 20vw;">
+			<div class = "GroupMembersRow">
+				<div class = "GroupMembersColumn">
 					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
 					<p>Dennis Kang</p>
 				</div>
@@ -416,12 +458,26 @@
 					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
 					<p>Eric Shu</p>
 				</div>
-				<div class = "GroupMembersColumn" style = "margin-left: -50px;">
+				<div class = "GroupMembersColumn">
 					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
 					<p>Patrick Webb</p>
 				</div>
 			</div>
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+			<h3>
+				Special Thanks To
+			</h3>
+			<div class = "SpecialThanksRow">
+				<div class = "SpecialThanksColumn">
+					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "SpecialThanksImage" src = "static/DennisLinkedin.jpg"></a>
+				</div>
+				<div class = "SpecialThanksColumn">
+					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "SpecialThanksImage" src = "static/EricLinkedin.jpg"></a>
+				</div>
+				<div class = "SpecialThanksColumn">
+					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "SpecialThanksImage" src = "static/PatrickLinkedin.jpg"></a>
+				</div>
+			</div>
 		</div>
     </div>
 
