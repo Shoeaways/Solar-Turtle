@@ -22,6 +22,8 @@
 				- Data 
 				- Terminal inputs
 		- Change the anchors for jumping to the sections to be a little bit before the title itself so it's 10/20/70-white/title/text
+		- Make Meeting the team names expand when images are hovered or this (https://www.w3docs.com/tools/code-editor/4135)
+		- Implement return to top (right now it just fades away cause our footer is changing opacity)
 		*/
 		* {
 		  box-sizing: border-box;
@@ -108,6 +110,7 @@
 		/* Style the Main Grid Columns */
 		.MainColumn {
 			padding: 15px;
+			padding-bottom: 25vw;
 		}
 		/* Define the Secondary Grid */
 		.SecondaryGrid {
@@ -365,7 +368,7 @@
 </head>
 
 <body onload = "myFunction()">
-    <div style="overflow: hidden" ; class="navbar">
+    <div style="overflow: hidden;" class="navbar" id = "top">
         <div class="NavbarRow">
             <a style = "font-size: 20px" class = "NavbarColumn" href = "#What is">What is S.O.L.A.R. Turtle?</a>
             <a style = "font-size: 20px" class = "NavbarColumn" href = "#Demo Video">Demo Video - Updated DD/MM/YY</a>
@@ -426,18 +429,18 @@
 				</div>
 			</div>
         </div>
-        
-		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 		<div style = "text-align: center; font-size: 24px;" class = "SecondaryGrid">
-            <h1 id = "What is">
+			<p id = "What is"></p><br>
+            <h1>
                 What is S.O.L.A.R. Turtle?
             </h1>
             <hr style = "width: 33vw;">
 			The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area. 
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
-			<h1 id = "Demo Video">
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+			
+			<p id = "Demo Video"></p><br>
+			<h1>
 				Demo Video
 			</h1>
 			<hr style="width: 15vw;">
@@ -445,7 +448,8 @@
 				<iframe class = "responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 			</div>
 
-			<h1 id = "Group Members">
+			<p id = "Group Members"></p><br>
+			<h1>
 				Meet the Team
 			</h1>
 			<hr style = "width: 20vw;">
@@ -480,11 +484,8 @@
 			</div>
 		</div>
     </div>
-
     <div class = "footer">
-
-    </div>
-
-
+		<a href = "#Top">Return to the top</a>
+	</div>
 </body>
 </html>
