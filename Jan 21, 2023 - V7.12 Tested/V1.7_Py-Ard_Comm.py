@@ -72,9 +72,9 @@ if __name__ == '__main__':
                         if num > 125:
                             print("Provided angle " + str(num) + " is out of upper bounds, setting the panel to 125º")
                             num = 125
-                        elif num < 80:
+                        elif num < 60:
                             print("Provided angle " + str(num) + " is out of lower bounds, setting the panel to 80º")
-                            num = 80
+                            num = 60
                         # Use tempcmd for the next line to be allowed
                         tempcmd = cmd
                         # Recombine the num and cmd message

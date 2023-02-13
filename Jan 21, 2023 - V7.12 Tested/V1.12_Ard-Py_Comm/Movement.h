@@ -61,11 +61,11 @@ void initMovement() {
   }
   
   // Defaults Servo to ~90 degrees which sits our solar panel flat
-  for (i = 90; i >= 100; i -= 3) {
+  for (i = 85; i >= 90; i += 1) {
       analogWrite(PanelServo, i);
-      delay(100);
+      delay(50);
   }
-  currPanelAngle = 100;
+  currPanelAngle = 90;
 }
 
 // Send GPS coords/RPY/etc.
@@ -506,27 +506,27 @@ void TurnLeft(float angle) {
 // Moves the solar panel servo to a called angle 
 void MovePanel(int angle) {
   // Determine if called angle is out of the reachable bounds
-  // Set to 125 if the angle called is greater than 125
-  if (angle > 125) {
-    angle = 125;
+  // Set to 120 if the angle called is greater than 120
+  if (angle > 120) {
+    angle = 120;
   }
-  // Set to 80 if the angle called is less than 80
-  if (angle < 80) {
-    angle = 80;
+  // Set to 60 if the angle called is less than 60
+  if (angle < 60) {
+    angle = 60;
   }
 
   // Case where the called angle is greater than the current angle
   if (currPanelAngle < angle) {
-    for (i = currAngle; i <= angle; i += 3) {
+    for (i = currPanelAngle; i <= angle; i += 1) {
       analogWrite(PanelServo, i);
-      delay(100);
+      delay(50);
     }
   }
   // Case where the called angle is smaller than the current angle
   else if (currPanelAngle > angle) {
-    for (i = currPanelAngle; i >= angle; i -= 3) {
+    for (i = currPanelAngle; i >= angle; i -= 1) {
       analogWrite(PanelServo, i);
-      delay(100);
+      delay(50);
     }
   }
   // Update the current Angle
