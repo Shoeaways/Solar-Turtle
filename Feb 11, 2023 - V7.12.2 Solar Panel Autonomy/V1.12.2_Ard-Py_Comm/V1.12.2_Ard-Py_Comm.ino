@@ -124,7 +124,7 @@ void loop() {
           // if(chargePercent <= 25) {
             // Raise Sleep Mode flag and execute sleep function - Means all functions cannot be called except for data to save power
             // isSleep = true;
-            // sleepMode();
+            // enterSleep();
               // Finish all short functions
               // Pause and remember all long functions
           // }
