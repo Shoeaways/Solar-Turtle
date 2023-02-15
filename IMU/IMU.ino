@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <math.h>
 
-MPU9250 mpu;
+bfs::MPU9250 mpu;
 
 #define Kp 0.5 // Proportional gain
 #define Ki 0.0 // Integral gain
