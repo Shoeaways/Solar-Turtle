@@ -54,6 +54,7 @@ float angleDifference = 0, currAngle = 0, prevAngle = 0;
 float errorAngle = 2.0;
 float tempOverflow = 0;
 float turnSpeed = 0;
+int turnIterator;
 
 // Misc Variables
 float PWMinput = 0;
@@ -326,6 +327,8 @@ void TurnRight(float angle) {
     digitalWrite(Forward[i], LOW);
     digitalWrite(Reverse[i], LOW);
   }
+  movingForward = false;
+  movingReverse = false;
 
   // Flag for the while loop when turning to determine whether or not we are starting our speed at 0
   fromZero = true;
@@ -480,6 +483,8 @@ void TurnLeft(float angle) {
     digitalWrite(Forward[i], LOW);
     digitalWrite(Reverse[i], LOW);
   }
+  movingForward = false;
+  movingReverse = false;
 
   // Flag for the while loop when turning to determine whether or not we are starting our speed at 0
   fromZero = true;
