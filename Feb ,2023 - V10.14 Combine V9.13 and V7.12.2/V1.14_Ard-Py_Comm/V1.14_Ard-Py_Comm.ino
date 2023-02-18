@@ -1,6 +1,6 @@
 /*
   Main file for the communication between our Arduino to Raspbery Pi
-  Rev 1.12.2 Changes
+  Rev 1.14 Changes
   - Added autonomous solar panel movement
 
   (Current Rev)
@@ -30,11 +30,14 @@ int num;
 int chargePercent;
 bool initFlag = true;
 
-// Sleep flags
+// Power automation flags
 bool isSleep = false, isReady = false;
-
 int checkPanelIterator = 0;
 int checkSOCIterator = 0;
+
+// Movement automation flags
+bool isAutomated = true;
+float longitude, latitude; 
 
 // Start serial on Arduino power up
 void setup() {
@@ -100,6 +103,53 @@ void loop() {
       initMovement();
       initData();
       initFlag = false;
+    }
+    if (isAutomated == true) {
+      if (message == "") {
+        // Panel Iterator will allow us to delay how often the solar panel runs automation
+        // Realistically we would poll this every ~30-45 minutes instead of every ~30 seconds
+        if (checkPanelIterator > 120) {
+          checkPanelIterator = 0;
+          AutonomousSolarPanel();
+        }
+        else {
+          ++checkPanelIterator;
+        }
+
+        // SOC Iterator will allow us to delay how often the SOC check runs
+        // Realistically we would poll this every 3-5 minutes (can change based on our load usage) instead of every ~30 seconds
+        if (checkSOCIterator > 120) {
+          checkSOCIterator = 0;
+          chargePercent = checkSOC();
+
+          // If SOC is < ~25% (12.9V @ Open Circuit)
+          // if(chargePercent <= 25) {
+            // Raise Sleep Mode flag and execute sleep function - Means all functions cannot be called except for data to save power
+            // isSleep = true;
+            // enterSleep();
+              // Finish all short functions
+              // Pause and remember all long functions
+          // }
+        }
+        else {
+          ++checkSOCIterator;
+        }
+
+        
+      }
+      else {
+        // Only valid commands during automated mode is to set it to manual mode and long/lat coords
+        if (message == "manual") {
+          // Switch to manual mode but also continue current function (Maybe store the current job and remember)
+        }
+        else {
+          spaceIndex = message.indexOf(" ");
+          tempString = message.substring(0, spaceIndex);
+          longitude = tempString.toInt();
+          tempString = message.substring((spaceIndex + 1), message.length());
+          latitude = tempString.toInt();
+        }
+      }
     }
     else {
       // Autonomous solar panel (Checks while the robot is idle/waiting for command)

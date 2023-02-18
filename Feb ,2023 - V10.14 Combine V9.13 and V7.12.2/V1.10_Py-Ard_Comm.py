@@ -1,10 +1,13 @@
 """
 Main file for the communication between our Raspberry Pi to Arduino and Webserver
-Rev 10.14 Changes
+Rev 1.10 Changes
 - Combine 7.12.2 and 9.13
 
 TODO:
 (Current Rev)
+- Create an auto and manual mode template
+    - Auto doesn't prompt user to input a command but has an enter manual mode button
+    - Manual mode just turns the rover into manual mode but doesn't cancel the current function
 (Future Rev)
 
 
@@ -42,6 +45,10 @@ def service_unav():
 def home():
     return render_template("Solar Turtle.html", result = "initialized", cmd = "", num = "0")
 
+@app.route('/automated')
+def automated():
+    return render_template("Solar Turtle.html", result = "initialized", cmd = "", num = "0")
+
 # Defining the page that awaits a user input
 @app.route('/getcommand', methods = ['GET', 'POST'])
 def getcommand():
@@ -69,8 +76,8 @@ def getcommand():
 
         # Reinitialize Arduino
         if cmd == "init":
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "init", num = "0")
-
+            num = "0"
+        
         elif cmd == "help":
             return render_template("Solar Turtle.html", result = "initialized", cmd = "help", num = str(num))
 
@@ -139,14 +146,16 @@ def getcommand():
             return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid", num = "0")
 
         # Send arduino the command
-        arduino.write(cmd.encode())     
+        arduino.write(cmd.encode())    
+        answer=str(arduino.readline()) 
         arduino.flushInput()
+
         # If data is called, split the string into our data list and output
         if cmd == "data":
-            answer = str(arduino.readline())
             dataList = answer.split("~")
             return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = jsonify(dataList))                            
         else:
+            print(answer)
             return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd, num = str(num))                    
     else:
         return redirect(url_for(home))
