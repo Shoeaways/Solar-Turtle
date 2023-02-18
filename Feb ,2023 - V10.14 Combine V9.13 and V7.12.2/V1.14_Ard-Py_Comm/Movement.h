@@ -4,7 +4,7 @@ Movement.h
 The purpose of this file is a library for any function 
 related to movement using our DC/Servo Motors.
 
-ALL FUNCTIONS ARE IN ALPHABETICAL ORDER EXCEPT FOR INIT
+ALL SUB-FUNCTIONS ARE IN ALPHABETICAL ORDER EXCEPT FOR INIT
 */
 
 #ifndef Movement_h
@@ -42,9 +42,14 @@ int tempForwardPWM = 0, tempReversePWM = 0;
 bool isSleep;
 
 // Autonomous Solar Panel Variables
+int currPanelAngle = 0;
 float optimalPower = 0;
 float optimalAngle = 0;
 float readPower = 0;
+
+// GPS Variables
+float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
+float currentLongitude, currentLatitude;
 
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
@@ -59,7 +64,6 @@ int turnIterator;
 // Misc Variables
 float PWMinput = 0;
 int brakeVar = 0;
-int currPanelAngle = 0;
 int i = 0;
 int j = 0;
 
@@ -91,6 +95,54 @@ void initMovement() {
       delay(50);
   }
   currPanelAngle = i;
+
+  currentLongitude = getLongitude();
+  currentLatitude = getLatitude();
+
+  // Initialize Last Known Signal Long/Lat
+  LKSLongitude = currentLongitude;
+  LKSLatitude = currentLatitude;
+}
+
+// Autonomous movement function
+int MoveTo(float targetLongitude, float targetLatitude, int mode) {
+  currentLongitude = getLongitude();
+  currentLatitude = getLatitude();
+
+  if (mode == 0) {
+    // Send -1 to alert GPS signal was unable to be found
+    if (currentLongitude == 0 &&  currentLatitude == 0) {
+      return -1;
+    }
+    else {
+      // Map out destination 
+    }
+  }
+  else if (mode == 1) {
+    if (currentLongitude == 0 &&  currentLatitude == 0) {
+      if (LKSLongitude == 0 &&  LKSLatitude == 0) {
+        return -2;
+      }
+      else {
+        // Move to LKS position and try a different route 
+      }
+    }
+  }
+  
+
+}
+
+// Populate map function to target
+
+// NOTES FOR CREATING THIS FUNCTION:
+//Length in km of 1° of latitude = always 111.32 km
+
+//Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
+void createMap {
+  // Get start point as Point A
+  //  - Should be current Long/Lat when the function is called
+  // Get end point as Point B
+  //  - Should be target Long/Lat
 }
 
 // Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
@@ -294,7 +346,7 @@ void MoveReverse(int num) {
 
 // Send GPS coords/RPY/etc. The "~" is to split the data when it's sent back to the RPi
 void sendData() {
-  Serial.print(IMUandGPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
+  Serial.print(IMUValues() + GPUValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
 }
 
 // Slow down and stop 
@@ -335,7 +387,7 @@ void TurnRight(float angle) {
   overflowFlag = false;
 
   // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error
-  currAngle = YawValue();
+  currAngle = getCompassHeading();
   prevAngle = currAngle;
   targetAngle = currAngle + angle;
   upperTargetAngle = targetAngle + errorAngle;
@@ -411,7 +463,7 @@ void TurnRight(float angle) {
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
       brakeVar = turnSpeed;
-      currAngle = YawValue();
+      currAngle = getCompassHeading();
     }
   }
   // No overflow
@@ -460,7 +512,7 @@ void TurnRight(float angle) {
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
-      currAngle = YawValue();
+      currAngle = getCompassHeading();
     }
   }
 
@@ -491,7 +543,7 @@ void TurnLeft(float angle) {
   overflowFlag = false;
 
   // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error  
-  currAngle = YawValue();  
+  currAngle = getCompassHeading();  
   prevAngle = currAngle;
   targetAngle = currAngle - angle;
   lowerTargetAngle = targetAngle - errorAngle;
@@ -567,7 +619,7 @@ void TurnLeft(float angle) {
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
       brakeVar = turnSpeed;
-      currAngle = YawValue();        
+      currAngle = getCompassHeading();        
     }
   }
   // No overflow
@@ -616,7 +668,7 @@ void TurnLeft(float angle) {
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
-      currAngle = YawValue();  
+      currAngle = getCompassHeading();  
     }    
   }
   

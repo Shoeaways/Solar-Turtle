@@ -38,6 +38,7 @@ int checkSOCIterator = 0;
 // Movement automation flags
 bool isAutomated = true;
 float longitude, latitude; 
+MoveStatus = 0;
 
 // Start serial on Arduino power up
 void setup() {
@@ -135,7 +136,22 @@ void loop() {
           ++checkSOCIterator;
         }
 
-        
+        // Move towards target longitude and latitude function with mode 0 (as normal)
+        MoveStatus = MoveTo(longitude, latitude, 0);
+        if (MoveStatus == -1) {
+          MoveTo(longitude, latitude, 1);
+        }
+        else if (MoveStatus == -2) {
+          // Output to user that GPS signal is not available, please move rover
+        }
+        else {
+          // This means everything is working as intended
+          // Report anything needed to be reported
+        }
+
+        // Check flags 
+        //  - send no GPS signal error and have the rover return to a location with signal
+        //  - If no GPS signal and prev known long lat is not available (send error)
       }
       else {
         // Only valid commands during automated mode is to set it to manual mode and long/lat coords
@@ -145,9 +161,9 @@ void loop() {
         else {
           spaceIndex = message.indexOf(" ");
           tempString = message.substring(0, spaceIndex);
-          longitude = tempString.toInt();
+          longitude = tempString.toFloat();
           tempString = message.substring((spaceIndex + 1), message.length());
-          latitude = tempString.toInt();
+          latitude = tempString.toFloat();
         }
       }
     }

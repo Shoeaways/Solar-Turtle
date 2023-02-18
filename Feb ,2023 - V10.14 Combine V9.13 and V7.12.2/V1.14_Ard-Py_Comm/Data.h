@@ -169,12 +169,63 @@ int checkSOC() {
   return SOC;
 }
 
+// Function returns compass heading
+float getCompassHeading() {
+  updateIMUValues();
+  return(yaw);
+}
+
+// Function returns longitude
+float getLongitude() {
+  updateGPSValues();
+  return Longitude;
+}
+
+// Function returns latitude
+float getLatitude() {
+  updateGPSValues();
+  return Latitude;
+}
+
+// Function to send Long/Lat values
+String GPSValues() {
+  upateGPSValues();
+  // The "~" is to split the data when it's sent back to the RPi
+  return("~" + String(Longitude) + "~" + String(Latitude) + "~" + String(roverSpeed));
+}
+
+// Function to send IMU values
+String IMUValues() {
+  updateIMUValues();
+  // The "~" is to split the data when it's sent back to the RPi
+  return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw));
+}
+
+// Function to return panel Voltage, Current, and Power as a string
+String panelVA() {
+  updatePanelVA();
+  // Return the average voltage/current/power of the system  
+  return(String(AVGpanelVoltage) + "~" + String(AVGpanelCurrent) + "~" + String(panelPower));
+}
+
+// Function sends Panel Power back as a float
+float readPanelPower() {
+  updatePanelVA();
+  return(panelPower);
+}
+
+// Function to return system Voltage, Current, and Power as a string
+String systemVA() {
+  updateSystemVA();
+  // Return the average voltage/current/power of the system  
+  return(String(AVGsystemVoltage) + "~" + String(AVGsystemCurrent) + "~" + String(systemPower));
+}
+
 // Function will update IMU and GPS values
-void updateIMUandGPSValues() {
+void updateIMUValues() {
   if (status >= 0){
     // Read values from IMU and GPS sensors
     IMU.readSensor();
-    gps.encode(ss.read());
     
     // Fill variables with sensor values
     // IMU Values
@@ -187,10 +238,6 @@ void updateIMUandGPSValues() {
     magX = IMU.getMagX_uT();
     magY = IMU.getMagY_uT();
     magZ = IMU.getMagZ_uT();
-    // GPS Values
-    Latitude = gps.location.lat();
-    Longitude = gps.location.lng();
-    roverSpeed = gps.speed.mps(); 
 
     // Calculate roll, pitch, and yaw
     roll = atan2(-accelX,(sqrt((accelY * accelY) + (accelZ * accelZ))));
@@ -211,28 +258,27 @@ void updateIMUandGPSValues() {
   else {
     //Serial.println("The IMU device is not enabled retrying connection...");
     status = IMU.begin();
-    if (status < 0) {
-      //Serial.println("IMU initialization unsuccessful...");
-    }
-    else {
-      // setting the accelerometer full scale range to +/-2G 
-      IMU.setAccelRange(MPU9250::ACCEL_RANGE_2G);
-      // setting the gyroscope full scale range to +/-250 deg/s
-      IMU.setGyroRange(MPU9250::GYRO_RANGE_250DPS);
-      // setting DLPF bandwidth to 5 Hz
-      IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_92HZ);
-      // setting SRD to 19 for a 50 Hz update rate
-      IMU.setSrd(19);
-      //Serial.print("IMU connected, retry command.")
-    }
+
+    // setting the accelerometer full scale range to +/-2G 
+    IMU.setAccelRange(MPU9250::ACCEL_RANGE_2G);
+    // setting the gyroscope full scale range to +/-250 deg/s
+    IMU.setGyroRange(MPU9250::GYRO_RANGE_250DPS);
+    // setting DLPF bandwidth to 5 Hz
+    IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_92HZ);
+    // setting SRD to 19 for a 50 Hz update rate
+    IMU.setSrd(19);
+    //Serial.print("IMU connected, retry command.")
   }
 }
 
-// Function to send Roll/Pitch/Yaw and Long/Lat values
-String IMUandGPSValues() {
-  updateIMUandGPSValues();
-  // The "~" is to split the data when it's sent back to the RPi
-  return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw) + "~" + String(Longitude) + "~" + String(Latitude) + "~" + String(roverSpeed));
+// Function will update GPS values
+void updateGPSValues() {
+  gps.encode(ss.read());
+
+  // GPS Values
+  Latitude = gps.location.lat();
+  Longitude = gps.location.lng();
+  roverSpeed = gps.speed.mps(); 
 }
 
 // Function will update the Voltage/Current/Power of the Solar Panel
@@ -261,13 +307,6 @@ void updatePanelVA() {
   panelPower = AVGpanelVoltage * AVGpanelCurrent;
 }
 
-// Function to return panel Voltage, Current, and Power as a string
-String panelVA() {
-  updatePanelVA();
-  // Return the average voltage/current/power of the system  
-  return(String(AVGpanelVoltage) + "~" + String(AVGpanelCurrent) + "~" + String(panelPower));
-}
-
 // Function will update the Voltage/Current/Power of the System
 void updateSystemVA() {
   AVGsystemVoltage = 0;
@@ -292,25 +331,6 @@ void updateSystemVA() {
   AVGsystemCurrent = ((AVGsystemCurrent / SensorIterator) - (ref_voltage / 2)) / 0.066;
   AVGsystemCurrent = abs(AVGsystemCurrent);
   systemPower = AVGsystemVoltage * AVGsystemCurrent;
-}
-
-// Function to return system Voltage, Current, and Power as a string
-String systemVA() {
-  updateSystemVA();
-  // Return the average voltage/current/power of the system  
-  return(String(AVGsystemVoltage) + "~" + String(AVGsystemCurrent) + "~" + String(systemPower));
-}
-
-// Function sends Panel Power back as a float
-float readPanelPower() {
-  updatePanelVA();
-  return(panelPower);
-}
-
-// Function to send just the Yaw value (compass heading)
-float YawValue() {
-  updateIMUandGPSValues();
-  return(yaw);
 }
 
 #endif
