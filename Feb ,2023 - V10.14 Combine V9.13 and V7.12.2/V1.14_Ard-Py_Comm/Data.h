@@ -42,6 +42,9 @@ float gyroX, gyroY, gyroZ;
 float magX, magY, magZ;
 float pitch, roll, yaw;
 float Yh, Xh;
+double compassHeading;
+int cardinalDirection;
+
 
 // Resistor Values of VSENSE module
 float R1 = 30000.0;
@@ -169,10 +172,16 @@ int checkSOC() {
   return SOC;
 }
 
+// Function returns current cardinal direction
+float getCardinal() {
+  updateIMUValues();
+  return(cardinalDirection);
+}
+
 // Function returns compass heading
 float getCompassHeading() {
   updateIMUValues();
-  return(yaw);
+  return(compassHeading);
 }
 
 // Function returns longitude
@@ -228,7 +237,6 @@ void updateIMUValues() {
     IMU.readSensor();
     
     // Fill variables with sensor values
-    // IMU Values
     accelX = IMU.getAccelX_mss();
     accelY = IMU.getAccelY_mss();
     accelZ = IMU.getAccelZ_mss();
@@ -253,6 +261,7 @@ void updateIMUValues() {
   
     // Alter range to be 0 to 360 instead of -180 to 180
     yaw += 180;
+    compassHeading = yaw;
   }
   // If the IMU didn't begin then retry (Need to integrate this with the GPS as well)
   else {

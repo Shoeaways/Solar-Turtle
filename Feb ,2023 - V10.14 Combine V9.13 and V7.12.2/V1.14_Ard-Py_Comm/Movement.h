@@ -47,9 +47,11 @@ float optimalPower = 0;
 float optimalAngle = 0;
 float readPower = 0;
 
-// GPS Variables
+// Autonomous Movement Variables
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 float currentLongitude, currentLatitude;
+int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
+bool mapExists = false;
 
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
@@ -108,6 +110,7 @@ void initMovement() {
 int MoveTo(float targetLongitude, float targetLatitude, int mode) {
   currentLongitude = getLongitude();
   currentLatitude = getLatitude();
+  currentCardinal = getCardinal();
 
   if (mode == 0) {
     // Send -1 to alert GPS signal was unable to be found
@@ -115,16 +118,36 @@ int MoveTo(float targetLongitude, float targetLatitude, int mode) {
       return -1;
     }
     else {
-      // Map out destination 
+      LKSLongitude = currentLongitude;
+      LKSLatitude = currentLatitude;
+      // Map out destination if a current map doesn't exist
+      if (mapExists == false) {
+        createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
+      }
+      // Create a subMaps with multiple target locations which slowly trail to final target
+
+      // Use an updateMap function to consistently update the current position on the map
+
+      // Check if the current cardinal direction and target cardinal direction is the same
+      while (currentCardinal != targetCardinal) {
+        // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
+        // Turn Left/Right function to reach target cardinal
+      }
+      // Check if an object is in front of the rover before moving, if so 
+      // Move towards destination
+      
     }
   }
+  // Send -2 if GPS signal is unavailable and 
   else if (mode == 1) {
     if (currentLongitude == 0 &&  currentLatitude == 0) {
       if (LKSLongitude == 0 &&  LKSLatitude == 0) {
         return -2;
       }
       else {
+        // createSubMap to LKS and render the current position as GPS signal loss
         // Move to LKS position and try a different route 
+        
       }
     }
   }
@@ -132,13 +155,14 @@ int MoveTo(float targetLongitude, float targetLatitude, int mode) {
 
 }
 
-// Populate map function to target
+// Populate map function to target (For A*)
 
 // NOTES FOR CREATING THIS FUNCTION:
 //Length in km of 1° of latitude = always 111.32 km
-
 //Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
-void createMap {
+
+// Determine what direction it is so the rover begins in the right direction
+void createMap(float currentX, float currentY, float targetX, float targetY) {
   // Get start point as Point A
   //  - Should be current Long/Lat when the function is called
   // Get end point as Point B
@@ -182,6 +206,7 @@ void changeErrorMargin (float newErrorMargin) {
   errorAngle = newErrorMargin;  
 }
 
+// Function enters sleep mode, pausing all movement functions
 void enterSleep() {
   // Check what function is running
     // Finish Short functions
@@ -189,6 +214,7 @@ void enterSleep() {
   // Set Motor Pins to low
 }
 
+// Function exits sleep mode, continuining any previous functions
 void exitSleep() {
   // Reset all used pins back to their previous setting
 }

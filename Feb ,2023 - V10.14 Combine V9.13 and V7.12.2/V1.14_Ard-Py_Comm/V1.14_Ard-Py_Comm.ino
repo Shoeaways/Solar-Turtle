@@ -4,6 +4,7 @@
   - Added autonomous solar panel movement
 
   (Current Rev)
+  - Code autonomous movement function
   - Poll Power percent remaining every x minutes (Grab Test data)
     - Code SOC check for power percent (Added to data for now)
     - Can make sort of dynamic by including load and usage time of load for power remaining
@@ -134,6 +135,11 @@ void loop() {
         }
         else {
           ++checkSOCIterator;
+        }
+
+        // Check if an object is in front of the rover here to ensure the rover doesn't begin by going into an object
+        if (checkObjectDetection() < 0) {
+
         }
 
         // Move towards target longitude and latitude function with mode 0 (as normal)
