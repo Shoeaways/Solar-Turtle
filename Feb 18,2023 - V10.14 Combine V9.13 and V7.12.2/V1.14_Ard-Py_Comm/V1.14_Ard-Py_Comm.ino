@@ -30,6 +30,7 @@
   (Clear issues we will run into)
   - If GPS and LKS are both (0,0) this requires human interaction
   - If the rover goes all possible locations AROUND the target but can never reach the target due to GPS loss or unmaneuverable land, it will go forever
+    - This means we have to assume the final location is reachable
 */
 
 #include "Movement.h"
@@ -53,7 +54,7 @@ int checkSOCIterator = 0;
 bool isAutomated = true;
 float currentLongitude = 0, currentLatitude = 0;
 float targetLongitude, targetLatitude; 
-MoveStatus = 0;
+int MoveStatus = 0;
 
 // Start serial on Arduino power up
 void setup() {

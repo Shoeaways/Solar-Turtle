@@ -4,7 +4,6 @@ Movement.h
 The purpose of this file is a library for any function 
 related to movement using our DC/Servo Motors.
 
-ALL SUB-FUNCTIONS ARE IN ALPHABETICAL ORDER EXCEPT FOR INIT
 */
 
 #ifndef Movement_h
@@ -39,7 +38,7 @@ bool movingForward = false, movingReverse = false;
 int tempForwardPWM = 0, tempReversePWM = 0;
 
 // Sleep Flag
-bool isSleep;
+bool isSleeping;
 
 // Autonomous Solar Panel Variables
 int currPanelAngle = 0;
@@ -48,6 +47,10 @@ float optimalAngle = 0;
 float readPower = 0;
 
 // Autonomous Movement Variables
+float mapLong[] = {};
+float mapLat[] = {};
+float fastestLong[] = {};
+float fastestLat[] = {};
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 bool mapExists = false;
@@ -70,7 +73,7 @@ int j = 0;
 
 // Initialize function
 void initMovement() {
-  isSleep = false; 
+  isSleeping = false; 
 
   // Default pins 2-15 to OUTPUT
   for (i = 2; i <=15; ++i) {
@@ -97,82 +100,9 @@ void initMovement() {
   }
   currPanelAngle = i;
 
-  currentLongitude = getLongitude();
-  currentLatitude = getLatitude();
-
   // Initialize Last Known Signal Long/Lat
-  LKSLongitude = currentLongitude;
-  LKSLatitude = currentLatitude;
-}
-
-// Autonomous movement function
-int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitude, float &targetLatitude, int mode) {
-  currentLongitude = getLongitude();
-  currentLatitude = getLatitude();
-  currentCardinal = getCardinal();
-
-  if (mode == 0) {
-    // Send -1 to alert GPS signal was unable to be found
-    if (currentLongitude == 0 &&  currentLatitude == 0) {
-      return -1;
-    }
-    else {
-      LKSLongitude = currentLongitude;
-      LKSLatitude = currentLatitude;
-      // Map out destination if a current map doesn't exist
-      if (mapExists == false) {
-        createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
-      }
-      // Create a subMap with multiple target locations which slowly trail to final target
-
-      // Use an updateMap function to consistently update the current position on the map
-
-      // Check if the current cardinal direction and target cardinal direction is the same
-      while (currentCardinal != targetCardinal) {
-        // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
-        // Turn Left/Right function to reach target cardinal
-      }
-      // Check if an object is in front of the rover before moving, if so 
-      // Move towards destination
-      
-    }
-  }
-  // Mode 1 is run when GPS signal is lost and we are attempting to retrun to an Last Known Signal position
-  else if (mode == 1) {
-    if (currentLongitude == 0 &&  currentLatitude == 0) {
-      if (LKSLongitude == 0 &&  LKSLatitude == 0) {
-        // Send -2 if GPS signal is unavailable and LKS is (0,0) meaning there was no Last Known Signal location
-        return -2;
-      }
-      else {
-        // createSubMap to LKS and render the current position as GPS signal loss which declares that location as no-go 
-        // Move to LKS position and try a different route 
-        
-      }
-    }
-  }
-  // Mode 2 is run when the LKS is spotted and we are traversing back to it
-  else if (mode == 2) {
-
-  }
-}
-
-// Populate map function to target (For A*)
-
-// NOTES FOR CREATING THIS FUNCTION:
-//Length in km of 1° of latitude = always 111.32 km
-//Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
-// Determine what direction it is so the rover begins in the right direction
-
-void createMap(float currentX, float currentY, float targetX, float targetY) {
-  // Get start point as Point A
-  //  - Should be current Long/Lat when the function is called
-  // Get end point as Point B
-  //  - Should be target Long/Lat
-  // Make a default 10 point grid
-  //  - If targetX-currentX > a certain amount
-  //    - Make a 20 point grid
-  // Using this method ^ create a dynamic grid creation
+  LKSLongitude = 0;
+  LKSLatitude = 0;
 }
 
 // Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
@@ -378,7 +308,7 @@ void MoveReverse(int num) {
 
 // Send GPS coords/RPY/etc. The "~" is to split the data when it's sent back to the RPi
 void sendData() {
-  Serial.print(IMUValues() + GPUValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
+  Serial.print(IMUValues() + GPSValues() + "~" + String(currPanelAngle) + "~" + systemVA() + "~" + panelVA() + "~" + String(checkSOC()) + "~");
 }
 
 // Slow down and stop 
@@ -709,5 +639,80 @@ void TurnLeft(float angle) {
     digitalWrite(LeftReverse[i], LOW);
   }
 }
+
+// Populate map function to target (For A*)
+
+// NOTES FOR CREATING THIS FUNCTION:
+// Length in km of 1° of latitude = always 111.32 km
+// Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
+// Determine what direction it is so the rover begins in the right direction
+
+void createMap(float currentX, float currentY, float targetX, float targetY) {
+  // Get start point as Point A
+  //  - Should be current Long/Lat when the function is called
+  // Get end point as Point B
+  //  - Should be target Long/Lat
+
+  float xdifference = targetX - currentX;
+  float ydifference = targetY - currentY;
+
+  // Make a default 10 point grid
+  //  - If targetX-currentX > a certain amount
+  //    - Make a 20 point grid
+  // Using this method ^ create a dynamic grid creation
+}
+
+// Autonomous movement function
+int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitude, float &targetLatitude, int mode) {
+  currentLongitude = getLongitude();
+  currentLatitude = getLatitude();
+  currentCardinal = getCardinal();
+
+  if (mode == 0) {
+    // Send -1 to alert GPS signal was unable to be found
+    if (currentLongitude == 0 &&  currentLatitude == 0) {
+      return -1;
+    }
+    else {
+      LKSLongitude = currentLongitude;
+      LKSLatitude = currentLatitude;
+      // Map out destination if a current map doesn't exist
+      if (mapExists == false) {
+        createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
+      }
+      // Create an submap (Astar) with multiple target locations which slowly trail to final target
+
+      // Use an updateMap function to consistently update the current position on the map
+
+      // Check if the current cardinal direction and target cardinal direction is the same
+      while (currentCardinal != targetCardinal) {
+        // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
+        // Turn Left/Right function to reach target cardinal
+      }
+      // Check if an object is in front of the rover before moving, if so 
+      // Move towards destination
+      
+    }
+  }
+  // Mode 1 is run when GPS signal is lost and we are attempting to retrun to an Last Known Signal position
+  else if (mode == 1) {
+    if (currentLongitude == 0 &&  currentLatitude == 0) {
+      if (LKSLongitude == 0 &&  LKSLatitude == 0) {
+        // Send -2 if GPS signal is unavailable and LKS is (0,0) meaning there was no Last Known Signal location
+        return -2;
+      }
+      else {
+        // create a subtarget to LKS and render the current position as GPS signal loss which declares that location as no-go 
+        // Move to LKS position and try a different route 
+        
+      }
+    }
+  }
+  // Mode 2 is run when the LKS is spotted and we are traversing back to it
+  else if (mode == 2) {
+
+  }
+}
+
 
 #endif

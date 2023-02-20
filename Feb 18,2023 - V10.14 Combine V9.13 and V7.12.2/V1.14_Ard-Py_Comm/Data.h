@@ -4,7 +4,6 @@ Data.h
 The purpose of this file is a library for any function 
 related to data such as GPS values and Roll/Pitch/Yaw.
 
-ALL FUNCTIONS ARE IN ALPHABETICAL ORDER EXCEPT FOR INIT
 */
 
 #ifndef Data_h
@@ -31,7 +30,7 @@ static const uint32_t GPSBaud = 9600;
 SoftwareSerial ss(TXPin, RXPin);
 // GPS variables
 float Latitude, Longitude;
-double roverSpeed;
+float roverSpeed;
 
 // Setup IMU connection
 MPU9250 IMU(Wire,0x68);
@@ -42,9 +41,8 @@ float gyroX, gyroY, gyroZ;
 float magX, magY, magZ;
 float pitch, roll, yaw;
 float Yh, Xh;
-double compassHeading;
+float compassHeading;
 int cardinalDirection;
-
 
 // Resistor Values of VSENSE module
 float R1 = 30000.0;
@@ -62,6 +60,7 @@ float AVGpanelVoltage = 0, AVGpanelCurrent = 0;
 float systemVoltage = 0, systemCurrent = 0;
 float AVGsystemVoltage = 0, AVGsystemCurrent = 0;
 float panelPower = 0, systemPower = 0;
+float voltagebias = 0;
 
 // SOC variables
 int SOC;
@@ -83,13 +82,17 @@ void initData() {
   IMU.setAccelRange(MPU9250::ACCEL_RANGE_2G);
   // setting the gyroscope full scale range to +/-250 deg/s
   IMU.setGyroRange(MPU9250::GYRO_RANGE_250DPS);
-  // setting DLPF bandwidth to 100 Hz
-  IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_100HZ);
+  // setting DLPF bandwidth to 5 Hz
+  IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_5HZ);
   // setting SRD to 19 for a 50 Hz update rate
   IMU.setSrd(19);
 
   // Initialize GPS
   ss.begin(GPSBaud);  
+}
+
+int checkObjectDetection() {
+  
 }
 
 // Function to return SOC of battery as an int (accuracy of about +-5%)
@@ -113,121 +116,63 @@ int checkSOC() {
   if (AVGsystemVoltage > 13.36) {
     SOC = 100;
   }
-  else if (AVGsystemVoltage > 13.35) {
+  else if (AVGsystemVoltage > 13.35 + voltagebias) {
     SOC = 95;
   }
-  else if (AVGsystemVoltage > 13.34) {
+  else if (AVGsystemVoltage > 13.34 + voltagebias) {
     SOC = 90;
   }
-  else if (AVGsystemVoltage > 13.32) {
+  else if (AVGsystemVoltage > 13.32 + voltagebias) {
     SOC = 85;
   }
-  else if (AVGsystemVoltage > 13.3) {
+  else if (AVGsystemVoltage > 13.3 + voltagebias) {
     SOC = 80;
   }
-  else if (AVGsystemVoltage > 13.28) {
+  else if (AVGsystemVoltage > 13.28 + voltagebias) {
     SOC = 75;
   }
-  else if (AVGsystemVoltage > 13.26) {
+  else if (AVGsystemVoltage > 13.26 + voltagebias) {
     SOC = 70;
   }
-  else if (AVGsystemVoltage > 13.24) {
+  else if (AVGsystemVoltage > 13.24 + voltagebias) {
     SOC = 65;
   }
-  else if (AVGsystemVoltage > 13.22) {
+  else if (AVGsystemVoltage > 13.22 + voltagebias) {
     SOC = 60;
   }
-  else if (AVGsystemVoltage > 13.2) {
+  else if (AVGsystemVoltage > 13.2 + voltagebias) {
     SOC = 55;
   }
-  else if (AVGsystemVoltage > 13.18) {
+  else if (AVGsystemVoltage > 13.18 + voltagebias) {
     SOC = 50;
   }
-  else if (AVGsystemVoltage > 13.14) {
+  else if (AVGsystemVoltage > 13.14 + voltagebias) {
     SOC = 45;
   }
-  else if (AVGsystemVoltage > 13.1) {
+  else if (AVGsystemVoltage > 13.1 + voltagebias) {
     SOC = 40;
   }
   // Currently seeing 12.25
-  else if (AVGsystemVoltage > 13.05) {
+  else if (AVGsystemVoltage > 13.05 + voltagebias) {
     SOC = 35;
   }
-  else if (AVGsystemVoltage > 13) {
+  else if (AVGsystemVoltage > 13 + voltagebias) {
     SOC = 30;
   }
-  else if (AVGsystemVoltage > 12.97) {
+  else if (AVGsystemVoltage > 12.97 + voltagebias) {
     SOC = 25;
   }
-  else if (AVGsystemVoltage > 12.87) {
+  else if (AVGsystemVoltage > 12.87 + voltagebias) {
     SOC = 20;
   }
-  else if (AVGsystemVoltage > 12.75) {
+  else if (AVGsystemVoltage > 12.75 + voltagebias) {
     SOC = 15;
   }
-  else if (AVGsystemVoltage > 12.6) {
+  else if (AVGsystemVoltage > 12.6 + voltagebias) {
     SOC = 10;
   }
 
   return SOC;
-}
-
-// Function returns current cardinal direction
-float getCardinal() {
-  updateIMUValues();
-  return(cardinalDirection);
-}
-
-// Function returns compass heading
-float getCompassHeading() {
-  updateIMUValues();
-  return(compassHeading);
-}
-
-// Function returns longitude
-float getLongitude() {
-  updateGPSValues();
-  return Longitude;
-}
-
-// Function returns latitude
-float getLatitude() {
-  updateGPSValues();
-  return Latitude;
-}
-
-// Function to send Long/Lat values
-String GPSValues() {
-  upateGPSValues();
-  // The "~" is to split the data when it's sent back to the RPi
-  return("~" + String(Longitude) + "~" + String(Latitude) + "~" + String(roverSpeed));
-}
-
-// Function to send IMU values
-String IMUValues() {
-  updateIMUValues();
-  // The "~" is to split the data when it's sent back to the RPi
-  return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw));
-}
-
-// Function to return panel Voltage, Current, and Power as a string
-String panelVA() {
-  updatePanelVA();
-  // Return the average voltage/current/power of the system  
-  return(String(AVGpanelVoltage) + "~" + String(AVGpanelCurrent) + "~" + String(panelPower));
-}
-
-// Function sends Panel Power back as a float
-float readPanelPower() {
-  updatePanelVA();
-  return(panelPower);
-}
-
-// Function to return system Voltage, Current, and Power as a string
-String systemVA() {
-  updateSystemVA();
-  // Return the average voltage/current/power of the system  
-  return(String(AVGsystemVoltage) + "~" + String(AVGsystemCurrent) + "~" + String(systemPower));
 }
 
 // Function will update IMU and GPS values
@@ -340,6 +285,64 @@ void updateSystemVA() {
   AVGsystemCurrent = ((AVGsystemCurrent / SensorIterator) - (ref_voltage / 2)) / 0.066;
   AVGsystemCurrent = abs(AVGsystemCurrent);
   systemPower = AVGsystemVoltage * AVGsystemCurrent;
+}
+
+// Function returns current cardinal direction
+float getCardinal() {
+  updateIMUValues();
+  return(cardinalDirection);
+}
+
+// Function returns compass heading
+float getCompassHeading() {
+  updateIMUValues();
+  return(compassHeading);
+}
+
+// Function returns longitude
+float getLongitude() {
+  updateGPSValues();
+  return Longitude;
+}
+
+// Function returns latitude
+float getLatitude() {
+  updateGPSValues();
+  return Latitude;
+}
+
+// Function to send Long/Lat values
+String GPSValues() {
+  updateGPSValues();
+  // The "~" is to split the data when it's sent back to the RPi
+  return("~" + String(Longitude) + "~" + String(Latitude) + "~" + String(roverSpeed));
+}
+
+// Function to send IMU values
+String IMUValues() {
+  updateIMUValues();
+  // The "~" is to split the data when it's sent back to the RPi
+  return("~" + String(roll) + "~" + String(pitch) + "~" + String(yaw));
+}
+
+// Function to return panel Voltage, Current, and Power as a string
+String panelVA() {
+  updatePanelVA();
+  // Return the average voltage/current/power of the system  
+  return(String(AVGpanelVoltage) + "~" + String(AVGpanelCurrent) + "~" + String(panelPower));
+}
+
+// Function sends Panel Power back as a float
+float readPanelPower() {
+  updatePanelVA();
+  return(panelPower);
+}
+
+// Function to return system Voltage, Current, and Power as a string
+String systemVA() {
+  updateSystemVA();
+  // Return the average voltage/current/power of the system  
+  return(String(AVGsystemVoltage) + "~" + String(AVGsystemCurrent) + "~" + String(systemPower));
 }
 
 #endif
