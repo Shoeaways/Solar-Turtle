@@ -49,7 +49,6 @@ float readPower = 0;
 
 // Autonomous Movement Variables
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
-float currentLongitude, currentLatitude;
 int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 bool mapExists = false;
 
@@ -107,7 +106,7 @@ void initMovement() {
 }
 
 // Autonomous movement function
-int MoveTo(float targetLongitude, float targetLatitude, int mode) {
+int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitude, float &targetLatitude, int mode) {
   currentLongitude = getLongitude();
   currentLatitude = getLatitude();
   currentCardinal = getCardinal();
@@ -124,7 +123,7 @@ int MoveTo(float targetLongitude, float targetLatitude, int mode) {
       if (mapExists == false) {
         createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
       }
-      // Create a subMaps with multiple target locations which slowly trail to final target
+      // Create a subMap with multiple target locations which slowly trail to final target
 
       // Use an updateMap function to consistently update the current position on the map
 
@@ -138,21 +137,24 @@ int MoveTo(float targetLongitude, float targetLatitude, int mode) {
       
     }
   }
-  // Send -2 if GPS signal is unavailable and 
+  // Mode 1 is run when GPS signal is lost and we are attempting to retrun to an Last Known Signal position
   else if (mode == 1) {
     if (currentLongitude == 0 &&  currentLatitude == 0) {
       if (LKSLongitude == 0 &&  LKSLatitude == 0) {
+        // Send -2 if GPS signal is unavailable and LKS is (0,0) meaning there was no Last Known Signal location
         return -2;
       }
       else {
-        // createSubMap to LKS and render the current position as GPS signal loss
+        // createSubMap to LKS and render the current position as GPS signal loss which declares that location as no-go 
         // Move to LKS position and try a different route 
         
       }
     }
   }
-  
+  // Mode 2 is run when the LKS is spotted and we are traversing back to it
+  else if (mode == 2) {
 
+  }
 }
 
 // Populate map function to target (For A*)
@@ -160,13 +162,17 @@ int MoveTo(float targetLongitude, float targetLatitude, int mode) {
 // NOTES FOR CREATING THIS FUNCTION:
 //Length in km of 1° of latitude = always 111.32 km
 //Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
-
 // Determine what direction it is so the rover begins in the right direction
+
 void createMap(float currentX, float currentY, float targetX, float targetY) {
   // Get start point as Point A
   //  - Should be current Long/Lat when the function is called
   // Get end point as Point B
   //  - Should be target Long/Lat
+  // Make a default 10 point grid
+  //  - If targetX-currentX > a certain amount
+  //    - Make a 20 point grid
+  // Using this method ^ create a dynamic grid creation
 }
 
 // Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
