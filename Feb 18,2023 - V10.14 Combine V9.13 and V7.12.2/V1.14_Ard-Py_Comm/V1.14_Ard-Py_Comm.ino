@@ -1,10 +1,17 @@
 /*
   Main file for the communication between our Arduino to Raspbery Pi
   Rev 1.14 Changes
-  - Added autonomous solar panel movement
 
   (Current Rev)
   - Code autonomous movement function
+    - Create map function
+      - Create submap function
+    - Moveto function
+      - Poll GPS connection
+      - LKS function in the case GPS is not recieving signal
+  - Object detection function
+    - Ultrasonic sensors function
+    - Connecting to image object detection information from the website
   - Poll Power percent remaining every x minutes (Grab Test data)
     - Code SOC check for power percent (Added to data for now)
     - Can make sort of dynamic by including load and usage time of load for power remaining
@@ -13,10 +20,16 @@
   - Review IMU calibration (Use quarternions)
     - Check the bounds of the IMU (240/290/270/290)
     - Determine what the compass heading points toward (what degree is N/E/S/W)
+
   (Future Rev) 
   - When the Rover lost comms, flag it and find a safe spot - Should then put rover in a wait mode for comms for a short period
     - If comms are not regained, return to last known position with comms
       - This means we would need a log recording if we still have comms and the coordinates that it was at 
+  - Make a display for the map on the website
+
+  (Clear issues we will run into)
+  - If GPS and LKS are both (0,0) this requires human interaction
+  - If the rover goes all possible locations AROUND the target but can never reach the target due to GPS loss or unmaneuverable land, it will go forever
 */
 
 #include "Movement.h"
@@ -38,7 +51,8 @@ int checkSOCIterator = 0;
 
 // Movement automation flags
 bool isAutomated = true;
-float longitude, latitude; 
+float currentLongitude = 0, currentLatitude = 0;
+float targetLongitude, targetLatitude; 
 MoveStatus = 0;
 
 // Start serial on Arduino power up
@@ -86,9 +100,12 @@ void loop() {
     }
     else {
       if (isReady == true) {
-        // Allow resume command to run if it's called
         if (message == "data") {
           sendData();
+        }
+        // Allow resume command to run if it's called
+        else if (message == "wake") {
+          exitSleep();
         }
       }
       else {
@@ -143,21 +160,19 @@ void loop() {
         }
 
         // Move towards target longitude and latitude function with mode 0 (as normal)
-        MoveStatus = MoveTo(longitude, latitude, 0);
-        if (MoveStatus == -1) {
-          MoveTo(longitude, latitude, 1);
-        }
-        else if (MoveStatus == -2) {
-          // Output to user that GPS signal is not available, please move rover
+        MoveStatus = MoveTo(currentLongitude, currentLatitude, targetLongitude, targetLatitude, 0);
+        if (MoveStatus < 0) {
+          if (MoveStatus == -1) {
+            MoveTo(currentLongitude, currentLatitude, targetLongitude, targetLatitude, 1);
+          }
+          else if (MoveStatus == -2) {
+            // Output to user that GPS signal is not available, please move rover
+          }
         }
         else {
           // This means everything is working as intended
           // Report anything needed to be reported
         }
-
-        // Check flags 
-        //  - send no GPS signal error and have the rover return to a location with signal
-        //  - If no GPS signal and prev known long lat is not available (send error)
       }
       else {
         // Only valid commands during automated mode is to set it to manual mode and long/lat coords
@@ -167,9 +182,9 @@ void loop() {
         else {
           spaceIndex = message.indexOf(" ");
           tempString = message.substring(0, spaceIndex);
-          longitude = tempString.toFloat();
+          targetLongitude = tempString.toFloat();
           tempString = message.substring((spaceIndex + 1), message.length());
-          latitude = tempString.toFloat();
+          targetLatitude = tempString.toFloat();
         }
       }
     }
