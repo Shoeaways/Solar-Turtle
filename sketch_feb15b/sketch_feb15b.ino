@@ -1,4 +1,12 @@
+#include <Wire.h>
+#include <math.h>
 #include "MPU9250.h"
+
+float theta, phi;
+float thetaG = 0, phiG = 0;
+
+float dt;
+float millisOld;
 
 // Setup IMU connection
 MPU9250 IMU(Wire,0x68);
@@ -7,6 +15,7 @@ int status;
 float accelX, accelY, accelZ;
 float gyroX, gyroY, gyroZ;
 float magX, magY, magZ;
+float roll, pitch, yaw;
 
 int startTime;
 int endTime;
@@ -27,26 +36,33 @@ void setup(){
   IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_5HZ);
   // setting SRD to 19 for a 50 Hz update rate
   IMU.setSrd(19); 
+  millisOld = millis();
 }
 
 void loop(){
+  IMU.readSensor();
+  accelX = IMU.getAccelX_mss();
+  accelY = IMU.getAccelY_mss();
+  accelZ = IMU.getAccelZ_mss();
+  gyroX = IMU.getGyroX_rads();
+  gyroY = IMU.getGyroY_rads();
+  gyroZ = IMU.getGyroZ_rads();
+  magX = IMU.getMagX_uT();
+  magY = IMU.getMagY_uT();
+  magZ = IMU.getMagZ_uT(); 
 
-  distanceTraveled = 0;
-  iterator = 0;
-  while (distanceTraveled <= 90 && turnReached == false) {
-    IMU.readSensor();
+  theta = atan2(accelX/9.8, accelZ/9.8) * 180 / PI;
+  phi = atan2(accelY/9.8, accelZ/9.8) * 180 / PI;
 
-    norm = sqrt(gyroX * gyroX + gyroY * gyroY + gyroZ * gyroZ);
-    gyroZ /= norm;
-    
-    gyroZ = IMU.getGyroZ_rads();
-    delay(10);
-    if (abs(gyroZ) > 0.1) {
-      distanceTraveled += gyroZ;
-    }
+  dt = (millis() - millisOld)/1000;
+  millisOld = millis();
 
-    Serial.println(distanceTraveled);
-  }
-  Serial.println("Turn Reached!");
-  turnReached = true;
+  thetaG = thetaG + gyroY * dt;
+  phiG = phiG + gyroX * dt;
+
+  Serial.println(thetaG);
+  Serial.println(phiG);
+  Serial.println();
+  
+  delay(100);
 }
