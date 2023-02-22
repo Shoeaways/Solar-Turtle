@@ -20,6 +20,14 @@ related to data such as GPS values and Roll/Pitch/Yaw.
 #include "TinyGPSPlus.h"
 #include "SoftwareSerial.h"
 
+// Ultrasonic Sensor Pins & Variables
+static const int FLsensorIN = 22, FLsensorOUT = 23;
+static const int FRsensorIN = 24, FRsensorOUT = 25;
+static const int BLsensorIN = 26, BLsensorOUT = 27;
+static const int BRsensorIN = 28, BRsensorOUT = 29;
+float Leftduration, Rightduration;
+int Leftdistance, Rightdistance;
+
 // The TinyGPSPlus object
 TinyGPSPlus gps;
 // Pin variables for GPS
@@ -69,6 +77,12 @@ int SOC;
 int SensorIterator = 0;
 
 void initData() {
+  for (i = 22; i <= 28; i += 2) {
+    pinMode(i, INPUT);
+    pinMode(i + 1, OUTPUT);
+    digitalWrite(i, LOW);
+  }
+
   // Initialize IMU
   status = IMU.begin();
   if (status < 0) {
@@ -91,25 +105,71 @@ void initData() {
   ss.begin(GPSBaud);  
 }
 
-// Function to check our object detection sensors as well as the tensorflow model
+// Function to check our object detection sensors as well as the tensorflow model for the front of the rover
 int checkObjectDetectionFront() {
-  // If object in front 
-    // Check what it is using the tensorflow model
-    // If it isn't avoidable or is actually something blocking us
+  // Sample the ultrasonic sensors 30 times (Left then Right)
+  for (i = 0; i < 30; ++i) {
+    digitalWrite(FLsensorIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(FLsensorIN, LOW);
+    Leftduration = pulseIn(FLsensorOUT, HIGH);
+    Leftdistance += (Leftduration * 0.034 / 2;)
+  }
+  Leftdistance /= 30;
+
+  for (i = 0; i < 30; ++i) {
+    digitalWrite(FRsensorIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(FRsensorIN, LOW);
+    Rightduration = pulseIn(FRsensorOUT, HIGH);
+    Rightdistance += (Rightduration * 0.034 / 2;)
+  }
+  Rightdistance /= 30;
+
+  // If an object is between 30-200cm away, return that there is an object in front
+  if ((Leftdistance < 200 && Leftdistance > 30) || (Rightdistance < 200 && Rightdistance > 30)) {
+    // Check tensorflow
+    // If tensorflow identifies it isn't avoidable or it is actually something blocking us
+    return -1;
+    // else it's likely something we can roll over or it actually wasn't anything
+  }
+  else {
+    // Check tensorflow
+    // If tensorflow identifies it isn't avoidable or it is actually something blocking us
     // return -1;
-  // Else
-    // Check to make sure there actually isn't anything instead of solely relying on the ultrasonic sensors using the tensorflow model
-    // if it is something and we cant avoid it
-      // return -1;
-    // else
-      return 0;
+    // else it's likely something we can roll over or it actually wasn't anything
+    return 0;
+  }
 }
 
+// Function to check our object detection sensors for the back of the rover
 int checkObjectDetectionBack() {
-  // If object in back
-    // return -1;
-  // Else
+  // Sample the ultrasonic sensors 30 times
+  for (i = 0; i < 30; ++i) {
+    digitalWrite(BLsensorIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(BLsensorIN, LOW);
+    Leftduration = pulseIn(BLsensorOUT, HIGH);
+    Leftdistance += (Leftduration * 0.034 / 2;)
+  }
+  Leftdistance /= 30;
+
+  for (i = 0; i < 30; ++i) {
+    digitalWrite(BRsensorIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(BRsensorIN, LOW);
+    Rightduration = pulseIn(BRsensorOUT, HIGH);
+    Rightdistance += (Rightduration * 0.034 / 2;)
+  }
+  Rightdistance /= 30;
+
+  // If an object is between 30-200cm away, return that there is an object in front
+  if ((Leftdistance < 200 && Leftdistance > 30) || (Rightdistance < 200 && Rightdistance > 30)) {
+    return -1;
+  }
+  else {
     return 0;
+  }
 }
 
 // Function to return SOC of battery as an int (accuracy of about +-5%)

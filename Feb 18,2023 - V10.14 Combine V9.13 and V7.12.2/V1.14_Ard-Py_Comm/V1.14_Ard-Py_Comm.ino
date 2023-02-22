@@ -37,6 +37,9 @@
   - Lot of kinks to work out on the find LKS but for now it will have basic functionality
     - We can test it by covering the GPS 
 
+  - We can make a dynamic grid size for the map creation based on the size of (target X & Y - current X & Y)
+    - For our case at the moment, it's not necessary due to be a prototype
+
   (Clear issues we will run into)
   - If GPS and LKS are both (0,0) this requires human interaction
   - If the rover goes all possible locations AROUND the target but can never reach the target due to GPS loss or unmaneuverable land, it will go forever
