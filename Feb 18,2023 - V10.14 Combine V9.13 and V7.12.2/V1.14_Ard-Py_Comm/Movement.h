@@ -144,15 +144,19 @@ void changeErrorMargin (float newErrorMargin) {
 
 // Function enters sleep mode, pausing all movement functions
 void enterSleep() {
-  // Check what function is running
-    // Finish Short functions
-    // Remember Long functions
+  Stop();
   // Set Motor Pins to low
+  for (i = 0; i < 12; ++i) {
+    digitalWrite(FunctionSleepArray[i], LOW);
+  }
 }
 
 // Function exits sleep mode, continuining any previous functions
 void exitSleep() {
   // Reset all used pins back to their previous setting
+  for (i = 0; i < 12; ++i) {
+    digitalWrite(FunctionSleepArray[i], HIGH);
+  }
 }
 
 // Move forward at a given speed (num is a 0-100 speed input)
@@ -640,13 +644,13 @@ void TurnLeft(float angle) {
   }
 }
 
-// Populate map function to target (For A*)
 
 // NOTES FOR CREATING THIS FUNCTION:
 // Length in km of 1° of latitude = always 111.32 km
 // Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
 // Determine what direction it is so the rover begins in the right direction
 
+// Populate map function to target (For A*)
 void createMap(float currentX, float currentY, float targetX, float targetY) {
   // Get start point as Point A
   //  - Should be current Long/Lat when the function is called
@@ -660,6 +664,11 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   //  - If targetX-currentX > a certain amount
   //    - Make a 20 point grid
   // Using this method ^ create a dynamic grid creation
+}
+
+// Create sub maps inside the map function. Will also serve as our main A* function
+void createSubMap() {
+
 }
 
 // Autonomous movement function

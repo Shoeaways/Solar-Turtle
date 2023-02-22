@@ -91,8 +91,18 @@ void initData() {
   ss.begin(GPSBaud);  
 }
 
+// Function to check our object detection sensors as well as the tensorflow model
 int checkObjectDetection() {
-  
+  // If object in front 
+    // Check what it is using the tensorflow model
+    // If it isn't avoidable or is actually something blocking us
+    // return -1
+  // Else
+    // Check to make sure there actually isn't anything instead of solely relying on the ultrasonic sensors using the tensorflow model
+    // if it is something and we cant avoid it
+      // return -1
+    // else
+      // return 0
 }
 
 // Function to return SOC of battery as an int (accuracy of about +-5%)
@@ -290,6 +300,7 @@ void updateSystemVA() {
 // Function returns current cardinal direction
 float getCardinal() {
   updateIMUValues();
+  updateGPSValues();
   return(cardinalDirection);
 }
 
