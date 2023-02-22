@@ -47,10 +47,11 @@ float optimalAngle = 0;
 float readPower = 0;
 
 // Autonomous Movement Variables
-float mapLong[] = {};
-float mapLat[] = {};
-float fastestLong[] = {};
-float fastestLat[] = {};
+float mapLong[128];
+float mapLat[128];
+float heuristicVal[128];
+float fastestLong[32];
+float fastestLat[32];
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 bool mapExists = false;
@@ -84,7 +85,7 @@ void initMovement() {
     pinMode(InitSleepArray[i], OUTPUT);
     digitalWrite(InitSleepArray[i], LOW);
   }
-  for (i = 22; i < 54; ++i) {
+  for (i = 30; i < 54; ++i) {
     pinMode(i, OUTPUT);
     digitalWrite(i, LOW);
   }
@@ -141,23 +142,6 @@ void AutonomousSolarPanel() {
 // Change the error margin of the IMU with the new input one
 void changeErrorMargin (float newErrorMargin) {
   errorAngle = newErrorMargin;  
-}
-
-// Function enters sleep mode, pausing all movement functions
-void enterSleep() {
-  Stop();
-  // Set Motor Pins to low
-  for (i = 0; i < 12; ++i) {
-    digitalWrite(FunctionSleepArray[i], LOW);
-  }
-}
-
-// Function exits sleep mode, continuining any previous functions
-void exitSleep() {
-  // Reset all used pins back to their previous setting
-  for (i = 0; i < 12; ++i) {
-    digitalWrite(FunctionSleepArray[i], HIGH);
-  }
 }
 
 // Move forward at a given speed (num is a 0-100 speed input)
@@ -645,40 +629,61 @@ void TurnLeft(float angle) {
   }
 }
 
+// Function enters sleep mode, pausing all movement functions
+void enterSleep() {
+  Stop(2);
+  // Set Motor Pins to low
+  for (i = 0; i < 12; ++i) {
+    digitalWrite(FunctionSleepArray[i], LOW);
+  }
+}
+
+// Function exits sleep mode, continuining any previous functions
+void exitSleep() {
+  // Reset all used pins back to their previous setting
+  for (i = 0; i < 12; ++i) {
+    digitalWrite(FunctionSleepArray[i], HIGH);
+  }
+}
 
 // NOTES FOR CREATING THIS FUNCTION:
 // Length in km of 1° of latitude = always 111.32 km
 // Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
 // Determine what direction it is so the rover begins in the right direction
-
 // Populate map function to target (For A*)
 void createMap(float currentX, float currentY, float targetX, float targetY) {
-  // Get start point as Point A
-  //  - Should be current Long/Lat when the function is called
-  // Get end point as Point B
-  //  - Should be target Long/Lat
-
   float xdifference = targetX - currentX;
   float ydifference = targetY - currentY;
+  xdifference /= 10.0;
+  ydifference /= 10.0;
 
-  // Make a default 10 point grid
-  //  - If targetX-currentX > a certain amount
-  //    - Make a 20 point grid
-  // Using this method ^ create a dynamic grid creation
+  // Populates the arrays with the map, with the first item in both arrays as the start point and the last item in both arrays as the end point
+  // Map consists of 11 x 11, each point spaced evenly in the X and Y direction
+  for (i = 0; i < 11; ++i) {
+    for (j = 0; j < 11; ++j) {
+      temp = ((i * 11) + j);
+      mapLong[temp] = (currentY + (ydifference * i));
+      mapLat[temp] = (currentX + (xdifference * j));
+      heuristicVal[temp] = sqrt(((mapLat[temp] - targetX) * (mapLat[temp] - targetX) + (mapLong[temp] - targetY) * (mapLong[temp] - targetY)))
+    }
+  }
+
+  // Determine the shortest path, which should be a diagonal line
+  // In our case the items inside the arrays at indexs: 0, 11, 22, 33, 44, 55, 66, 77, 88, and 99
 }
 
-// Create sub maps inside the map function. Will also serve as our main A* function
-void createSubMap() {
+// Create sub maps inside the map function.
+void createSubMap(float currentX, float currentY, float targetX, float targetY) {
 
 }
 
-void updateLocation() {
+void updateLocation(float currentLongitude, float currentLatitude) {
   // 0.000001 is the tolerance/radius of the actual target coordinates we need to be within to be considered complete
   // This is value of degrees which we can calculate as feet or meters
   if ((currentLongitude > endTargetY - 0.000001) && (currentLongitude < endTargetY - 0.000001) && (currentLatitude > endTargetX - 0.000001) && (currentLatitude < endTargetX + 0.000001)) {
     return 2; // Means final destination was reached
   }
-  else if () {
+  else if (1) {
     return 1; // Means sub destination was reached
   }
   else {
