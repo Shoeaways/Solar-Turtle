@@ -92,17 +92,24 @@ void initData() {
 }
 
 // Function to check our object detection sensors as well as the tensorflow model
-int checkObjectDetection() {
+int checkObjectDetectionFront() {
   // If object in front 
     // Check what it is using the tensorflow model
     // If it isn't avoidable or is actually something blocking us
-    // return -1
+    // return -1;
   // Else
     // Check to make sure there actually isn't anything instead of solely relying on the ultrasonic sensors using the tensorflow model
     // if it is something and we cant avoid it
-      // return -1
+      // return -1;
     // else
-      // return 0
+      return 0;
+}
+
+int checkObjectDetectionBack() {
+  // If object in back
+    // return -1;
+  // Else
+    return 0;
 }
 
 // Function to return SOC of battery as an int (accuracy of about +-5%)

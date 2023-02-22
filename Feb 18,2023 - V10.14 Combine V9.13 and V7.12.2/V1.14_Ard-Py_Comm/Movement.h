@@ -54,6 +54,7 @@ float fastestLat[] = {};
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 bool mapExists = false;
+float endTargetX = 0, endTargetY = 0;
 
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
@@ -671,6 +672,20 @@ void createSubMap() {
 
 }
 
+void updateLocation() {
+  // 0.000001 is the tolerance/radius of the actual target coordinates we need to be within to be considered complete
+  // This is value of degrees which we can calculate as feet or meters
+  if ((currentLongitude > endTargetY - 0.000001) && (currentLongitude < endTargetY - 0.000001) && (currentLatitude > endTargetX - 0.000001) && (currentLatitude < endTargetX + 0.000001)) {
+    return 2; // Means final destination was reached
+  }
+  else if () {
+    return 1; // Means sub destination was reached
+  }
+  else {
+    return 0; // Neither final or sub destination was reached
+  }
+}
+
 // Autonomous movement function
 int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitude, float &targetLatitude, int mode) {
   currentLongitude = getLongitude();
@@ -679,7 +694,7 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
 
   if (mode == 0) {
     // Send -1 to alert GPS signal was unable to be found
-    if (currentLongitude == 0 &&  currentLatitude == 0) {
+    if (currentLongitude == 0 && currentLatitude == 0) {
       return -1;
     }
     else {
@@ -688,6 +703,8 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
       // Map out destination if a current map doesn't exist
       if (mapExists == false) {
         createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
+        endTargetY = targetLongitude;
+        endTargetX = targetLatitude;
       }
       // Create an submap (Astar) with multiple target locations which slowly trail to final target
 
@@ -698,15 +715,30 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
         // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
         // Turn Left/Right function to reach target cardinal
       }
-      // Check if an object is in front of the rover before moving, if so 
-      // Move towards destination
-      
+      // Check if an object is in front of the rover before moving
+      if (checkObjectDetectionFront() < 0) {
+        
+      }
+      else {
+        // Check if we are in the submap destination
+        // if (createSubMap > 0) {}
+          // Check if we reached the main destination
+          // if (updateLocation > 0) {}
+            // Output notification that we have arrived
+          // else {}
+            // iterate to the next submap
+
+
+        // else {}
+        // Move towards destination
+        MoveForward(25);
+      }
     }
   }
   // Mode 1 is run when GPS signal is lost and we are attempting to retrun to an Last Known Signal position
   else if (mode == 1) {
-    if (currentLongitude == 0 &&  currentLatitude == 0) {
-      if (LKSLongitude == 0 &&  LKSLatitude == 0) {
+    if (currentLongitude == 0 && currentLatitude == 0) {
+      if (LKSLongitude == 0 && LKSLatitude == 0) {
         // Send -2 if GPS signal is unavailable and LKS is (0,0) meaning there was no Last Known Signal location
         return -2;
       }
@@ -719,7 +751,19 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
   }
   // Mode 2 is run when the LKS is spotted and we are traversing back to it
   else if (mode == 2) {
+    // Create a submap and set the LKS as the target point
+      // We will be in opposite cardinal direction so if the LKS is to the NE, we will be facing SW and reverse instead of moving forward
+      // This helps distinct what the rover is doing on the livestream
 
+    // while currLong/Lat == 0
+    while (checkObjectDetectionBack() < 0) {
+      // Do a turn ~20-35 degrees
+      // iterate something to remember how much we turned
+    }
+    while ((checkObjectDetectionBack() >= 0) && currentLongitude == 0 && currentLatitude == 0) {
+      // MoveReverse(25);
+    }
+    // Turn the amount you turned earlier in the opposite direction
   }
 }
 

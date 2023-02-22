@@ -7,15 +7,16 @@
   - Code Sleep mode and exit sleep mode
     - Raises isSleep flag and that doesn't allow the movement function to iterate
     - Also iterates SoC check and Solar Panel functions
+
+  - Moveto function
+    - Poll GPS connection
+    - LKS function in the case GPS is not recieving signal
     
 
   (Current Rev)
   - Code autonomous movement function
     - Create map function
       - Create submap function
-    - Moveto function
-      - Poll GPS connection
-      - LKS function in the case GPS is not recieving signal
   - Object detection function
     - Ultrasonic sensors function
     - Connecting to image object detection information from the website
@@ -32,6 +33,9 @@
   (Notes)
   - In order to be some sort of insurance we can send DD/MM/YYYY and HR/MN/SC to the rover so that the rover does not idle indefinitely and has some sort of timeout to EVERYTHING
     - This will only work if there is internet connection
+
+  - Lot of kinks to work out on the find LKS but for now it will have basic functionality
+    - We can test it by covering the GPS 
 
   (Clear issues we will run into)
   - If GPS and LKS are both (0,0) this requires human interaction
@@ -157,21 +161,16 @@ void loop() {
           chargePercent = checkSOC();
 
           // If SOC is < ~25% (12.9V @ Open Circuit)
-          // if(chargePercent <= 25) {
+          if (chargePercent <= 25) {
             // Raise Sleep Mode flag and execute sleep function - Means all functions cannot be called except for data to save power
             // isSleep = true;
             // enterSleep();
               // Finish all short functions
               // Pause and remember all long functions
-          // }
+          }
         }
         else {
           ++checkSOCIterator;
-        }
-
-        // Check if an object is in front of the rover here to ensure the rover doesn't begin by going into an object
-        if (checkObjectDetection() < 0) {
-
         }
 
         // Move towards target longitude and latitude function with mode 0 (as normal)
@@ -182,9 +181,16 @@ void loop() {
           }
           else if (MoveStatus == -2) {
             // Output to user that GPS signal is not available, please move rover
+            // while (1) {
+            //   Serial.println("GPS signal failure, please initiate rover in a location with signal");
+            //   delay(10000);
+            // }
           }
         }
         else {
+          delay(100);
+          sendData();
+
           // This means everything is working as intended
           // Report anything needed to be reported
         }
@@ -208,7 +214,7 @@ void loop() {
       if (message == "") {
         // Panel Iterator will allow us to delay how often the solar panel runs automation
         // Realistically we would poll this every ~30-45 minutes instead of every ~30 seconds
-        if (checkPanelIterator > 120) {
+        if (checkPanelIterator > 7200) {
           checkPanelIterator = 0;
           AutonomousSolarPanel();
         }
@@ -218,18 +224,18 @@ void loop() {
 
         // SOC Iterator will allow us to delay how often the SOC check runs
         // Realistically we would poll this every 3-5 minutes (can change based on our load usage) instead of every ~30 seconds
-        if (checkSOCIterator > 120) {
+        if (checkSOCIterator > 1200) {
           checkSOCIterator = 0;
           chargePercent = checkSOC();
 
           // If SOC is < ~25% (12.9V @ Open Circuit)
-          // if(chargePercent <= 25) {
+          if (chargePercent <= 25) {
             // Raise Sleep Mode flag and execute sleep function - Means all functions cannot be called except for data to save power
             // isSleep = true;
             // enterSleep();
               // Finish all short functions
               // Pause and remember all long functions
-          // }
+          }
         }
         else {
           ++checkSOCIterator;
