@@ -258,6 +258,7 @@
 	</style>
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript">var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
 	
 	<script>
         $(document).ready(function(){
@@ -265,7 +266,6 @@
 				$('.footer').css('opacity', 1 - $(window).scrollTop() / 400);
 				var scrollPercentage = $(window).scrollTop() / (documentHeight - windowHeight);
 				var newHeight = scrollPercentage * (-250);
-				$('.footer').css('translateY', newHeight);
             })
         })
     </script>
@@ -282,7 +282,7 @@
 			else if (result == "not initialized") {
 				document.getElementById("InitCheck").innerHTML = " - Not Initialized, please initialize";
 			}
-			
+
 			if (cmd == "data") {
 				var Roll = dataList[1] + "º";
 				var Pitch = dataList[2] + "º";
