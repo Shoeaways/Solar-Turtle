@@ -52,6 +52,7 @@ float mapLat[128];
 float heuristicVal[128];
 float fastestLong[32];
 float fastestLat[32];
+int totalPoints;
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 bool mapExists = false;
@@ -771,6 +772,5 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
     // Turn the amount you turned earlier in the opposite direction
   }
 }
-
 
 #endif

@@ -12,14 +12,21 @@
     - Poll GPS connection
     - LKS function in the case GPS is not recieving signal
     
+  - Object detection function
+    - Ultrasonic sensors function
+
+  - Code autonomous movement function
+    - Create map function
 
   (Current Rev)
   - Code autonomous movement function
     - Create map function
+      - Make A*
       - Create submap function
+
   - Object detection function
-    - Ultrasonic sensors function
     - Connecting to image object detection information from the website
+
   - Review IMU calibration (Use quarternions)
     - Check the bounds of the IMU (240/290/270/290)
     - Determine what the compass heading points toward (what degree is N/E/S/W)
