@@ -53,10 +53,12 @@ float heuristicVal[128];
 float fastestLong[32];
 float fastestLat[32];
 int beenTo[128];
+int checkArray[8];
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 float endTargetX = 0, endTargetY = 0;
 int totalPoints;
 int currentIndex;
+int bestChoice;
 int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 bool mapExists = false;
 bool fastestMapComplete = false;
@@ -696,25 +698,145 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   fastestLong[0] = currentY;
   beenTo[0] = 1;
   currentIndex = 0;
+  totalPoints = 1;
   
   while(fastestMapComplete == false;) {
     if (currentIndex == 120) {
       fastestMapComplete = true;
     }
     else if (currentIndex == 108 || currentIndex == 109 || currentIndex == 119) {
-      // Go to 120 if possible
+      currentIndex = 120;
     }
     else if (currentIndex == 0) {
       // Check +1, +11, +12
+      checkArray[0] = 12; checkArray[1] = 11; checkArray[2] = 1; 
+
+      
+
+      for (i = 1; i < 3; ++i) {
+
+      }
+
+      if (beenTo[currentIndex + 1] == 0) {
+        bestChoice = currentIndex + 1;
+      }
+
+      if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex + 11]) {
+        if (beenTo[currentIndex + 11] == 0) {
+          bestChoice = currentIndex + 11;
+        }
+        if (heuristicVal[currentIndex + 11] > heuristicVal[currentIndex + 12]) {
+          if (beenTo[currentIndex + 12] == 0) {
+            bestChoice = currentIndex + 12;
+          }
+        }
+      }
+
+      if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex + 12]) {
+        if (beenTo[currentIndex + 12] == 0) {
+          bestChoice = currentIndex + 12;
+        }
+        if (heuristicVal[currentIndex + 12] > heuristicVal[currentIndex + 11]) {
+          if (beenTo[currentIndex + 11] == 0) {
+            bestChoice = currentIndex + 11;
+          }
+        }
+      }
     }
     else if (currentIndex == 110) {
       // Check -11, -10, +1
+      if (beenTo[currentIndex - 11] == 0) {
+        bestChoice = currentIndex - 11;
+      }
+
+      if (heuristicVal[currentIndex - 11] > heuristicVal[currentIndex - 10]) {
+        if (beenTo[currentIndex - 10] == 0) {
+          bestChoice = currentIndex - 10;
+        }
+        if (heuristicVal[currentIndex - 10] > heuristicVal[currentIndex + 1]) {
+          if (beenTo[currentIndex + 1] == 0) {
+            bestChoice = currentIndex + 1;
+          }
+        }
+      }
+
+      if (heuristicVal[currentIndex - 11] > heuristicVal[currentIndex + 1]) {
+        if (beenTo[currentIndex + 1] == 0) {
+          bestChoice = currentIndex + 1;
+        }
+        if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex - 10]) {
+          if (beenTo[currentIndex - 10] == 0) {
+            bestChoice = currentIndex - 10;
+          }
+        }
+      }
     }
     else if (currentIndex == 10) {
       // Check -1, +10, +11
+      if (beenTo[currentIndex - 1] == 0) {
+        bestChoice = currentIndex - 1;
+      }
+
+      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 10]) {
+        if (beenTo[currentIndex + 10] == 0) {
+          bestChoice = currentIndex + 10;
+        }
+        if (heuristicVal[currentIndex + 10] > heuristicVal[currentIndex + 11]) {
+          if (beenTo[currentIndex + 11] == 0) {
+            bestChoice = currentIndex + 11;
+          }
+        }
+      }
+
+      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 11]) {
+        if (beenTo[currentIndex + 11] == 0) {
+          bestChoice = currentIndex + 11;
+        }
+        if (heuristicVal[currentIndex + 11] > heuristicVal[currentIndex + 10]) {
+          if (beenTo[currentIndex + 10] == 0) {
+            bestChoice = currentIndex + 10;
+          }
+        }
+      }
     }
     else if (currentIndex == 1 || currentIndex == 2 || currentIndex == 3 || currentIndex == 4 || currentIndex == 5 || currentIndex == 6 || currentIndex == 7 || currentIndex == 8 || currentIndex == 9) {
       // Check -1, +1, +10, +11, +12
+      if (beenTo[currentIndex - 1] == 0) {
+        bestChoice = currentIndex - 1;
+      }
+
+      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 1]) {
+        if (beenTo[currentIndex + 1] == 0) {
+          bestChoice = currentIndex + 1;
+        }
+        if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex + 11]) {
+          if (beenTo[currentIndex + 11] == 0) {
+            bestChoice = currentIndex + 11;
+          }
+        }
+      }
+
+      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 10]) {
+        if (beenTo[currentIndex + 10] == 0) {
+          bestChoice = currentIndex + 10;
+        }
+        if (heuristicVal[currentIndex + 10] > heuristicVal[currentIndex + 11]) {
+          if (beenTo[currentIndex + 11] == 0) {
+            bestChoice = currentIndex + 11;
+          }
+        }
+      }
+
+      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 11]) {
+        if (beenTo[currentIndex + 11] == 0) {
+          bestChoice = currentIndex + 11;
+        }
+        if (heuristicVal[currentIndex + 11] > heuristicVal[currentIndex + 10]) {
+          if (beenTo[currentIndex + 10] == 0) {
+            bestChoice = currentIndex + 10;
+          }
+        }
+      }
     }
     else if (currentIndex == 11 || currentIndex == 22 || currentIndex == 33 || currentIndex == 44|| currentIndex == 55 || currentIndex == 66 || currentIndex == 77 || currentIndex == 88 || currentIndex == 99) {
       // Check -11, -10, +1, +11, +12
@@ -725,6 +847,13 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
     else if (currentIndex == 111 || currentIndex == 112 || currentIndex == 113 || currentIndex == 114 || currentIndex == 115 || currentIndex == 116 || currentIndex == 117 || currentIndex == 118) {
       // Check -12, -11, -10, -1, +1
     }
+    else {
+      // Check -12, -11, -10, -1, +1, +10, +11, +12
+
+    }
+    beenTo[bestChoice] = 1;
+    fastestLat[totalPoints] = mapLat[bestChoice];
+    fastestLong[totalPoints] = mapLong[bestChoice];
     ++totalPoints;
   }
 }
@@ -829,5 +958,7 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
     // Turn the amount you turned earlier in the opposite direction
   }
 }
+
+
 
 #endif

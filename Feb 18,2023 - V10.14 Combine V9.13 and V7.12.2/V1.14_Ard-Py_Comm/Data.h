@@ -56,7 +56,7 @@ int cardinalDirection;
 float R1 = 30000.0;
 float R2 = 7500.0; 
 // Float for Reference Voltage (Arduino GPIO voltage)
-float ref_voltage = 5;
+float ref_voltage = 5.057;
 // Adc_value variable
 int Vadc_value = 0;
 int Aadc_value = 0;
