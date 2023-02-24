@@ -668,7 +668,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       temp = ((i * 11) + j);
       mapLong[temp] = (currentY + (ydifference * i));
       mapLat[temp] = (currentX + (xdifference * j));
-      heuristicVal[temp] = sqrt(((mapLat[temp] - targetX) * (mapLat[temp] - targetX) + (mapLong[temp] - targetY) * (mapLong[temp] - targetY)))
+      heuristicVal[temp] = sqrt((((mapLat[temp] - targetX) * 8.787) * ((mapLat[temp] - targetX) * 8.787) + ((mapLong[temp] - targetY) * 11.1045) * ((mapLong[temp] - targetY) * 11.1045)))
       beenTo[temp] = 0;
     }
   }
