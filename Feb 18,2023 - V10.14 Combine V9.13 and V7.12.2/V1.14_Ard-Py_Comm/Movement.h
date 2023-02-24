@@ -52,11 +52,14 @@ float mapLat[128];
 float heuristicVal[128];
 float fastestLong[32];
 float fastestLat[32];
-int totalPoints;
+int beenTo[128];
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
+float endTargetX = 0, endTargetY = 0;
+int totalPoints;
+int currentIndex;
 int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 bool mapExists = false;
-float endTargetX = 0, endTargetY = 0;
+bool fastestMapComplete = false;
 
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
@@ -666,11 +669,64 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       mapLong[temp] = (currentY + (ydifference * i));
       mapLat[temp] = (currentX + (xdifference * j));
       heuristicVal[temp] = sqrt(((mapLat[temp] - targetX) * (mapLat[temp] - targetX) + (mapLong[temp] - targetY) * (mapLong[temp] - targetY)))
+      beenTo[temp] = 0;
     }
   }
 
-  // Determine the shortest path, which should be a diagonal line
-  // In our case the items inside the arrays at indexs: 0, 11, 22, 33, 44, 55, 66, 77, 88, and 99
+  /*
+  The map created looks something like this
+  110 111 112 113 114 115 116 117 118 119 120
+  99  100 101 102 103 104 105 106 107 108 109
+  88  89  90  91  92  93  94  95  96  97  98
+  77  78  79  80  81  82  83  84  85  86  87
+  66  67  68  69  70  71  72  73  74  75  76
+  55  56  57  58  59  60  61  62  63  64  65
+  44  45  46  47  48  49  50  51  52  53  54
+  33  34  35  36  37  38  39  40  41  42  43
+  22  23  24  25  26  27  28  29  30  31  32
+  11  12  13  14  15  16  17  18  19  20  21
+  0   1   2   3   4   5   6   7   8   9   10
+  */
+
+  // Determine the shortest path, which should be a diagonal line when we first determine it.
+  // It will change when objects are detected and filled into the map
+  // In our case the items inside the arrays at indexs: 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120
+  
+  fastestLat[0] = currentX;
+  fastestLong[0] = currentY;
+  beenTo[0] = 1;
+  currentIndex = 0;
+  
+  while(fastestMapComplete == false;) {
+    if (currentIndex == 120) {
+      fastestMapComplete = true;
+    }
+    else if (currentIndex == 108 || currentIndex == 109 || currentIndex == 119) {
+      // Go to 120 if possible
+    }
+    else if (currentIndex == 0) {
+      // Check +1, +11, +12
+    }
+    else if (currentIndex == 110) {
+      // Check -11, -10, +1
+    }
+    else if (currentIndex == 10) {
+      // Check -1, +10, +11
+    }
+    else if (currentIndex == 1 || currentIndex == 2 || currentIndex == 3 || currentIndex == 4 || currentIndex == 5 || currentIndex == 6 || currentIndex == 7 || currentIndex == 8 || currentIndex == 9) {
+      // Check -1, +1, +10, +11, +12
+    }
+    else if (currentIndex == 11 || currentIndex == 22 || currentIndex == 33 || currentIndex == 44|| currentIndex == 55 || currentIndex == 66 || currentIndex == 77 || currentIndex == 88 || currentIndex == 99) {
+      // Check -11, -10, +1, +11, +12
+    }
+    else if (currentIndex == 21 || currentIndex == 32 || currentIndex == 43 || currentIndex == 54 || currentIndex == 65 || currentIndex == 76 || currentIndex == 87 || currentIndex == 98) {
+      // Check -12, -11, -1, +10, +11
+    }
+    else if (currentIndex == 111 || currentIndex == 112 || currentIndex == 113 || currentIndex == 114 || currentIndex == 115 || currentIndex == 116 || currentIndex == 117 || currentIndex == 118) {
+      // Check -12, -11, -10, -1, +1
+    }
+    ++totalPoints;
+  }
 }
 
 // Create sub maps inside the map function.
@@ -723,7 +779,8 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
       }
       // Check if an object is in front of the rover before moving
       if (checkObjectDetectionFront() < 0) {
-        
+        // Change the heuristic of whichever point is closer
+        // Point 120 is an exception, it will
       }
       else {
         // Check if we are in the submap destination

@@ -47,6 +47,9 @@
   - We can make a dynamic grid size for the map creation based on the size of (target X & Y - current X & Y)
     - For our case at the moment, it's not necessary due to be a prototype
 
+  - Future change for code would be creating a struct for the heuristic code and grid
+    - 
+
   (Clear issues we will run into)
   - If GPS and LKS are both (0,0) this requires human interaction
   - If the rover goes all possible locations AROUND the target but can never reach the target due to GPS loss or unmaneuverable land, it will go forever
