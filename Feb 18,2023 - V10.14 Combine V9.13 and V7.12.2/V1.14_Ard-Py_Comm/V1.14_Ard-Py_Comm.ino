@@ -17,11 +17,11 @@
 
   - Code autonomous movement function
     - Create map function
+      - Make A*
 
   (Current Rev)
   - Code autonomous movement function
     - Create map function
-      - Make A*
       - Create submap function
 
   - Object detection function

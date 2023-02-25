@@ -46,7 +46,13 @@ float optimalPower = 0;
 float optimalAngle = 0;
 float readPower = 0;
 
-// Autonomous Movement Variables
+// MoveTo Function Variables
+float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
+float endTargetX = 0, endTargetY = 0;
+int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
+bool mapExists = false;
+
+// A* Variables
 float mapLong[128];
 float mapLat[128];
 float heuristicVal[128];
@@ -54,13 +60,9 @@ float fastestLong[128];
 float fastestLat[128];
 int beenTo[128];
 int checkArray[8];
-float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
-float endTargetX = 0, endTargetY = 0;
 int totalPoints;
 int currentIndex;
 int bestChoice;
-int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
-bool mapExists = false;
 bool fastestMapComplete = false;
 
 // Turning Variables
@@ -657,6 +659,7 @@ void exitSleep() {
 // Length of 1° longitude ~= 111,045m
 // Determine what direction it is so the rover begins in the right direction
 // Populate map function to target (For A*)
+// Need to make it so that beenTo = 1 just increases the heuristic by a small margin
 void createMap(float currentX, float currentY, float targetX, float targetY) {
   int temp;
   float xdifference = targetX - currentX;
@@ -707,10 +710,11 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   // It will change when objects are detected and filled into the map
   // In our case the items inside the arrays at indexs: 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120
   
-  fastestLat[0] = currentX;
-  fastestLong[0] = currentY;
-  beenTo[0] = 1;
   currentIndex = 0;
+  fastestLat[currentIndex] = currentX;
+  fastestLong[currentIndex] = currentY;
+  beenTo[currentIndex] = 1;
+  heuristicVal[currentIndex] += 9999;
   totalPoints = 1;
   
   while(fastestMapComplete == false) {
@@ -734,8 +738,9 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 12;
       for (i = 1; i < 3; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
@@ -746,8 +751,9 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 1;
       for (i = 1; i < 3; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
@@ -758,8 +764,9 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 11;
       for (i = 1; i < 3; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
@@ -770,8 +777,9 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 12;
       for (i = 1; i < 5; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
@@ -782,8 +790,9 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 12;
       for (i = 1; i < 5; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
@@ -794,8 +803,9 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 11;
       for (i = 1; i < 5; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
@@ -806,8 +816,9 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 1;
       for (i = 1; i < 5; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
@@ -818,21 +829,28 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
       bestChoice = 12;
       for (i = 1; i < 8; ++i) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
-          if (beenTo[currentIndex + checkArray[i]] == 0) {
-            bestChoice = checkArray[i];
+          bestChoice = checkArray[i];
+          if (beenTo[currentIndex + bestChoice] == 1) {
+            heuristicVal[currentIndex] += 9999;
           }
         }
       }
     }
-    //Serial.print(currentIndex);
-    //Serial.println();
+    Serial.print(currentIndex);
+    Serial.println();
     currentIndex += bestChoice;
     beenTo[currentIndex] = 1;
+    heuristicVal[currentIndex] += 9999;
     fastestLat[totalPoints] = mapLat[currentIndex];
     fastestLong[totalPoints] = mapLong[currentIndex];
     ++totalPoints;
   }
+
   --totalPoints;
+  for (i = 0; i <= currentIndex; ++i) {
+    beenTo[i] = 0;
+  }
+  currentIndex = 0;
 }
 
 // Create sub maps inside the map function.
@@ -843,7 +861,7 @@ void createSubMap(float currentX, float currentY, float targetX, float targetY) 
 void updateLocation(float currentLongitude, float currentLatitude) {
   // 0.000001 is the tolerance/radius of the actual target coordinates we need to be within to be considered complete
   // This is value of degrees which we can calculate as feet or meters
-  if ((currentLongitude > endTargetY - 0.000001) && (currentLongitude < endTargetY - 0.000001) && (currentLatitude > endTargetX - 0.000001) && (currentLatitude < endTargetX + 0.000001)) {
+  if ((currentLongitude > endTargetX - 0.000005) && (currentLongitude < endTargetX - 0.000005) && (currentLatitude > endTargetY - 0.000006) && (currentLatitude < endTargetY + 0.000006)) {
     return 2; // Means final destination was reached
   }
   else if (1) {
@@ -874,8 +892,10 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
         endTargetY = targetLongitude;
         endTargetX = targetLatitude;
       }
-      // Create an submap (Astar) with multiple target locations which slowly trail to final target
+      // Create an submap
+      if () {
 
+      }
       // Use an updateMap function to consistently update the current position on the map
 
       // Check if the current cardinal direction and target cardinal direction is the same
@@ -935,7 +955,5 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
     // Turn the amount you turned earlier in the opposite direction
   }
 }
-
-
 
 #endif
