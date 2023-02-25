@@ -858,13 +858,16 @@ void createSubMap(float currentX, float currentY, float targetX, float targetY) 
 
 }
 
-void updateLocation(float currentLongitude, float currentLatitude) {
+void updateLocation(float currentLong, float currentLat) {
   // 0.000001 is the tolerance/radius of the actual target coordinates we need to be within to be considered complete
   // This is value of degrees which we can calculate as feet or meters
-  if ((currentLongitude > endTargetX - 0.000005) && (currentLongitude < endTargetX - 0.000005) && (currentLatitude > endTargetY - 0.000006) && (currentLatitude < endTargetY + 0.000006)) {
+  if ((currentLong > endTargetX - 0.000005) && (currentLong < endTargetX - 0.000005) && (currentLat > endTargetY - 0.000006) && (currentLat < endTargetY + 0.000006)) {
+    // clear Maps
+    // clearMaps();
     return 2; // Means final destination was reached
   }
   else if (1) {
+    // iterate to next index
     return 1; // Means sub destination was reached
   }
   else {
@@ -897,6 +900,7 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
 
       }
       // Use an updateMap function to consistently update the current position on the map
+      // updateLocation(currentLongitude, currentLatitude);
 
       // Check if the current cardinal direction and target cardinal direction is the same
       while (currentCardinal != targetCardinal) {
