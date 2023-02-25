@@ -50,8 +50,8 @@ float readPower = 0;
 float mapLong[128];
 float mapLat[128];
 float heuristicVal[128];
-float fastestLong[32];
-float fastestLat[32];
+float fastestLong[128];
+float fastestLat[128];
 int beenTo[128];
 int checkArray[8];
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
@@ -653,11 +653,12 @@ void exitSleep() {
 }
 
 // NOTES FOR CREATING THIS FUNCTION:
-// Length in km of 1° of latitude = always 111.32 km
-// Length in km of 1° of longitude = 40075 km * cos( latitude ) / 360
+// Length of 1° latitude ~= 87,870m
+// Length of 1° longitude ~= 111,045m
 // Determine what direction it is so the rover begins in the right direction
 // Populate map function to target (For A*)
 void createMap(float currentX, float currentY, float targetX, float targetY) {
+  int temp;
   float xdifference = targetX - currentX;
   float ydifference = targetY - currentY;
   xdifference /= 10.0;
@@ -668,12 +669,24 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   for (i = 0; i < 11; ++i) {
     for (j = 0; j < 11; ++j) {
       temp = ((i * 11) + j);
-      mapLong[temp] = (currentY + (ydifference * i));
-      mapLat[temp] = (currentX + (xdifference * j));
-      heuristicVal[temp] = sqrt((((mapLat[temp] - targetX) * 8.787) * ((mapLat[temp] - targetX) * 8.787) + ((mapLong[temp] - targetY) * 11.1045) * ((mapLong[temp] - targetY) * 11.1045)))
+      mapLong[temp] = (currentX + (xdifference * j));
+      mapLat[temp] = (currentY + (ydifference * i));
+      heuristicVal[temp] = sqrt((((mapLat[temp] - targetY) * 8.787) * ((mapLat[temp] - targetY) * 8.787) + ((mapLong[temp] - targetX) * 11.1045) * ((mapLong[temp] - targetX) * 11.1045)));
       beenTo[temp] = 0;
     }
   }
+
+  // Uncomment these to create artifical heuristic changes
+  //heuristicVal[1] += 999999;
+  //heuristicVal[12] += 999999;
+  //heuristicVal[23] += 999999;
+  //heuristicVal[34] += 999999;
+  //heuristicVal[45] += 999999;
+  //heuristicVal[56] += 999999;
+  //heuristicVal[67] += 999999;
+  //heuristicVal[78] += 999999;
+  //heuristicVal[89] += 999999;
+  //heuristicVal[100] += 999999;
 
   /*
   The map created looks something like this
@@ -700,162 +713,126 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   currentIndex = 0;
   totalPoints = 1;
   
-  while(fastestMapComplete == false;) {
+  while(fastestMapComplete == false) {
     if (currentIndex == 120) {
       fastestMapComplete = true;
     }
-    else if (currentIndex == 108 || currentIndex == 109 || currentIndex == 119) {
-      currentIndex = 120;
+    else if (currentIndex == 108 || currentIndex == 109 || currentIndex == 119) {\
+      if (currentIndex == 108) {
+        bestChoice = 12;
+      }
+      else if (currentIndex == 109) {
+        bestChoice = 11;
+      }
+      else if (currentIndex == 119) {
+        bestChoice = 1;
+      }
     }
     else if (currentIndex == 0) {
       // Check +1, +11, +12
       checkArray[0] = 12; checkArray[1] = 11; checkArray[2] = 1; 
-
-      
-
+      bestChoice = 12;
       for (i = 1; i < 3; ++i) {
-
-      }
-
-      if (beenTo[currentIndex + 1] == 0) {
-        bestChoice = currentIndex + 1;
-      }
-
-      if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex + 11]) {
-        if (beenTo[currentIndex + 11] == 0) {
-          bestChoice = currentIndex + 11;
-        }
-        if (heuristicVal[currentIndex + 11] > heuristicVal[currentIndex + 12]) {
-          if (beenTo[currentIndex + 12] == 0) {
-            bestChoice = currentIndex + 12;
-          }
-        }
-      }
-
-      if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex + 12]) {
-        if (beenTo[currentIndex + 12] == 0) {
-          bestChoice = currentIndex + 12;
-        }
-        if (heuristicVal[currentIndex + 12] > heuristicVal[currentIndex + 11]) {
-          if (beenTo[currentIndex + 11] == 0) {
-            bestChoice = currentIndex + 11;
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
           }
         }
       }
     }
     else if (currentIndex == 110) {
       // Check -11, -10, +1
-      if (beenTo[currentIndex - 11] == 0) {
-        bestChoice = currentIndex - 11;
-      }
-
-      if (heuristicVal[currentIndex - 11] > heuristicVal[currentIndex - 10]) {
-        if (beenTo[currentIndex - 10] == 0) {
-          bestChoice = currentIndex - 10;
-        }
-        if (heuristicVal[currentIndex - 10] > heuristicVal[currentIndex + 1]) {
-          if (beenTo[currentIndex + 1] == 0) {
-            bestChoice = currentIndex + 1;
-          }
-        }
-      }
-
-      if (heuristicVal[currentIndex - 11] > heuristicVal[currentIndex + 1]) {
-        if (beenTo[currentIndex + 1] == 0) {
-          bestChoice = currentIndex + 1;
-        }
-        if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex - 10]) {
-          if (beenTo[currentIndex - 10] == 0) {
-            bestChoice = currentIndex - 10;
+      checkArray[0] = 1; checkArray[1] = -11; checkArray[2] = -10; 
+      bestChoice = 1;
+      for (i = 1; i < 3; ++i) {
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
           }
         }
       }
     }
     else if (currentIndex == 10) {
       // Check -1, +10, +11
-      if (beenTo[currentIndex - 1] == 0) {
-        bestChoice = currentIndex - 1;
-      }
-
-      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 10]) {
-        if (beenTo[currentIndex + 10] == 0) {
-          bestChoice = currentIndex + 10;
-        }
-        if (heuristicVal[currentIndex + 10] > heuristicVal[currentIndex + 11]) {
-          if (beenTo[currentIndex + 11] == 0) {
-            bestChoice = currentIndex + 11;
-          }
-        }
-      }
-
-      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 11]) {
-        if (beenTo[currentIndex + 11] == 0) {
-          bestChoice = currentIndex + 11;
-        }
-        if (heuristicVal[currentIndex + 11] > heuristicVal[currentIndex + 10]) {
-          if (beenTo[currentIndex + 10] == 0) {
-            bestChoice = currentIndex + 10;
+      checkArray[0] = 11; checkArray[1] = 10; checkArray[2] = -1; 
+      bestChoice = 11;
+      for (i = 1; i < 3; ++i) {
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
           }
         }
       }
     }
     else if (currentIndex == 1 || currentIndex == 2 || currentIndex == 3 || currentIndex == 4 || currentIndex == 5 || currentIndex == 6 || currentIndex == 7 || currentIndex == 8 || currentIndex == 9) {
       // Check -1, +1, +10, +11, +12
-      if (beenTo[currentIndex - 1] == 0) {
-        bestChoice = currentIndex - 1;
-      }
-
-      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 1]) {
-        if (beenTo[currentIndex + 1] == 0) {
-          bestChoice = currentIndex + 1;
-        }
-        if (heuristicVal[currentIndex + 1] > heuristicVal[currentIndex + 11]) {
-          if (beenTo[currentIndex + 11] == 0) {
-            bestChoice = currentIndex + 11;
-          }
-        }
-      }
-
-      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 10]) {
-        if (beenTo[currentIndex + 10] == 0) {
-          bestChoice = currentIndex + 10;
-        }
-        if (heuristicVal[currentIndex + 10] > heuristicVal[currentIndex + 11]) {
-          if (beenTo[currentIndex + 11] == 0) {
-            bestChoice = currentIndex + 11;
-          }
-        }
-      }
-
-      if (heuristicVal[currentIndex - 1] > heuristicVal[currentIndex + 11]) {
-        if (beenTo[currentIndex + 11] == 0) {
-          bestChoice = currentIndex + 11;
-        }
-        if (heuristicVal[currentIndex + 11] > heuristicVal[currentIndex + 10]) {
-          if (beenTo[currentIndex + 10] == 0) {
-            bestChoice = currentIndex + 10;
+      checkArray[0] = 12; checkArray[1] = 11; checkArray[2] = 10; checkArray[3] = 1; checkArray[4] = -1;
+      bestChoice = 12;
+      for (i = 1; i < 5; ++i) {
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
           }
         }
       }
     }
     else if (currentIndex == 11 || currentIndex == 22 || currentIndex == 33 || currentIndex == 44|| currentIndex == 55 || currentIndex == 66 || currentIndex == 77 || currentIndex == 88 || currentIndex == 99) {
       // Check -11, -10, +1, +11, +12
+      checkArray[0] = 12; checkArray[1] = 11; checkArray[2] = 1; checkArray[3] = -10; checkArray[4] = -11;
+      bestChoice = 12;
+      for (i = 1; i < 5; ++i) {
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
+          }
+        }
+      }
     }
     else if (currentIndex == 21 || currentIndex == 32 || currentIndex == 43 || currentIndex == 54 || currentIndex == 65 || currentIndex == 76 || currentIndex == 87 || currentIndex == 98) {
       // Check -12, -11, -1, +10, +11
+      checkArray[0] = 11; checkArray[1] = 10; checkArray[2] = -1; checkArray[3] = -11; checkArray[4] = -12;
+      bestChoice = 11;
+      for (i = 1; i < 5; ++i) {
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
+          }
+        }
+      }
     }
     else if (currentIndex == 111 || currentIndex == 112 || currentIndex == 113 || currentIndex == 114 || currentIndex == 115 || currentIndex == 116 || currentIndex == 117 || currentIndex == 118) {
       // Check -12, -11, -10, -1, +1
+      checkArray[0] = 1; checkArray[1] = -1; checkArray[2] = -10; checkArray[3] = -11; checkArray[4] = -12;
+      bestChoice = 1;
+      for (i = 1; i < 5; ++i) {
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
+          }
+        }
+      }
     }
     else {
       // Check -12, -11, -10, -1, +1, +10, +11, +12
-
+      checkArray[0] = 12; checkArray[1] = 11; checkArray[2] = 10; checkArray[3] = 1; checkArray[4] = -1; checkArray[5] = -10; checkArray[6] = -11; checkArray[7] = -12;
+      bestChoice = 12;
+      for (i = 1; i < 8; ++i) {
+        if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
+          if (beenTo[currentIndex + checkArray[i]] == 0) {
+            bestChoice = checkArray[i];
+          }
+        }
+      }
     }
-    beenTo[bestChoice] = 1;
-    fastestLat[totalPoints] = mapLat[bestChoice];
-    fastestLong[totalPoints] = mapLong[bestChoice];
+    //Serial.print(currentIndex);
+    //Serial.println();
+    currentIndex += bestChoice;
+    beenTo[currentIndex] = 1;
+    fastestLat[totalPoints] = mapLat[currentIndex];
+    fastestLong[totalPoints] = mapLong[currentIndex];
     ++totalPoints;
   }
+  --totalPoints;
 }
 
 // Create sub maps inside the map function.
