@@ -29,6 +29,8 @@
 
   - Review IMU calibration (Use quarternions)
     - Check the bounds of the IMU (240/290/270/290)
+
+  - GPS
     - Determine what the compass heading points toward (what degree is N/E/S/W)
 
   (Future Rev) 
@@ -38,6 +40,10 @@
   - Make a display for the map on the website
 
   (Notes)
+  - At the moment, if we overshoot the target, the rover will infinitely go and have no form of check to show that it's getting further
+
+  - Use the IMU to fix trajectory since there will be drift
+
   - In order to be some sort of insurance we can send DD/MM/YYYY and HR/MN/SC to the rover so that the rover does not idle indefinitely and has some sort of timeout to EVERYTHING
     - This will only work if there is internet connection
 
@@ -48,7 +54,6 @@
     - For our case at the moment, it's not necessary due to be a prototype
 
   - Future change for code would be creating a struct for the heuristic code and grid
-    - 
 
   (Clear issues we will run into)
   - If GPS and LKS are both (0,0) this requires human interaction
@@ -201,9 +206,6 @@ void loop() {
           }
         }
         else {
-          delay(100);
-          sendData();
-
           // This means everything is working as intended
           // Report anything needed to be reported
         }

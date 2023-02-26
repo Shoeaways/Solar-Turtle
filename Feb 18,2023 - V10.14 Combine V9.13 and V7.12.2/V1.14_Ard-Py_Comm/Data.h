@@ -283,7 +283,26 @@ void updateIMUValues() {
   
     // Alter range to be 0 to 360 instead of -180 to 180
     yaw += 180;
-    compassHeading = yaw;
+
+    norm = sqrt(accelX * accelX + accelY * accelY + accelZ * accelZ);
+    accelX /= -norm;
+    accelY /= -norm;
+    accelZ /= -norm;
+
+    if (abs(gyroZ) < 0.8) {
+      gyroZ = 0;
+    }
+    if (abs(gyroY) < 0.8) {
+      gyroY = 0;
+    }
+    if (abs(gyroX) < 0.8) {
+      gyroX = 0;
+    }
+    gyroX *= 0.75;
+    gyroY *= 0.75;
+    gyroZ *= 0.75;
+
+    compassHeading += (sin(accelX * PI / 2) * gyroX) + (sin(accelY * PI / 2) * gyroY) + (sin(accelZ * PI / 2) * gyroZ);
   }
   // If the IMU didn't begin then retry (Need to integrate this with the GPS as well)
   else {

@@ -49,7 +49,10 @@ float readPower = 0;
 // MoveTo Function Variables
 float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 float endTargetX = 0, endTargetY = 0;
-int currentCardinal, targetCardinal; // Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
+float subTargetX = 0, subTargetY = 0;
+int currentCardinal;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
+int targetCardinal[128];
+int North = 1, NorthEast = 2, East = 3, SouthEast = 4, South = 5, SouthWest = 6, West = 7, NorthWest = 8;
 bool mapExists = false;
 
 // A* Variables
@@ -409,6 +412,7 @@ void TurnRight(float angle) {
           }
         }
         fromZero = false;
+        updateIMUValues()
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -418,6 +422,7 @@ void TurnRight(float angle) {
           }
           delay(2);
         }
+        updateIMUValues()
       }
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
@@ -459,6 +464,7 @@ void TurnRight(float angle) {
           }
         }
         fromZero = false;
+        updateIMUValues()
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -468,6 +474,7 @@ void TurnRight(float angle) {
           }
           delay(2);
         }
+        updateIMUValues()
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
@@ -565,6 +572,7 @@ void TurnLeft(float angle) {
           }
         }
         fromZero = false;
+        updateIMUValues()
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -574,6 +582,7 @@ void TurnLeft(float angle) {
           }
           delay(2);
         }
+        updateIMUValues()
       }
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
@@ -615,6 +624,7 @@ void TurnLeft(float angle) {
           }
         }
         fromZero = false;
+        updateIMUValues()
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -624,6 +634,7 @@ void TurnLeft(float angle) {
           }
           delay(2);
         }
+        updateIMUValues()
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
@@ -836,8 +847,36 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         }
       }
     }
-    Serial.print(currentIndex);
-    Serial.println();
+    
+    switch (bestChoice) {
+      case 12:
+        targetCardinal[totalPoints] = NorthEast;
+        break;
+      case 11:
+        targetCardinal[totalPoints] = North;
+        break;
+      case 10:
+        targetCardinal[totalPoints] = NorthWest;
+        break;
+      case 1:
+        targetCardinal[totalPoints] = East;
+        break;
+      case -1:
+        targetCardinal[totalPoints] = West;
+        break;
+      case -10:
+        targetCardinal[totalPoints] = SouthEast;
+        break;   
+      case -11:
+        targetCardinal[totalPoints] = South;
+        break;
+      case -12:
+        targetCardinal[totalPoints] = SouthWest;
+        break;  
+      default:
+        break;
+    }
+
     currentIndex += bestChoice;
     beenTo[currentIndex] = 1;
     heuristicVal[currentIndex] += 9999;
@@ -850,12 +889,15 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   for (i = 0; i <= currentIndex; ++i) {
     beenTo[i] = 0;
   }
-  currentIndex = 0;
+  currentIndex = 1;
 }
 
 // Create sub maps inside the map function.
 void createSubMap(float currentX, float currentY, float targetX, float targetY) {
-
+  if (currentIndex < (totalPoints + 1)) {
+    subTargetX = fastestLong[currentIndex];
+    subTargetY = fastestLat[currentIndex];
+  }
 }
 
 void updateLocation(float currentLong, float currentLat) {
@@ -866,8 +908,7 @@ void updateLocation(float currentLong, float currentLat) {
     // clearMaps();
     return 2; // Means final destination was reached
   }
-  else if (1) {
-    // iterate to next index
+  else if ((currentLong > subTargetX - 0.000005) && (currentLong < subTargetX - 0.000005) && (currentLat > subTargetY - 0.000006) && (currentLat < subTargetY + 0.000006)) {
     return 1; // Means sub destination was reached
   }
   else {
@@ -880,6 +921,20 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
   currentLongitude = getLongitude();
   currentLatitude = getLatitude();
   currentCardinal = getCardinal();
+
+  // FOR DEMO SET THE TARGET TO ~25x25 METERS AWAY
+  if (targetLongitude == 0 || targetLatitude == 0) {
+    targetLongitude = currentLongitude + 0.000225;
+    targetLatitude = currentLatitude + 0.000285;
+    currentCardinal = North;
+  }
+
+  // FOR ACTUAL
+  /*
+  if (targetLongitude == 0 || targetLatitude == 0) {
+    return 0;
+  }
+  */
 
   if (mode == 0) {
     // Send -1 to alert GPS signal was unable to be found
@@ -894,37 +949,47 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
         createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
         endTargetY = targetLongitude;
         endTargetX = targetLatitude;
+        createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
       }
-      // Create an submap
-      if () {
-
+      
+      if (updateLocation(currentLongitude, currentLatitude) > 0) {
+        // If subTarget reached, iterate to next point
+        if (updateLocation(currentLongitude, currentLatitude) == 1) {
+          Stop(2);
+          ++currentIndex;
+          createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
+        }
+        else if (updateLocation(currentLongitude, currentLatitude) == 2) {
+          // Destination reached, do something to demonstrate completion like shake head or something idk
+          // shakeHead();
+        }
       }
-      // Use an updateMap function to consistently update the current position on the map
-      // updateLocation(currentLongitude, currentLatitude);
 
       // Check if the current cardinal direction and target cardinal direction is the same
-      while (currentCardinal != targetCardinal) {
+      while (currentCardinal != targetCardinal[currentIndex]) {
         // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
         // Turn Left/Right function to reach target cardinal
+        // Can make it better by having it overflow 1 to 8
+        if (currentCardinal < targetCardinal[currentIndex]) {
+          // Need to turn right
+          int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 43;
+          TurnRight(CardinalDifference)
+        }
+        else if (currentCardinal < targetCardinal[currentIndex]) {
+          // Need to turn left
+          int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 43;
+          TurnRight(CardinalDifference)
+        }
       }
+
       // Check if an object is in front of the rover before moving
       if (checkObjectDetectionFront() < 0) {
-        // Change the heuristic of whichever point is closer
+        // Change the heuristic of whichever point is closer if there is an object detected
         // Point 120 is an exception, it will
       }
       else {
-        // Check if we are in the submap destination
-        // if (createSubMap > 0) {}
-          // Check if we reached the main destination
-          // if (updateLocation > 0) {}
-            // Output notification that we have arrived
-          // else {}
-            // iterate to the next submap
-
-
-        // else {}
         // Move towards destination
-        MoveForward(25);
+        MoveForward(20);
       }
     }
   }
