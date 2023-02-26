@@ -74,13 +74,16 @@ float voltagebias = 0;
 int SOC;
 
 // Misc variables
+float norm;
 int SensorIterator = 0;
+int dataPinIterator = 0;
+int ObjectDetectionIterator = 0;
 
 void initData() {
-  for (i = 22; i <= 28; i += 2) {
-    pinMode(i, INPUT);
-    pinMode(i + 1, OUTPUT);
-    digitalWrite(i, LOW);
+  for (dataPinIterator = 22; dataPinIterator <= 28; dataPinIterator += 2) {
+    pinMode(dataPinIterator, INPUT);
+    pinMode(dataPinIterator + 1, OUTPUT);
+    digitalWrite(dataPinIterator, LOW);
   }
 
   // Initialize IMU
@@ -108,21 +111,21 @@ void initData() {
 // Function to check our object detection sensors as well as the tensorflow model for the front of the rover
 int checkObjectDetectionFront() {
   // Sample the ultrasonic sensors 30 times (Left then Right)
-  for (i = 0; i < 30; ++i) {
+  for (ObjectDetectionIterator = 0; ObjectDetectionIterator < 30; ++ObjectDetectionIterator) {
     digitalWrite(FLsensorIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(FLsensorIN, LOW);
     Leftduration = pulseIn(FLsensorOUT, HIGH);
-    Leftdistance += (Leftduration * 0.034 / 2;)
+    Leftdistance += (Leftduration * 0.034 / 2);
   }
   Leftdistance /= 30;
 
-  for (i = 0; i < 30; ++i) {
+  for (ObjectDetectionIterator = 0; ObjectDetectionIterator < 30; ++ObjectDetectionIterator) {
     digitalWrite(FRsensorIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(FRsensorIN, LOW);
     Rightduration = pulseIn(FRsensorOUT, HIGH);
-    Rightdistance += (Rightduration * 0.034 / 2;)
+    Rightdistance += (Rightduration * 0.034 / 2);
   }
   Rightdistance /= 30;
 
@@ -145,21 +148,21 @@ int checkObjectDetectionFront() {
 // Function to check our object detection sensors for the back of the rover
 int checkObjectDetectionBack() {
   // Sample the ultrasonic sensors 30 times
-  for (i = 0; i < 30; ++i) {
+  for (ObjectDetectionIterator = 0; ObjectDetectionIterator < 30; ++ObjectDetectionIterator) {
     digitalWrite(BLsensorIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(BLsensorIN, LOW);
     Leftduration = pulseIn(BLsensorOUT, HIGH);
-    Leftdistance += (Leftduration * 0.034 / 2;)
+    Leftdistance += (Leftduration * 0.034 / 2);
   }
   Leftdistance /= 30;
 
-  for (i = 0; i < 30; ++i) {
+  for (ObjectDetectionIterator = 0; ObjectDetectionIterator < 30; ++ObjectDetectionIterator) {
     digitalWrite(BRsensorIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(BRsensorIN, LOW);
     Rightduration = pulseIn(BRsensorOUT, HIGH);
-    Rightdistance += (Rightduration * 0.034 / 2;)
+    Rightdistance += (Rightduration * 0.034 / 2);
   }
   Rightdistance /= 30;
 

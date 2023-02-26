@@ -412,7 +412,7 @@ void TurnRight(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues()
+        updateIMUValues();
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -422,7 +422,7 @@ void TurnRight(float angle) {
           }
           delay(2);
         }
-        updateIMUValues()
+        updateIMUValues();
       }
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
@@ -464,7 +464,7 @@ void TurnRight(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues()
+        updateIMUValues();
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -474,7 +474,7 @@ void TurnRight(float angle) {
           }
           delay(2);
         }
-        updateIMUValues()
+        updateIMUValues();
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
@@ -572,7 +572,7 @@ void TurnLeft(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues()
+        updateIMUValues();
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -582,7 +582,7 @@ void TurnLeft(float angle) {
           }
           delay(2);
         }
-        updateIMUValues()
+        updateIMUValues();
       }
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
@@ -624,7 +624,7 @@ void TurnLeft(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues()
+        updateIMUValues();
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -634,7 +634,7 @@ void TurnLeft(float angle) {
           }
           delay(2);
         }
-        updateIMUValues()
+        updateIMUValues();
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
@@ -900,7 +900,7 @@ void createSubMap(float currentX, float currentY, float targetX, float targetY) 
   }
 }
 
-void updateLocation(float currentLong, float currentLat) {
+int updateLocation(float currentLong, float currentLat) {
   // 0.000001 is the tolerance/radius of the actual target coordinates we need to be within to be considered complete
   // This is value of degrees which we can calculate as feet or meters
   if ((currentLong > endTargetX - 0.000005) && (currentLong < endTargetX - 0.000005) && (currentLat > endTargetY - 0.000006) && (currentLat < endTargetY + 0.000006)) {
@@ -973,12 +973,12 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
         if (currentCardinal < targetCardinal[currentIndex]) {
           // Need to turn right
           int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 43;
-          TurnRight(CardinalDifference)
+          TurnRight(CardinalDifference);
         }
         else if (currentCardinal < targetCardinal[currentIndex]) {
           // Need to turn left
           int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 43;
-          TurnRight(CardinalDifference)
+          TurnRight(CardinalDifference);
         }
       }
 
