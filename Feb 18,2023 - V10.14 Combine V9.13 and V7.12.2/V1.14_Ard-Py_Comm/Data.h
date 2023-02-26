@@ -292,6 +292,7 @@ void updateIMUValues() {
     accelY /= -norm;
     accelZ /= -norm;
 
+    /*
     if (abs(gyroZ) < 0.8) {
       gyroZ = 0;
     }
@@ -304,6 +305,7 @@ void updateIMUValues() {
     gyroX *= 0.75;
     gyroY *= 0.75;
     gyroZ *= 0.75;
+    */
 
     compassHeading += (sin(accelX * PI / 2) * gyroX) + (sin(accelY * PI / 2) * gyroY) + (sin(accelZ * PI / 2) * gyroZ);
   }
@@ -394,7 +396,11 @@ float getCardinal() {
 }
 
 // Function returns compass heading
-float getCompassHeading() {
+float getCompassHeading(bool &newTurnFlag) {
+  if (newTurnFlag == true) {
+    compassHeading = 0;
+    newTurnFlag = false;
+  }
   updateIMUValues();
   return(compassHeading);
 }

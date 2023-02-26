@@ -71,6 +71,7 @@ bool fastestMapComplete = false;
 // Turning Variables
 bool overflowFlag, rightTurnOverflow, leftTurnOverflow;
 bool fromZero;
+bool newTurn = false;
 float targetAngle = 0, lowerTargetAngle = 0, upperTargetAngle = 0;
 float angleDifference = 0, currAngle = 0, prevAngle = 0;
 float errorAngle = 2.0;
@@ -349,7 +350,8 @@ void TurnRight(float angle) {
   overflowFlag = false;
 
   // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error
-  currAngle = getCompassHeading();
+  newTurn = true;
+  currAngle = getCompassHeading(newTurn);
   prevAngle = currAngle;
   targetAngle = currAngle + angle;
   upperTargetAngle = targetAngle + errorAngle;
@@ -427,7 +429,7 @@ void TurnRight(float angle) {
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading();
+      currAngle = getCompassHeading(newTurn);
     }
   }
   // No overflow
@@ -478,7 +480,7 @@ void TurnRight(float angle) {
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading();
+      currAngle = getCompassHeading(newTurn);
     }
   }
 
@@ -509,7 +511,8 @@ void TurnLeft(float angle) {
   overflowFlag = false;
 
   // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error  
-  currAngle = getCompassHeading();  
+  newTurn = true;
+  currAngle = getCompassHeading(newTurn);  
   prevAngle = currAngle;
   targetAngle = currAngle - angle;
   lowerTargetAngle = targetAngle - errorAngle;
@@ -587,7 +590,7 @@ void TurnLeft(float angle) {
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading();        
+      currAngle = getCompassHeading(newTurn);        
     }
   }
   // No overflow
@@ -638,7 +641,7 @@ void TurnLeft(float angle) {
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading();  
+      currAngle = getCompassHeading(newTurn);  
     }    
   }
   
