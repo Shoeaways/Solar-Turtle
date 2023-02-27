@@ -45,10 +45,6 @@ def service_unav():
 def home():
     return render_template("Solar Turtle.html", result = "initialized", cmd = "", num = "0")
 
-@app.route('/automated')
-def automated():
-    return render_template("Solar Turtle.html", result = "initialized", cmd = "", num = "0")
-
 # Defining the page that awaits a user input
 @app.route('/getcommand', methods = ['GET', 'POST'])
 def getcommand():
