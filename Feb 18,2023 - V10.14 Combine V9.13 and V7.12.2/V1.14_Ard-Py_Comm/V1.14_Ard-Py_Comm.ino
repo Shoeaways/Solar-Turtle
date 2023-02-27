@@ -159,8 +159,10 @@ void loop() {
       initMovement();
       initData();
       initFlag = false;
-      currentLongitude = getLongitude();
-      currentLatitude = getLatitude();
+      while (currentLongitude == 0 || currentLatitude == 0) {
+        currentLongitude = getLongitude();
+        currentLatitude = getLatitude();
+      }
     }
     if (isAutomated == true) {
       if (message == "") {
