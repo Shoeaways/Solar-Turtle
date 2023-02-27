@@ -18,17 +18,14 @@
   - Code autonomous movement function
     - Create map function
       - Make A*
+    - Create submap function
+
+  - Review IMU 
+    - Testing new lib
 
   (Current Rev)
-  - Code autonomous movement function
-    - Create map function
-      - Create submap function
-
   - Object detection function
     - Connecting to image object detection information from the website
-
-  - Review IMU calibration (Use quarternions)
-    - Check the bounds of the IMU (240/290/270/290)
 
   - GPS
     - Determine what the compass heading points toward (what degree is N/E/S/W)
