@@ -429,7 +429,7 @@ void TurnRight(float angle) {
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading(newTurn);
+      //currAngle = getCompassHeading(newTurn);
     }
   }
   // No overflow
@@ -480,7 +480,7 @@ void TurnRight(float angle) {
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading(newTurn);
+      //currAngle = getCompassHeading(newTurn);
     }
   }
 
@@ -590,7 +590,7 @@ void TurnLeft(float angle) {
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading(newTurn);        
+      //currAngle = getCompassHeading(newTurn);        
     }
   }
   // No overflow
@@ -641,7 +641,7 @@ void TurnLeft(float angle) {
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
-      currAngle = getCompassHeading(newTurn);  
+      //currAngle = getCompassHeading(newTurn);  
     }    
   }
   
