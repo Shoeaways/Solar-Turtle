@@ -725,10 +725,10 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   // In our case the items inside the arrays at indexs: 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120
   
   currentIndex = 0;
-  fastestLat[currentIndex] = currentX;
-  fastestLong[currentIndex] = currentY;
+  fastestLat[currentIndex] = currentY;
+  fastestLong[currentIndex] = currentX;
   beenTo[currentIndex] = 1;
-  heuristicVal[currentIndex] += 9999;
+  heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
   totalPoints = 1;
   
   while(fastestMapComplete == false) {
@@ -754,7 +754,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
@@ -767,7 +767,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
@@ -780,7 +780,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
@@ -793,7 +793,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
@@ -806,7 +806,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
@@ -819,7 +819,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
@@ -832,7 +832,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
@@ -845,7 +845,7 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
         if (heuristicVal[currentIndex + checkArray[i]] < heuristicVal[currentIndex + bestChoice]) {
           bestChoice = checkArray[i];
           if (beenTo[currentIndex + bestChoice] == 1) {
-            heuristicVal[currentIndex] += 9999;
+            heuristicVal[currentIndex] += (heuristicVal[currentIndex] * 9999);
           }
         }
       }
