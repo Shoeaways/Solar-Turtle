@@ -975,12 +975,12 @@ int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitu
         // Can make it better by having it overflow 1 to 8
         if (currentCardinal < targetCardinal[currentIndex]) {
           // Need to turn right
-          int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 43;
+          int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 45;
           TurnRight(CardinalDifference);
         }
         else if (currentCardinal < targetCardinal[currentIndex]) {
           // Need to turn left
-          int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 43;
+          int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
           TurnRight(CardinalDifference);
         }
       }
