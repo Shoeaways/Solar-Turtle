@@ -156,10 +156,25 @@ void loop() {
       initMovement();
       initData();
       initFlag = false;
+
+      if(Serial1.available()) {
+        currentLongitude = getLongitude();
+        currentLatitude = getLatitude();
+        Serial.print(currentLongitude);
+        Serial.print(" ");
+        Serial.print(currentLatitude);
+        Serial.println();
+      }
+      else {
+        Serial.println("Serial1 is not available.");
+      }
+
       while (currentLongitude == 0 || currentLatitude == 0) {
+        MoveReverse(20);
         currentLongitude = getLongitude();
         currentLatitude = getLatitude();
       }
+      Stop(2);
     }
     if (isAutomated == true) {
       if (message == "") {

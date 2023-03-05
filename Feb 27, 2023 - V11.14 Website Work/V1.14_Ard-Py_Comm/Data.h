@@ -31,10 +31,6 @@ int Leftdistance, Rightdistance;
 TinyGPSPlus gps;
 // Pin variables for GPS
 static const int RXPin = 19, TXPin = 18;
-// Baud rate for GPS
-static const uint32_t GPSBaud = 9600;
-// The serial connection to the GPS device
-SoftwareSerial ss(TXPin, RXPin);
 // GPS variables
 float Latitude, Longitude;
 float roverSpeed;
@@ -86,32 +82,13 @@ void initData() {
     digitalWrite(dataPinIterator, LOW);
   }
 
+  // Initialize IMU
   Wire.begin();
   mpu6050.begin();
   mpu6050.calcGyroOffsets(true);
-  
-  /*
-  // Initialize IMU
-  status = IMU.begin();
-  if (status < 0) {
-    // Serial.println("IMU initialization unsuccessful");
-    // Serial.println("Check IMU wiring or try cycling power");
-    // Serial.print("Status: ");
-    // Serial.println(status);
-    // while(1) {}
-  }
-  // setting the accelerometer full scale range to +/-2G 
-  IMU.setAccelRange(MPU9250::ACCEL_RANGE_2G);
-  // setting the gyroscope full scale range to +/-250 deg/s
-  IMU.setGyroRange(MPU9250::GYRO_RANGE_250DPS);
-  // setting DLPF bandwidth to 5 Hz
-  IMU.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_5HZ);
-  // setting SRD to 19 for a 50 Hz update rate
-  IMU.setSrd(19);
-  */
 
   // Initialize GPS
-  Serial1.begin(GPSBaud);  
+  Serial1.begin(9600);  
 }
 
 // Function to check our object detection sensors as well as the tensorflow model for the front of the rover
