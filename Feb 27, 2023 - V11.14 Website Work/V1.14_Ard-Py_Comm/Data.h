@@ -18,7 +18,6 @@ related to data such as GPS values and Roll/Pitch/Yaw.
 // IMU and GPS libraries
 #include "MPU6050_tockn.h"
 #include "TinyGPSPlus.h"
-#include "SoftwareSerial.h"
 
 // Ultrasonic Sensor Pins & Variables
 static const int FLsensorIN = 22, FLsensorOUT = 23;
@@ -31,7 +30,7 @@ int Leftdistance, Rightdistance;
 // The TinyGPSPlus object
 TinyGPSPlus gps;
 // Pin variables for GPS
-static const int RXPin = 17, TXPin = 16;
+static const int RXPin = 19, TXPin = 18;
 // Baud rate for GPS
 static const uint32_t GPSBaud = 9600;
 // The serial connection to the GPS device
@@ -112,7 +111,7 @@ void initData() {
   */
 
   // Initialize GPS
-  ss.begin(GPSBaud);  
+  Serial1.begin(GPSBaud);  
 }
 
 // Function to check our object detection sensors as well as the tensorflow model for the front of the rover
@@ -270,7 +269,7 @@ void updateIMUValues() {
 
 // Function will update GPS values
 void updateGPSValues() {
-  gps.encode(ss.read());
+  gps.encode(Serial1.read());
 
   // GPS Values
   Latitude = gps.location.lat();
