@@ -39,6 +39,14 @@ p {
     pointer-events: none;
     resize: none;
 }
+.ReturnToTop {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    width: 4vw;
+    height: 4vw;
+    opacity: 0;
+}
 
 /* Style the top navigation bar */
 .navbar {
@@ -80,11 +88,13 @@ p {
     display: grid;
     grid-template-columns: 1fr 1fr;
     margin-top: 0px;
+    border: 2px solid #000000;
 }
 /* Style the Main Grid Columns */
 .MainColumn {
     padding: 15px;
     padding-bottom: 25vw;
+    border: 2px solid #000000;
 }
 /* Define the Secondary Grid */
 .SecondaryGrid {
@@ -92,6 +102,7 @@ p {
     grid-column-end: 3;
     float: left;
     padding: 25px;
+    border: 2px solid #000000;
 }
 /* Style the lines under the titles */
 .SecondaryGrid hr {
@@ -104,7 +115,7 @@ p {
     position: relative;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
-    padding-top: 3vw;
+    padding-top: 2vw;
     padding-bottom: 3vw;
     padding-left: 15vw;
     padding-right: 15vw;
@@ -127,20 +138,16 @@ p {
     opacity: 0.3;
     transform:scale(1.07);
 }
-/* Make overlay appear when image is hovered */
-.GroupMembersImageOverlay:hover {
-    opacity: 1;
-}
 
 /* Define the Special Thanks row */
 .SpecialThanksRow {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10vw, 1fr));
     padding-top: 1.5vw;
     padding-bottom: 10vw;
-    padding-left: 15vw;
-    padding-right: 15vw;
+    padding-left: 12.5vw;
+    padding-right: 12.5vw;
 }
 /* Define the Special Thanks Column */
 .SpecialThanksColumn {
@@ -153,6 +160,10 @@ p {
     border-radius: 50%;
     transition: 0.3s ease-in-out;
     backface-visibility: hidden;
+}
+.SpecialThanksImage:hover {
+    opacity: 0.3;
+    transform:scale(1.07);
 }
 
 /* Define a ControlPanel subgrid within the ControlPanel Column */

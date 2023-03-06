@@ -36,6 +36,7 @@
         $(document).ready(function(){
             $(window).scroll(function(){
 				$('.grassFooter').css('opacity', 1 - $(window).scrollTop() / 400);
+				$('.ReturnToTop').css('opacity', -0.3 + $(window).scrollTop() / 400);
 				var scrollPercentage = $(window).scrollTop() / (documentHeight - windowHeight);
 				var newHeight = scrollPercentage * (-250);
             })
@@ -44,16 +45,9 @@
 
 	<script>
         function myFunction() {
-          //var result = {{ result|tojson }};
-          //var cmd = {{ cmd|tojson }};
-		  //var num = {{ num|tojson }};
+          	var cmd = {{ cmd|tojson }};
+		   	var num = {{ num|tojson }};
 
-			//if (result == "initialized") {
-			//	document.getElementById("InitCheck").innerHTML = " - Initialized";
-			//}
-			//else if (result == "not initialized") {
-			//	document.getElementById("InitCheck").innerHTML = " - Not Initialized, please initialize";
-			//}
 			LongLat = "Test Long , Test Lat";
 			document.getElementById("LongLat").innerHTML = LongLat;
 
@@ -89,38 +83,38 @@
 				}
 			else if (cmd == "panel") {
 				outputString = "Moving the solar panel to " + " degrees";
-				}
+			}
 			else if (cmd == "forward") {
 				outputString = "Moving forward at " + "% speed";
-				}
+			}
 			else if (cmd == "reverse") {
 				outputString = "Moving reverse at " + "% speed";
-				}
+			}
 			else if (cmd == "left") {
 				outputString = "Turning left " + " degrees";
-				}
+			}
 			else if (cmd == "right") {
 				outputString = "Turning right " + " degrees";
-				}
+			}
 			else if (cmd == "error") {
 				outputString = "Changing error";
-				}
+			}
 			else if (cmd == "stop") {
 				outputString = "Stopping";
-				}
+			}
 			else if (cmd == "invalid") {
 				outputString = "Invalid command, try again";
-				}
-				else {
+			}
+			else {
 				outputString = "test";
-				}
+			}
 			document.getElementById("cmd").innerHTML = outputString;
 		}
     </script>
 </head>
 
 <body onload = "myFunction()">
-    <div style="overflow: hidden;" class="navbar" id = "top">
+    <div style="overflow: hidden;" class="navbar" id = "Top">
         <div class="NavbarRow">
             <a style = "font-size: 20px" class = "NavbarColumn" href = "#What is">What is S.O.L.A.R. Turtle?</a>
             <a style = "font-size: 20px" class = "NavbarColumn" href = "#Demo Video">Demo Video - Updated DD/MM/YY</a>
@@ -181,60 +175,78 @@
         </div>
 
 		<div style = "text-align: center; font-size: 16px;" class = "SecondaryGrid">
-			<p id = "What is"></p><br>
-            <h1>
-                What is S.O.L.A.R. Turtle?
-            </h1>
-            <hr style = "width: 33vw;">
-			The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area. 
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+			<div style = "margin-bottom: 120px;">
+				<p id = "What is"></p><br>
+				<h1>
+					What is S.O.L.A.R. Turtle?
+				</h1>
+				<hr style = "width: 33vw;">
+				<p style="margin-left: 16vw; margin-right: 16vw; text-align: justify; ">
+					The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area.
+					Designed by a team of Electrical Engineers, the current prototype is able to traverse to a given Longitude and Latitude using an A* algorithm and object detection with 
+					a lifetime of 6+ hours depending on the speed and terrain. Using a self actuating solar panel and a self-programmed sleep algorithm, the rover is capable of any journey no matter how long it takes, given the end point is 
+					a feasible destination. 
+				</p>
+			</div>	
 			
-			<p id = "Demo Video"></p><br>
-			<h1>
-				Demo Video
-			</h1>
-			<hr style="width: 15vw;">
-			<div  class = "demoiframe-container" style = "width: 75vw; margin: auto; margin-top: 50px; margin-bottom: 50px;" >
-				<iframe class = "responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+			<div style = "margin-bottom: 120px;">
+				<p id = "Demo Video"></p><br>
+				<h1>
+					Demo Video
+				</h1>
+				<hr style="width: 15vw;">
+				<video width="1250vw" height="750vw" controls>
+					<source src = "static/Rick.mp4" type = "video/mp4">
+					Your browser does not support the video tag.
+				</video>	
 			</div>
+			
+			<div>
+				<p id = "Group Members"></p><br>
+				<h1>
+					Meet the Team
+				</h1>
+				<hr style = "width: 20vw;">
+				<div class = "GroupMembersRow">
+					<div class = "GroupMembersColumn">
+						<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
+						<p>Dennis Kang</p>
+					</div>
+					<div class = "GroupMembersColumn">
+						<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
+						<p>Eric Shu</p>
+					</div>
+					<div class = "GroupMembersColumn">
+						<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
+						<p>Patrick Webb</p>
+					</div>
+				</div>
 
-			<p id = "Group Members"></p><br>
-			<h1>
-				Meet the Team
-			</h1>
-			<hr style = "width: 20vw;">
-			<div class = "GroupMembersRow">
-				<div class = "GroupMembersColumn">
-					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
-					<p>Dennis Kang</p>
-				</div>
-				<div class = "GroupMembersColumn">
-					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
-					<p>Eric Shu</p>
-				</div>
-				<div class = "GroupMembersColumn">
-					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
-					<p>Patrick Webb</p>
-				</div>
-			</div>
-
-			<h3>
-				Special Thanks To
-			</h3>
-			<div class = "SpecialThanksRow">
-				<div class = "SpecialThanksColumn">
-					<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "SpecialThanksImage" src = "static/DennisLinkedin.jpg"></a>
-				</div>
-				<div class = "SpecialThanksColumn">
-					<a href = "https://www.linkedin.com/in/eyshu/"><img class = "SpecialThanksImage" src = "static/EricLinkedin.jpg"></a>
-				</div>
-				<div class = "SpecialThanksColumn">
-					<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "SpecialThanksImage" src = "static/PatrickLinkedin.jpg"></a>
+				<h3>
+					Special Thanks To
+				</h3>
+				<div class = "SpecialThanksRow">
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/vahagnt/"><img class = "SpecialThanksImage" src = "static/PatrickLinkedin.jpg"></a>
+						<p>Vahagn Tovmasian</p>
+					</div>
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "SpecialThanksImage" src = "static/PatrickLinkedin.jpg"></a>
+						<p>Sunny Zeng</p>
+					</div>
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "SpecialThanksImage" src = "static/PatrickLinkedin.jpg"></a>
+						<p>Brandon Alcala</p>
+					</div>
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "SpecialThanksImage" src = "static/PatrickLinkedin.jpg"></a>
+						<p>Neo Marin</p>
+					</div>
 				</div>
 			</div>
 		</div>
     </div>
+	<a href = "#Top"><img class = "ReturnToTop" src = "static/top.png"></a>
     <div class = "grassFooter"></div>
-	<a href = "#Top">Return to the top</a>
 </body>
 </html>

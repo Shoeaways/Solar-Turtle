@@ -21,6 +21,15 @@ app = Flask(__name__)
 global arduino
 arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
 
+# Initialize data list variables
+Longitude = " "
+Latitude = " "
+CompassHeading = " "
+RoverSpeed = " "
+PanelAngle = " "
+PanelPower = " "
+SystemPower = " "
+
 # App Error handlers
 """
 @app.errorhandler(400)
@@ -43,7 +52,7 @@ def service_unav():
 # Defining home page of app 
 @app.route('/')
 def home():
-    return render_template("Solar Turtle.html", result = "initialized", cmd = "", num = "0")
+    return render_template("Solar Turtle.html", cmd = "", num = "0")
 
 # Defining the page that awaits a user input
 @app.route('/getcommand', methods = ['GET', 'POST'])
@@ -66,7 +75,7 @@ def getcommand():
             tempcmd = cmdtemp[1]
         # If none of the above are true, return incorrect command message
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid", num = "0")
+            return render_template("Solar Turtle.html", cmd = "invalid", num = "0")
         
         cmd = tempcmd.lower()
 
@@ -75,7 +84,7 @@ def getcommand():
             num = "0"
         
         elif cmd == "help":
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "help", num = str(num))
+            return render_template("Solar Turtle.html", cmd = "help", num = str(num))
 
         # If panel command is called, update the panel text
         elif cmd == "panel":
@@ -139,7 +148,7 @@ def getcommand():
 
         # If any other command is called, it is invalid and runs back around to the top code  
         else:
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "invalid", num = "0")
+            return render_template("Solar Turtle.html", cmd = "invalid", num = "0")
 
         # Send arduino the command
         arduino.write(cmd.encode())    
@@ -149,10 +158,10 @@ def getcommand():
         # If data is called, split the string into our data list and output
         if cmd == "data":
             dataList = answer.split("~")
-            return render_template("Solar Turtle.html", result = "initialized", cmd = "data", num = str(num), dataList = jsonify(dataList))                            
+            return render_template("Solar Turtle.html", cmd = "data", num = str(num))                            
         else:
             print(answer)
-            return render_template("Solar Turtle.html", result = "initialized", cmd = tempcmd, num = str(num))                    
+            return render_template("Solar Turtle.html", cmd = tempcmd, num = str(num))                    
     else:
         return redirect(url_for(home))
 
