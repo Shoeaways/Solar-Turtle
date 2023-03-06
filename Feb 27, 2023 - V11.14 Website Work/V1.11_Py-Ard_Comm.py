@@ -52,7 +52,7 @@ def service_unav():
 # Defining home page of app 
 @app.route('/')
 def home():
-    return render_template("Solar Turtle.html", cmd = "", num = "0")
+    return render_template("Solar Turtle.html", cmd = "", num = "0", Longitude = Longitude, Latitude = Latitude, CompassHeading = CompassHeading, RoverSpeed = RoverSpeed, PanelAngle = PanelAngle, PanelPower = PanelPower, SystemPower = SystemPower)
 
 # Defining the page that awaits a user input
 @app.route('/getcommand', methods = ['GET', 'POST'])
@@ -75,7 +75,7 @@ def getcommand():
             tempcmd = cmdtemp[1]
         # If none of the above are true, return incorrect command message
         else:
-            return render_template("Solar Turtle.html", cmd = "invalid", num = "0")
+            return render_template("Solar Turtle.html", cmd = "invalid", num = "0", Longitude = Longitude, Latitude = Latitude, CompassHeading = CompassHeading, RoverSpeed = RoverSpeed, PanelAngle = PanelAngle, PanelPower = PanelPower, SystemPower = SystemPower)
         
         cmd = tempcmd.lower()
 
@@ -84,7 +84,7 @@ def getcommand():
             num = "0"
         
         elif cmd == "help":
-            return render_template("Solar Turtle.html", cmd = "help", num = str(num))
+            return render_template("Solar Turtle.html", cmd = "help", num = str(num), Longitude = Longitude, Latitude = Latitude, CompassHeading = CompassHeading, RoverSpeed = RoverSpeed, PanelAngle = PanelAngle, PanelPower = PanelPower, SystemPower = SystemPower)
 
         # If panel command is called, update the panel text
         elif cmd == "panel":
@@ -148,7 +148,7 @@ def getcommand():
 
         # If any other command is called, it is invalid and runs back around to the top code  
         else:
-            return render_template("Solar Turtle.html", cmd = "invalid", num = "0")
+            return render_template("Solar Turtle.html", cmd = "invalid", num = "0", Longitude = Longitude, Latitude = Latitude, CompassHeading = CompassHeading, RoverSpeed = RoverSpeed, PanelAngle = PanelAngle, PanelPower = PanelPower, SystemPower = SystemPower)
 
         # Send arduino the command
         arduino.write(cmd.encode())    
@@ -158,10 +158,10 @@ def getcommand():
         # If data is called, split the string into our data list and output
         if cmd == "data":
             dataList = answer.split("~")
-            return render_template("Solar Turtle.html", cmd = "data", num = str(num))                            
+            return render_template("Solar Turtle.html", cmd = "data", num = str(num), Longitude = Longitude, Latitude = Latitude, CompassHeading = CompassHeading, RoverSpeed = RoverSpeed, PanelAngle = PanelAngle, PanelPower = PanelPower, SystemPower = SystemPower)                            
         else:
             print(answer)
-            return render_template("Solar Turtle.html", cmd = tempcmd, num = str(num))                    
+            return render_template("Solar Turtle.html", cmd = tempcmd, num = str(num), Longitude = Longitude, Latitude = Latitude, CompassHeading = CompassHeading, RoverSpeed = RoverSpeed, PanelAngle = PanelAngle, PanelPower = PanelPower, SystemPower = SystemPower)                    
     else:
         return redirect(url_for(home))
 
