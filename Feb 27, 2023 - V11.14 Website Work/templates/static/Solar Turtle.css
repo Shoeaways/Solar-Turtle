@@ -2,6 +2,9 @@
     box-sizing: border-box;
 }
 body {
+    background-image: url(background.png);
+    background-repeat: repeat-y;
+    background-size: contain;
     font-size: 16px;
     margin: 0;
     padding: 0;
@@ -88,13 +91,11 @@ p {
     display: grid;
     grid-template-columns: 1fr 1fr;
     margin-top: 0px;
-    border: 2px solid #000000;
 }
 /* Style the Main Grid Columns */
 .MainColumn {
     padding: 15px;
     padding-bottom: 25vw;
-    border: 2px solid #000000;
 }
 /* Define the Secondary Grid */
 .SecondaryGrid {
@@ -102,7 +103,6 @@ p {
     grid-column-end: 3;
     float: left;
     padding: 25px;
-    border: 2px solid #000000;
 }
 /* Style the lines under the titles */
 .SecondaryGrid hr {
@@ -116,7 +116,7 @@ p {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
     padding-top: 2vw;
-    padding-bottom: 3vw;
+    padding-bottom: 6vw;
     padding-left: 15vw;
     padding-right: 15vw;
 }
@@ -143,7 +143,7 @@ p {
 .SpecialThanksRow {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10vw, 1fr));
+    grid-template-columns: repeat(4, minmax(10vw, 1fr));
     padding-top: 1.5vw;
     padding-bottom: 10vw;
     padding-left: 12.5vw;
