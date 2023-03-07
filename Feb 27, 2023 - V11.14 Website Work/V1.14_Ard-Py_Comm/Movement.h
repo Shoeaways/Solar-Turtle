@@ -374,7 +374,7 @@ void TurnRight(float angle) {
     //lowerTargetAngle -= errorAngle;
     //upperTargetAngle += errorAngle;         
     while (((currAngle + 360) < lowerTargetAngle) || ((currAngle + 360) > upperTargetAngle)) {
-      Serial.println(currAngle);
+      // Serial.println(currAngle);
       // Checks if the IMU overflowed from 360 to 0
       if (abs(prevAngle - currAngle) > 150) {
         overflowFlag = true;
@@ -416,7 +416,7 @@ void TurnRight(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -426,7 +426,7 @@ void TurnRight(float angle) {
           }
           delay(2);
         }
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
@@ -588,7 +588,7 @@ void TurnLeft(float angle) {
           }
           delay(2);
         }
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Update variables and recapture the current compass reading
       prevAngle = currAngle;
@@ -640,7 +640,7 @@ void TurnLeft(float angle) {
           }
           delay(2);
         }
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
@@ -694,6 +694,15 @@ void createMap(double currentX, double currentY, double targetX, double targetY)
       heuristicVal[temp] = sqrt((((mapLat[temp] - targetY) * 8.787) * ((mapLat[temp] - targetY) * 8.787) + ((mapLong[temp] - targetX) * 11.1045) * ((mapLong[temp] - targetX) * 11.1045)));
       beenTo[temp] = 0;
     }
+  }
+
+  for (i = 0; i < 11; ++i) {
+    for (j = 0; j < 11; ++j) {
+      temp = ((i * 11) + j);
+      Serial.print(heuristicVal[temp]);
+      Serial.print(" ");
+    }
+    Serial.println();
   }
 
   // Uncomment these to create artifical heuristic changes
@@ -1007,7 +1016,6 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         // Move towards destination
         Serial.println("Moving Forward");
         MoveForward(20);
-        
       }
     }
   }
