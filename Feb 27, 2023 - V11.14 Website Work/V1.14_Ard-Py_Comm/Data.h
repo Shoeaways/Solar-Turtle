@@ -320,6 +320,7 @@ float getCompassHeading(bool &newTurnFlag) {
     newTurnFlag = false;
   }
   mpu6050.update();
+  compassHeading = mpu6050.getAngleZ();
   return(compassHeading);
 }
 
