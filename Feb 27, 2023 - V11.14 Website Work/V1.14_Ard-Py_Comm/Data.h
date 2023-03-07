@@ -32,8 +32,8 @@ TinyGPSPlus gps;
 // Pin variables for GPS
 static const int RXPin = 19, TXPin = 18;
 // GPS variables
-float Latitude, Longitude;
-float roverSpeed;
+double Latitude, Longitude;
+double roverSpeed;
 
 // Setup IMU connection
 MPU6050 mpu6050(Wire);

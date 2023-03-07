@@ -47,20 +47,20 @@ float optimalAngle = 0;
 float readPower = 0;
 
 // MoveTo Function Variables
-float LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
-float endTargetX = 0, endTargetY = 0;
-float subTargetX = 0, subTargetY = 0;
+double LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
+double endTargetX = 0, endTargetY = 0;
+double subTargetX = 0, subTargetY = 0;
 int currentCardinal;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 int targetCardinal[128];
 int North = 1, NorthEast = 2, East = 3, SouthEast = 4, South = 5, SouthWest = 6, West = 7, NorthWest = 8;
 bool mapExists = false;
 
 // A* Variables
-float mapLong[128];
-float mapLat[128];
-float heuristicVal[128];
-float fastestLong[128];
-float fastestLat[128];
+double mapLong[128];
+double mapLat[128];
+double heuristicVal[128];
+double fastestLong[128];
+double fastestLat[128];
 int beenTo[128];
 int checkArray[8];
 int totalPoints;
@@ -674,10 +674,10 @@ void exitSleep() {
 // Determine what direction it is so the rover begins in the right direction
 // Populate map function to target (For A*)
 // Need to make it so that beenTo = 1 just increases the heuristic by a small margin
-void createMap(float currentX, float currentY, float targetX, float targetY) {
+void createMap(double currentX, double currentY, double targetX, double targetY) {
   int temp;
-  float xdifference = targetX - currentX;
-  float ydifference = targetY - currentY;
+  double xdifference = targetX - currentX;
+  double ydifference = targetY - currentY;
   xdifference /= 10.0;
   ydifference /= 10.0;
 
@@ -725,8 +725,8 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
   // In our case the items inside the arrays at indexs: 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120
   
   currentIndex = 0;
-  fastestLat[currentIndex] = currentX;
-  fastestLong[currentIndex] = currentY;
+  fastestLat[currentIndex] = currentY;
+  fastestLong[currentIndex] = currentX;
   beenTo[currentIndex] = 1;
   heuristicVal[currentIndex] += 9999;
   totalPoints = 1;
@@ -896,14 +896,14 @@ void createMap(float currentX, float currentY, float targetX, float targetY) {
 }
 
 // Create sub maps inside the map function.
-void createSubMap(float currentX, float currentY, float targetX, float targetY) {
+void createSubMap(double currentX, double currentY, double targetX, double targetY) {
   if (currentIndex < (totalPoints + 1)) {
     subTargetX = fastestLong[currentIndex];
     subTargetY = fastestLat[currentIndex];
   }
 }
 
-int updateLocation(float currentLong, float currentLat) {
+int updateLocation(double currentLong, double currentLat) {
   // 0.000001 is the tolerance/radius of the actual target coordinates we need to be within to be considered complete
   // This is value of degrees which we can calculate as feet or meters
   if ((currentLong > endTargetX - 0.000005) && (currentLong < endTargetX - 0.000005) && (currentLat > endTargetY - 0.000006) && (currentLat < endTargetY + 0.000006)) {
@@ -920,7 +920,7 @@ int updateLocation(float currentLong, float currentLat) {
 }
 
 // Autonomous movement function
-int MoveTo(float &currentLongitude, float &currentLatitude, float &targetLongitude, float &targetLatitude, int mode) {
+int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLongitude, double &targetLatitude, int mode) {
   currentLongitude = getLongitude();
   currentLatitude = getLatitude();
   currentCardinal = getCardinal();
