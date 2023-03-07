@@ -83,8 +83,8 @@ int checkSOCIterator = 0;
 
 // Movement automation flags
 bool isAutomated = true;
-float currentLongitude = 0, currentLatitude = 0;
-float targetLongitude, targetLatitude; 
+double currentLongitude = 0, currentLatitude = 0;
+double targetLongitude, targetLatitude; 
 int MoveStatus = 0;
 
 // Start serial with 9600 baud rate on Arduino power up
