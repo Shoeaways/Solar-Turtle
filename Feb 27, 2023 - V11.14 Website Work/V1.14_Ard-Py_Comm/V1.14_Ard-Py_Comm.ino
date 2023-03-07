@@ -181,6 +181,9 @@ void loop() {
         Serial.println();
       }
       Stop(2);
+      double targetLong = currentLongitude + 0.000225;
+      double targetLat = currentLatitude + 0.000285; 
+      createMap(currentLongitude, currentLatitude, targetLong, targetLat);
     }
     if (isAutomated == true) {
       Serial.println(message);
@@ -232,6 +235,7 @@ void loop() {
         else {
           // This means everything is working as intended
           // Report anything needed to be reported
+          Serial.println("EVERYTHIG IS WORKING");
         }
       }
       else {

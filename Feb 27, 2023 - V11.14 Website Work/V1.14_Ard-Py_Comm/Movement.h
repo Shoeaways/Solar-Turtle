@@ -50,10 +50,10 @@ float readPower = 0;
 double LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 double endTargetX = 0, endTargetY = 0;
 double subTargetX = 0, subTargetY = 0;
-int currentCardinal;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
+int currentCardinal = 1;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 int targetCardinal[128];
 int North = 1, NorthEast = 2, East = 3, SouthEast = 4, South = 5, SouthWest = 6, West = 7, NorthWest = 8;
-bool mapExists = false;
+bool mapExists = true;
 
 // A* Variables
 double mapLong[128];
@@ -437,7 +437,7 @@ void TurnRight(float angle) {
   // No overflow
   else {
     while((currAngle < lowerTargetAngle) || (currAngle > upperTargetAngle)) {
-      Serial.println(currAngle);
+      //Serial.println(currAngle);
       // Calculate remaining distance from target angle
       angleDifference = targetAngle - currAngle;
       angleDifference = abs(angleDifference); // This just accounts for overshoot or left turns 
@@ -679,10 +679,19 @@ void exitSleep() {
 // Need to make it so that beenTo = 1 just increases the heuristic by a small margin
 void createMap(double currentX, double currentY, double targetX, double targetY) {
   int temp;
+
+  Serial.println(currentX, 8);
+  Serial.println(currentY, 8);
+  Serial.println(targetX, 8);
+  Serial.println(targetY, 8);
+
   double xdifference = targetX - currentX;
   double ydifference = targetY - currentY;
   xdifference /= 10.0;
   ydifference /= 10.0;
+
+  Serial.println(xdifference, 8);
+  Serial.println(ydifference, 8);
 
   // Populates the arrays with the map, with the first item in both arrays as the start point and the last item in both arrays as the end point
   // Map consists of 11 x 11, each point spaced evenly in the X and Y direction
@@ -691,7 +700,7 @@ void createMap(double currentX, double currentY, double targetX, double targetY)
       temp = ((i * 11) + j);
       mapLong[temp] = (currentX + (xdifference * j));
       mapLat[temp] = (currentY + (ydifference * i));
-      heuristicVal[temp] = sqrt((((mapLat[temp] - targetY) * 8.787) * ((mapLat[temp] - targetY) * 8.787) + ((mapLong[temp] - targetX) * 11.1045) * ((mapLong[temp] - targetX) * 11.1045)));
+      heuristicVal[temp] = 10000.0 * sqrt((((mapLat[temp] - targetY) * 8.787) * ((mapLat[temp] - targetY) * 8.787) + ((mapLong[temp] - targetX) * 11.1045) * ((mapLong[temp] - targetX) * 11.1045)));
       beenTo[temp] = 0;
     }
   }
@@ -699,8 +708,12 @@ void createMap(double currentX, double currentY, double targetX, double targetY)
   for (i = 0; i < 11; ++i) {
     for (j = 0; j < 11; ++j) {
       temp = ((i * 11) + j);
-      Serial.print(heuristicVal[temp]);
+      Serial.print(heuristicVal[temp], 8);
       Serial.print(" ");
+      //Serial.print(mapLong[temp], 8);
+      //Serial.print(",");
+      //Serial.print(mapLat[temp], 8);
+      //Serial.print(" ");
     }
     Serial.println();
   }
@@ -935,13 +948,16 @@ int updateLocation(double currentLong, double currentLat) {
 int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLongitude, double &targetLatitude, int mode) {
   currentLongitude = getLongitude();
   currentLatitude = getLatitude();
-  currentCardinal = getCardinal();
+  //currentCardinal = getCardinal();
 
   // FOR DEMO SET THE TARGET TO ~25x25 METERS AWAY
   if (targetLongitude == 0 || targetLatitude == 0) {
     targetLongitude = currentLongitude + 0.000225;
     targetLatitude = currentLatitude + 0.000285;
     currentCardinal = North;
+    Serial.print(targetLongitude, 8);
+    Serial.print(" ");
+    Serial.println(targetLatitude, 8);
   }
 
   // FOR ACTUAL
@@ -984,6 +1000,7 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
       }
 
       // Check if the current cardinal direction and target cardinal direction is the same
+
       while (currentCardinal != targetCardinal[currentIndex]) {
         // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
         // Turn Left/Right function to reach target cardinal
@@ -999,12 +1016,16 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         else if (currentCardinal < targetCardinal[currentIndex]) {
           // Need to turn left
           int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
-          TurnRight(CardinalDifference);
+          TurnLeft(CardinalDifference);
           currentCardinal = targetCardinal[currentIndex];
           Stop(2);
         }
         Serial.println("DOOR STUCK");
       }
+
+      Serial.println("Moving Forward");
+      MoveForward(20);
+      return 0;
 
       // Check if an object is in front of the rover before moving
       if (checkObjectDetectionFront() < 0) {
@@ -1016,6 +1037,7 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         // Move towards destination
         Serial.println("Moving Forward");
         MoveForward(20);
+        return 0;
       }
     }
   }
