@@ -12,8 +12,8 @@ related to movement using our DC/Servo Motors.
 #include "Data.h"
 
 // Motor Pins
-static const int Motor1PWM = 11, Motor1Forward = 14, Motor1Reverse = 15;
-static const int Motor2PWM = 10, Motor2Forward = 9, Motor2Reverse = 8;
+static const int Motor1PWM = 11, Motor1Forward = 15, Motor1Reverse = 14;
+static const int Motor2PWM = 10, Motor2Forward = 8, Motor2Reverse = 9;
 static const int Motor3PWM = 5, Motor3Forward = 6, Motor3Reverse = 7;
 static const int Motor4PWM = 4, Motor4Forward = 2 ,Motor4Reverse = 3;
 
@@ -331,6 +331,7 @@ void Stop(int num) {
 
 // Turn Right x amount of degrees
 void TurnRight(float angle) {
+  Serial.println("Turning Right");
   // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
@@ -373,6 +374,7 @@ void TurnRight(float angle) {
     //lowerTargetAngle -= errorAngle;
     //upperTargetAngle += errorAngle;         
     while (((currAngle + 360) < lowerTargetAngle) || ((currAngle + 360) > upperTargetAngle)) {
+      Serial.println(currAngle);
       // Checks if the IMU overflowed from 360 to 0
       if (abs(prevAngle - currAngle) > 150) {
         overflowFlag = true;
@@ -392,7 +394,7 @@ void TurnRight(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50);   
+        turnSpeed = ((angleDifference/angle) * 50) + 25;   
       }
 
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -435,6 +437,7 @@ void TurnRight(float angle) {
   // No overflow
   else {
     while((currAngle < lowerTargetAngle) || (currAngle > upperTargetAngle)) {
+      Serial.println(currAngle);
       // Calculate remaining distance from target angle
       angleDifference = targetAngle - currAngle;
       angleDifference = abs(angleDifference); // This just accounts for overshoot or left turns 
@@ -444,7 +447,7 @@ void TurnRight(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50);   
+        turnSpeed = ((angleDifference/angle) * 50) + 25;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -553,7 +556,7 @@ void TurnLeft(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50);   
+        turnSpeed = ((angleDifference/angle) * 50) + 25;   
       }
                   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -605,7 +608,7 @@ void TurnLeft(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50);   
+        turnSpeed = ((angleDifference/angle) * 50) + 25;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -949,13 +952,16 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
       LKSLatitude = currentLatitude;
       // Map out destination if a current map doesn't exist
       if (mapExists == false) {
+        Serial.println("Creating A* Map");
         createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
+        mapExists = true;
         endTargetY = targetLongitude;
         endTargetX = targetLatitude;
         createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
       }
       
       if (updateLocation(currentLongitude, currentLatitude) > 0) {
+        Serial.println("Updating Location");
         // If subTarget reached, iterate to next point
         if (updateLocation(currentLongitude, currentLatitude) == 1) {
           Stop(2);
@@ -975,24 +981,33 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         // Can make it better by having it overflow 1 to 8
         if (currentCardinal < targetCardinal[currentIndex]) {
           // Need to turn right
-          int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 43;
+          int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 45;
           TurnRight(CardinalDifference);
+          currentCardinal = targetCardinal[currentIndex];
+          Stop(2);
+          Serial.println("Target turn Reached");
         }
         else if (currentCardinal < targetCardinal[currentIndex]) {
           // Need to turn left
-          int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 43;
+          int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
           TurnRight(CardinalDifference);
+          currentCardinal = targetCardinal[currentIndex];
+          Stop(2);
         }
+        Serial.println("DOOR STUCK");
       }
 
       // Check if an object is in front of the rover before moving
       if (checkObjectDetectionFront() < 0) {
         // Change the heuristic of whichever point is closer if there is an object detected
         // Point 120 is an exception, it will
+        Serial.println("SOMETHING IS IN FRONT MOVE BITCH");
       }
       else {
         // Move towards destination
+        Serial.println("Moving Forward");
         MoveForward(20);
+        
       }
     }
   }

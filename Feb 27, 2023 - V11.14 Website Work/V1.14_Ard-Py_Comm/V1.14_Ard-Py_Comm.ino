@@ -90,6 +90,7 @@ int MoveStatus = 0;
 // Start serial with 9600 baud rate on Arduino power up
 void setup() {
   Serial.begin(9600);
+  Serial1.begin(9600);
 }
 
 void loop() {
@@ -160,6 +161,7 @@ void loop() {
       if(Serial1.available()) {
         currentLongitude = getLongitude();
         currentLatitude = getLatitude();
+        Serial.println();
         Serial.print(currentLongitude);
         Serial.print(" ");
         Serial.print(currentLatitude);
@@ -173,10 +175,16 @@ void loop() {
         MoveReverse(20);
         currentLongitude = getLongitude();
         currentLatitude = getLatitude();
+        Serial.print(currentLongitude);
+        Serial.print(" ");
+        Serial.print(currentLatitude);
+        Serial.println();
       }
       Stop(2);
     }
     if (isAutomated == true) {
+      Serial.println(message);
+      message = "";
       if (message == "") {
         // Panel Iterator will allow us to delay how often the solar panel runs automation
         // Realistically we would poll this every ~30-45 minutes instead of every ~30 seconds

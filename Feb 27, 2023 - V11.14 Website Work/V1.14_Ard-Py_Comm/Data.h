@@ -241,7 +241,7 @@ int checkSOC() {
 // Function will update IMU and GPS values
 void updateIMUValues() {
   mpu6050.update();
-  compassHeading = mpu6050.getAngleZ();
+  compassHeading = -mpu6050.getAngleZ();
 }
 
 // Function will update GPS values
@@ -249,8 +249,8 @@ void updateGPSValues() {
   gps.encode(Serial1.read());
 
   // GPS Values
-  Latitude = gps.location.lat();
-  Longitude = gps.location.lng();
+  Latitude = gps.location.lng();
+  Longitude = gps.location.lat();
   roverSpeed = gps.speed.mps(); 
 }
 
@@ -320,7 +320,7 @@ float getCompassHeading(bool &newTurnFlag) {
     newTurnFlag = false;
   }
   mpu6050.update();
-  compassHeading = mpu6050.getAngleZ();
+  compassHeading = -mpu6050.getAngleZ();
   return(compassHeading);
 }
 
