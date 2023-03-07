@@ -466,7 +466,7 @@ void TurnRight(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -476,7 +476,7 @@ void TurnRight(float angle) {
           }
           delay(2);
         }
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Update variables and recapture the current compass reading
       brakeVar = turnSpeed;
@@ -575,7 +575,7 @@ void TurnLeft(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Otherwise, we will slow down from the previous speed
       else {
@@ -627,7 +627,7 @@ void TurnLeft(float angle) {
           }
         }
         fromZero = false;
-        updateIMUValues();
+        currAngle = getCompassHeading(newTurn);
       }
       // Otherwise, we will slow down from the previous speed
       else {
