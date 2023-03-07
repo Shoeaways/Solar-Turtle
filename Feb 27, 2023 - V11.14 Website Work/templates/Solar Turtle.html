@@ -4,6 +4,7 @@
 	<title>Solar Hub</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+	<meta http-equiv="refresh" content="30" />
 	<link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
 	<link rel="stylesheet" href="static/Solar Turtle.css">
 	
@@ -47,6 +48,13 @@
         function myFunction() {
           	var cmd = {{ cmd|tojson }};
 		   	var num = {{ num|tojson }};
+			var Longitude = {{ Longitude|tojson }};
+			var Latitude = {{ Latitude|tojson }};
+			var CompassHeading = {{ CompassHeading|tojson }};
+			var RoverSpeed = {{ RoverSpeed|tojson }};
+			var PanelAngle = {{ PanelAngle|tojson }};
+			var PanelPower = {{ PanelPower|tojson }};
+			var SystemPower = {{ SystemPower|tojson }};
 
 			LongLat = "Test Long , Test Lat";
 			document.getElementById("LongLat").innerHTML = LongLat;
