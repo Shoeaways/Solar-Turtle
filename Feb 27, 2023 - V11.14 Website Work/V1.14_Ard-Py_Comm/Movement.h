@@ -332,7 +332,7 @@ void Stop(int num) {
 
 // Turn Right x amount of degrees
 void TurnRight(float angle) {
-  Serial.println("Turning Right");
+  // Serial.println("Turning Right");
   // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
     for (j = 0; j < 4; ++j) {
@@ -392,10 +392,10 @@ void TurnRight(float angle) {
   
       // Set speed based on percent distance remaining
       if (angleDifference/angle >= 1) {
-        turnSpeed = 25;
+        turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 25) + 5;   
+        turnSpeed = ((angleDifference/angle) *40) + 15;   
       }
 
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -445,10 +445,10 @@ void TurnRight(float angle) {
   
       // Set speed based on percent distance remaining      
       if (angleDifference/angle >= 1) {
-        turnSpeed = 25;
+        turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 25) + 5;   
+        turnSpeed = ((angleDifference/angle) * 40) + 15;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -554,10 +554,10 @@ void TurnLeft(float angle) {
       
       // Set speed based on percent distance remaining
       if (angleDifference/angle >= 1) {
-        turnSpeed = 25;
+        turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 25) + 5;   
+        turnSpeed = ((angleDifference/angle) * 40) + 15;   
       }
                   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -606,10 +606,10 @@ void TurnLeft(float angle) {
   
       // Set speed based on percent distance remaining      
       if (angleDifference/angle >= 1) {
-        turnSpeed = 25;
+        turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 25) + 5;   
+        turnSpeed = ((angleDifference/angle) * 40) + 15;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -950,16 +950,6 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
   currentLongitude = getLongitude();
   currentLatitude = getLatitude();
   //currentCardinal = getCardinal();
-
-  // FOR DEMO SET THE TARGET TO ~25x25 METERS AWAY
-  if (targetLongitude == 0 || targetLatitude == 0) {
-    targetLongitude = currentLongitude + 0.000225;
-    targetLatitude = currentLatitude + 0.000285;
-    currentCardinal = North;
-    Serial.print(targetLongitude, 8);
-    Serial.print(" ");
-    Serial.println(targetLatitude, 8);
-  }
 
   // FOR ACTUAL
   /*
