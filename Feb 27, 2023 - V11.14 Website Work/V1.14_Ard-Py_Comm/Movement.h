@@ -395,7 +395,7 @@ void TurnRight(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 25;   
+        turnSpeed = ((angleDifference/angle) * 50) + 30;   
       }
 
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -448,7 +448,7 @@ void TurnRight(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 25;   
+        turnSpeed = ((angleDifference/angle) * 50) + 30;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -557,7 +557,7 @@ void TurnLeft(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 25;   
+        turnSpeed = ((angleDifference/angle) * 50) + 30;   
       }
                   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -609,7 +609,7 @@ void TurnLeft(float angle) {
         turnSpeed = 50;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 25;   
+        turnSpeed = ((angleDifference/angle) * 50) + 30;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
