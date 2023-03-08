@@ -81,6 +81,7 @@ int turnIterator;
 
 // Misc Variables
 float PWMinput = 0;
+int beenMoving = 0;
 int brakeVar = 0;
 int i = 0;
 int j = 0;
@@ -997,12 +998,15 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         // If subTarget reached, iterate to next point
         if (updateLocation(currentLongitude, currentLatitude) == 1) {
           Stop(2);
+          Serial.println("Sub destination reached, proceeding to next point");
           ++currentIndex;
           createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
         }
         else if (updateLocation(currentLongitude, currentLatitude) == 2) {
           // Destination reached, do something to demonstrate completion like shake head or something idk
           // shakeHead();
+          Serial.println("Destination Reached");
+          return 3;
         }
       }
 
@@ -1030,10 +1034,44 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         Serial.println("DOOR STUCK");
       }
 
-      Serial.println("Moving Forward");
-      MoveForward(20);
-      return 0;
+      if (movingForward == true) {
+        if (beenMoving >= 10) {
+          beenMoving = 0;
+          Stop(2);
+          while (currentLongitude == getLongitude() && currentLatitude == getLatitude()) {}
+          currentLongitude = getLongitude();
+          currentLatitude = getLatitude();
+          if (updateLocation(currentLongitude, currentLatitude) > 0) {
+            Serial.println("Updating Location");
+            // If subTarget reached, iterate to next point
+            if (updateLocation(currentLongitude, currentLatitude) == 1) {
+              Stop(2);
+              Serial.println("Sub destination reached, proceeding to next point");
+              ++currentIndex;
+              createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
+            }
+            else if (updateLocation(currentLongitude, currentLatitude) == 2) {
+              // Destination reached, do something to demonstrate completion like shake head or something idk
+              // shakeHead();
+              Stop(2);
+              Serial.println("Destination Reached");
+              return 3;
+            }
+          }
+        }
+        else {
+          ++beenMoving;
+          MoveForward(20);
+          return 0;
+        }
+      }
+      else {
+        Serial.println("Moving Forward");
+        MoveForward(20);
+        return 0;
+      }
 
+      /*
       // Check if an object is in front of the rover before moving
       if (checkObjectDetectionFront() < 0) {
         // Change the heuristic of whichever point is closer if there is an object detected
@@ -1046,6 +1084,7 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         MoveForward(20);
         return 0;
       }
+      */
     }
   }
   // Mode 1 is run when GPS signal is lost and we are attempting to retrun to an Last Known Signal position

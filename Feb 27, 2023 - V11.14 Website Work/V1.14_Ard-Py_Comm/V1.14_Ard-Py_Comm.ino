@@ -192,7 +192,7 @@ void loop() {
       if (message == "") {
         // Panel Iterator will allow us to delay how often the solar panel runs automation
         // Realistically we would poll this every ~30-45 minutes instead of every ~30 seconds
-        if (checkPanelIterator > 7200) {
+        if (checkPanelIterator > 7000) {
           checkPanelIterator = 0;
           AutonomousSolarPanel();
         }
@@ -202,7 +202,7 @@ void loop() {
 
         // SOC Iterator will allow us to delay how often the SOC check runs
         // Realistically we would poll this every 3-5 minutes (can change based on our load usage) instead of every ~30 seconds
-        if (checkSOCIterator > 1200) {
+        if (checkSOCIterator > 1000) {
           checkSOCIterator = 0;
           chargePercent = checkSOC();
 
@@ -234,6 +234,11 @@ void loop() {
           }
         }
         else {
+          if (MoveStatus == 3) {
+            Stop(2);
+            Serial.println("Demo Complete");
+            delay(999999);
+          }
           // This means everything is working as intended
           // Report anything needed to be reported
           Serial.println("EVERYTHIG IS WORKING");
