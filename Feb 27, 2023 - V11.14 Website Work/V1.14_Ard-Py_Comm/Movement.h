@@ -985,6 +985,13 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
       }
       
+      currentLongitude = getLongitude();
+      currentLatitude = getLatitude();
+      Serial.print(currentLongitude,8);
+      Serial.print(" ");
+      Serial.println(currentLatitude,8);
+      Serial.println();
+
       if (updateLocation(currentLongitude, currentLatitude) > 0) {
         Serial.println("Updating Location");
         // If subTarget reached, iterate to next point

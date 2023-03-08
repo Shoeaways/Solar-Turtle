@@ -172,7 +172,8 @@ void loop() {
       }
 
       while (currentLongitude == 0 || currentLatitude == 0) {
-        MoveReverse(20);
+        //MoveReverse(20);
+        //MoveForward(20);
         currentLongitude = getLongitude();
         currentLatitude = getLatitude();
         Serial.print(currentLongitude);
@@ -180,7 +181,7 @@ void loop() {
         Serial.print(currentLatitude);
         Serial.println();
       }
-      Stop(2);
+      //Stop(2);
       double targetLong = currentLongitude + 0.000225;
       double targetLat = currentLatitude + 0.000285; 
       createMap(currentLongitude, currentLatitude, targetLong, targetLat);
