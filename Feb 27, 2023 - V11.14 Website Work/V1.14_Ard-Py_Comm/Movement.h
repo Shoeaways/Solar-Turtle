@@ -392,20 +392,20 @@ void TurnRight(float angle) {
   
       // Set speed based on percent distance remaining
       if (angleDifference/angle >= 1) {
-        turnSpeed = 50;
+        turnSpeed = 25;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 30;   
+        turnSpeed = ((angleDifference/angle) * 25) + 5;   
       }
 
       // If the rover is beginning to move, we will start the PWM from i = 0
       if (fromZero) {
         if ((angleDifference/angle) > 1) {
-          for (i = 0; i <= 50; ++i) {
+          for (i = 0; i <= turnSpeed; ++i) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         else {
@@ -413,7 +413,7 @@ void TurnRight(float angle) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         fromZero = false;
@@ -445,20 +445,20 @@ void TurnRight(float angle) {
   
       // Set speed based on percent distance remaining      
       if (angleDifference/angle >= 1) {
-        turnSpeed = 50;
+        turnSpeed = 25;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 30;   
+        turnSpeed = ((angleDifference/angle) * 25) + 5;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
       if (fromZero) {
         if ((angleDifference/angle) >= 1) {
-          for (i = 0; i <= 50; ++i) {
+          for (i = 0; i <= turnSpeed; ++i) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         else {
@@ -466,7 +466,7 @@ void TurnRight(float angle) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         fromZero = false;
@@ -554,20 +554,20 @@ void TurnLeft(float angle) {
       
       // Set speed based on percent distance remaining
       if (angleDifference/angle >= 1) {
-        turnSpeed = 50;
+        turnSpeed = 25;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 30;   
+        turnSpeed = ((angleDifference/angle) * 25) + 5;   
       }
                   
       // If the rover is beginning to move, we will start the PWM from i = 0
       if (fromZero) {
         if ((angleDifference/angle) > 1) {
-          for (i = 0; i <= 50; ++i) {
+          for (i = 0; i <= turnSpeed; ++i) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         else {
@@ -575,7 +575,7 @@ void TurnLeft(float angle) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         fromZero = false;
@@ -606,20 +606,20 @@ void TurnLeft(float angle) {
   
       // Set speed based on percent distance remaining      
       if (angleDifference/angle >= 1) {
-        turnSpeed = 50;
+        turnSpeed = 25;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 50) + 30;   
+        turnSpeed = ((angleDifference/angle) * 25) + 5;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
       if (fromZero) {
         if ((angleDifference/angle) >= 1) {
-          for (i = 0; i <= 50; ++i) {
+          for (i = 0; i <= turnSpeed; ++i) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         else {
@@ -627,7 +627,7 @@ void TurnLeft(float angle) {
             for (j = 0; j < 4; ++j) {
               analogWrite(PWM[j], i);
             }
-            delay(6);
+            delay(10);
           }
         }
         fromZero = false;
