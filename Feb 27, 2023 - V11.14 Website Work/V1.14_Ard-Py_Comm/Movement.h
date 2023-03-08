@@ -1017,20 +1017,19 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
         // Turn Left/Right function to reach target cardinal
         if (currentCardinal < targetCardinal[currentIndex]) {
           if ((targetCardinal[currentIndex] - currentCardinal) > 4) {
-            // Need to turn right
+            // Need to turn left
             int CardinalDifference = (8 - (targetCardinal[currentIndex] - currentCardinal)) * 45;
             TurnLeft(CardinalDifference);
           }
           else {
-            // Need to turn left
+            // Need to turn right
             int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
             TurnRight(CardinalDifference);
           }
           currentCardinal = targetCardinal[currentIndex];
           Stop(2);
-          Serial.println("Target turn Reached");
         }
-        else if (currentCardinal < targetCardinal[currentIndex]) {
+        else if (currentCardinal > targetCardinal[currentIndex]) {
           if ((currentCardinal - targetCardinal[currentIndex]) > 4) {
             // Need to turn right
             int CardinalDifference = (8 - (currentCardinal - targetCardinal[currentIndex])) * 45;
