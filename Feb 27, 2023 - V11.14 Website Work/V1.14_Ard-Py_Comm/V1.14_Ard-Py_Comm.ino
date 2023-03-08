@@ -182,7 +182,7 @@ void loop() {
         Serial.println();
       }
       //Stop(2);
-      double targetLong = currentLongitude + 0.000225;
+      double targetLong = currentLongitude - 0.000225;
       double targetLat = currentLatitude + 0.000285; 
       createMap(currentLongitude, currentLatitude, targetLong, targetLat);
     }

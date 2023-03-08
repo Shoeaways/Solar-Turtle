@@ -50,7 +50,7 @@ float readPower = 0;
 double LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 double endTargetX = 0, endTargetY = 0;
 double subTargetX = 0, subTargetY = 0;
-int currentCardinal = 1;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
+int currentCardinal = 7;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 int targetCardinal[128];
 int North = 1, NorthEast = 2, East = 3, SouthEast = 4, South = 5, SouthWest = 6, West = 7, NorthWest = 8;
 bool mapExists = true;
@@ -1015,23 +1015,36 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
       while (currentCardinal != targetCardinal[currentIndex]) {
         // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
         // Turn Left/Right function to reach target cardinal
-        // Can make it better by having it overflow 1 to 8
         if (currentCardinal < targetCardinal[currentIndex]) {
-          // Need to turn right
-          int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 45;
-          TurnRight(CardinalDifference);
+          if ((targetCardinal[currentIndex] - currentCardinal) > 4) {
+            // Need to turn right
+            int CardinalDifference = (8 - (targetCardinal[currentIndex] - currentCardinal)) * 45;
+            TurnLeft(CardinalDifference);
+          }
+          else {
+            // Need to turn left
+            int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
+            TurnRight(CardinalDifference);
+          }
           currentCardinal = targetCardinal[currentIndex];
           Stop(2);
           Serial.println("Target turn Reached");
         }
         else if (currentCardinal < targetCardinal[currentIndex]) {
-          // Need to turn left
-          int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
-          TurnLeft(CardinalDifference);
+          if ((currentCardinal - targetCardinal[currentIndex]) > 4) {
+            // Need to turn right
+            int CardinalDifference = (8 - (currentCardinal - targetCardinal[currentIndex])) * 45;
+            TurnRight(CardinalDifference);
+          }
+          else {
+            // Need to turn left
+            int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
+            TurnLeft(CardinalDifference);
+          }
           currentCardinal = targetCardinal[currentIndex];
           Stop(2);
         }
-        Serial.println("DOOR STUCK");
+        Serial.println("Cardinal direction reached. If this prints consecutively, the code is stuck in this loop");
       }
 
       if (movingForward == true) {
