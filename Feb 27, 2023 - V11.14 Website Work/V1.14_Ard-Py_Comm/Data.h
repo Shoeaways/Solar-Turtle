@@ -246,8 +246,9 @@ void updateIMUValues() {
 
 // Function will update GPS values
 void updateGPSValues() {
-  gps.encode(Serial1.read());
-
+  while(Serial1.available()) {
+    gps.encode(Serial1.read());
+  }
   // GPS Values
   Latitude = gps.location.lng();
   Longitude = gps.location.lat();
