@@ -85,7 +85,7 @@ void initData() {
   // Initialize IMU
   Wire.begin();
   mpu6050.begin();
-  mpu6050.calcGyroOffsets(true);
+  mpu6050.calcGyroOffsets(false);
 
   // Initialize GPS
   Serial1.begin(9600);  
@@ -241,7 +241,7 @@ int checkSOC() {
 // Function will update IMU and GPS values
 void updateIMUValues() {
   mpu6050.update();
-  compassHeading = -mpu6050.getAngleZ();
+  compassHeading = mpu6050.getAngleZ();
 }
 
 // Function will update GPS values
@@ -317,11 +317,12 @@ float getCardinal() {
 // Function returns compass heading
 float getCompassHeading(bool &newTurnFlag) {
   if (newTurnFlag == true) {
-    compassHeading = 0;
+    //compassHeading = 0;
     newTurnFlag = false;
   }
   mpu6050.update();
   compassHeading = -mpu6050.getAngleZ();
+  //Serial.println(compassHeading);
   return(compassHeading);
 }
 
@@ -364,6 +365,10 @@ float readPanelPower() {
   return(panelPower);
 }
 
+float readPanelVoltage() {
+  updatePanelVA();
+  return(AVGpanelVoltage);
+}
 // Function to return system Voltage, Current, and Power as a string
 String systemVA() {
   updateSystemVA();

@@ -50,7 +50,7 @@ float readPower = 0;
 double LKSLongitude, LKSLatitude; // Last Known Signal Long/Lat
 double endTargetX = 0, endTargetY = 0;
 double subTargetX = 0, subTargetY = 0;
-int currentCardinal = 7;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
+int currentCardinal = 1;// Allows us to denote N/E/S/W with the midpoints (NE,SE) using 1-8
 int targetCardinal[128];
 int North = 1, NorthEast = 2, East = 3, SouthEast = 4, South = 5, SouthWest = 6, West = 7, NorthWest = 8;
 bool mapExists = true;
@@ -85,6 +85,7 @@ int beenMoving = 0;
 int brakeVar = 0;
 int i = 0;
 int j = 0;
+int turnLeft1 = 0, turnRight1 = 0, turnRight2 = 0;
 
 // Initialize function
 void initMovement() {
@@ -122,24 +123,26 @@ void initMovement() {
 
 // Autonomous solar panel movement (Checks every 5 degrees between 60-120 and locates the best charging angle)
 void AutonomousSolarPanel() {
+  //Serial.println("Running autonomous Solar Panel");
   // Reset panel to 30 degrees
-  for (i = currPanelAngle; i > 30; i -= 1) {
+  for (i = currPanelAngle; i > 15; i -= 1) {
     analogWrite(PanelServo, i);
     delay(40);
   }
-  currPanelAngle = 30;
+  currPanelAngle = 15;
   
-  optimalPower = readPanelPower();
+  optimalPower = readPanelVoltage();
   optimalAngle = currPanelAngle;
   // Poll angles between 30-105 at 5 degree increments for the most optimal charging rate
   for (i = currPanelAngle; i < 105; i += 5) {
     analogWrite(PanelServo, i);
     // fiddle w this number
-    delay(100);
-    readPower = readPanelPower();
-    if (readPower > optimalPower) {
+    delay(300);
+    readPower = readPanelVoltage();
+    if (readPower < optimalPower) {
       optimalAngle = i;
       optimalPower = readPower;
+      //Serial.println(optimalPower, 6);
     }
   }
   currPanelAngle = i;
@@ -332,6 +335,7 @@ void Stop(int num) {
 
 // Turn Right x amount of degrees
 void TurnRight(float angle) {
+  // Serial.println(angle);
   // Serial.println("Turning Right");
   // Sets speed to 0 before starting to account for calling the function while the robot is already moving
   for (brakeVar = i; brakeVar >= 0; --brakeVar) {
@@ -353,9 +357,13 @@ void TurnRight(float angle) {
 
   // Pull compass heading from IMU and create a target angle as well as the upper/lower limit with the error
   newTurn = true;
+  delay(2000);
+  currAngle = getCompassHeading(newTurn);
+  while ((getCompassHeading(newTurn) - currAngle) > 3) {}
   currAngle = getCompassHeading(newTurn);
   prevAngle = currAngle;
   targetAngle = currAngle + angle;
+  //Serial.println(targetAngle);
   upperTargetAngle = targetAngle + errorAngle;
   lowerTargetAngle = targetAngle - errorAngle;
 
@@ -395,7 +403,7 @@ void TurnRight(float angle) {
         turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) *40) + 15;   
+        turnSpeed = (abs(angleDifference/angle) * 40) + 70;   
       }
 
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -425,7 +433,7 @@ void TurnRight(float angle) {
           for (j = 0; j < 4; ++j) {
             analogWrite(PWM[j], i);
           }
-          delay(2);
+          delay(4);
         }
         currAngle = getCompassHeading(newTurn);
       }
@@ -438,8 +446,13 @@ void TurnRight(float angle) {
   // No overflow
   else {
     while((currAngle < lowerTargetAngle) || (currAngle > upperTargetAngle)) {
-      //Serial.println(currAngle);
+      //Serial.print(turnSpeed);
+      //Serial.print(" ");
+      //Serial.print(currAngle);
+      //Serial.print(" ");
+      //Serial.println(upperTargetAngle);
       // Calculate remaining distance from target angle
+      
       angleDifference = targetAngle - currAngle;
       angleDifference = abs(angleDifference); // This just accounts for overshoot or left turns 
   
@@ -448,7 +461,7 @@ void TurnRight(float angle) {
         turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 40) + 15;   
+        turnSpeed = (abs(angleDifference/angle) * 40) + 70;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -478,7 +491,7 @@ void TurnRight(float angle) {
           for (j = 0; j < 4; ++j) {
             analogWrite(PWM[j], turnSpeed);
           }
-          delay(2);
+          delay(4);
         }
         currAngle = getCompassHeading(newTurn);
       }
@@ -557,7 +570,7 @@ void TurnLeft(float angle) {
         turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 40) + 15;   
+        turnSpeed = ((angleDifference/angle) * 40) + 30;   
       }
                   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -609,7 +622,7 @@ void TurnLeft(float angle) {
         turnSpeed = 40;
       }
       else {
-        turnSpeed = ((angleDifference/angle) * 40) + 15;   
+        turnSpeed = ((angleDifference/angle) * 40) + 30;   
       }
   
       // If the rover is beginning to move, we will start the PWM from i = 0
@@ -681,18 +694,18 @@ void exitSleep() {
 void createMap(double currentX, double currentY, double targetX, double targetY) {
   int temp;
 
-  Serial.println(currentX, 8);
-  Serial.println(currentY, 8);
-  Serial.println(targetX, 8);
-  Serial.println(targetY, 8);
+  //Serial.println(currentX, 8);
+  //Serial.println(currentY, 8);
+  //Serial.println(targetX, 8);
+  //Serial.println(targetY, 8);
 
   double xdifference = targetX - currentX;
   double ydifference = targetY - currentY;
   xdifference /= 10.0;
   ydifference /= 10.0;
 
-  Serial.println(xdifference, 8);
-  Serial.println(ydifference, 8);
+  //Serial.println(xdifference, 8);
+  //Serial.println(ydifference, 8);
 
   // Populates the arrays with the map, with the first item in both arrays as the start point and the last item in both arrays as the end point
   // Map consists of 11 x 11, each point spaced evenly in the X and Y direction
@@ -709,14 +722,14 @@ void createMap(double currentX, double currentY, double targetX, double targetY)
   for (i = 0; i < 11; ++i) {
     for (j = 0; j < 11; ++j) {
       temp = ((i * 11) + j);
-      Serial.print(heuristicVal[temp], 8);
-      Serial.print(" ");
+      //Serial.print(heuristicVal[temp], 8);
+      //Serial.print(" ");
       //Serial.print(mapLong[temp], 8);
       //Serial.print(",");
       //Serial.print(mapLat[temp], 8);
       //Serial.print(" ");
     }
-    Serial.println();
+    //Serial.println();
   }
 
   // Uncomment these to create artifical heuristic changes
@@ -914,7 +927,17 @@ void createMap(double currentX, double currentY, double targetX, double targetY)
     ++totalPoints;
   }
 
-  --totalPoints;
+  totalPoints -= 2;
+
+  for (i = 0; i <= totalPoints; ++i) {
+    //Serial.print(fastestLong[i],8);
+    //Serial.print(" ");
+    //Serial.println(fastestLat[i],8);
+  }
+
+  endTargetY = fastestLat[totalPoints];
+  endTargetX = fastestLong[totalPoints];
+
   for (i = 0; i <= currentIndex; ++i) {
     beenTo[i] = 0;
   }
@@ -922,22 +945,25 @@ void createMap(double currentX, double currentY, double targetX, double targetY)
 }
 
 // Create sub maps inside the map function.
-void createSubMap(double currentX, double currentY, double targetX, double targetY) {
+void createSubMap(double currentX, double currentY) {
   if (currentIndex < (totalPoints + 1)) {
     subTargetX = fastestLong[currentIndex];
     subTargetY = fastestLat[currentIndex];
+    //Serial.print(subTargetX, 8);
+    //Serial.print(" ");
+    //Serial.println(subTargetY, 8);
   }
 }
 
 int updateLocation(double currentLong, double currentLat) {
   // 0.000001 is the tolerance/radius of the actual target coordinates we need to be within to be considered complete
   // This is value of degrees which we can calculate as feet or meters
-  if ((currentLong > endTargetX - 0.000005) && (currentLong < endTargetX - 0.000005) && (currentLat > endTargetY - 0.000006) && (currentLat < endTargetY + 0.000006)) {
+  if ((currentLong > endTargetX - 0.0000025) && (currentLat > endTargetY + 0.0000025)) {
     // clear Maps
     // clearMaps();
     return 2; // Means final destination was reached
   }
-  else if ((currentLong > subTargetX - 0.000005) && (currentLong < subTargetX - 0.000005) && (currentLat > subTargetY - 0.000006) && (currentLat < subTargetY + 0.000006)) {
+  else if ((currentLong > subTargetX - 0.0000025) && (currentLat > subTargetY + 0.0000025)) {
     return 1; // Means sub destination was reached
   }
   else {
@@ -968,34 +994,37 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
       LKSLatitude = currentLatitude;
       // Map out destination if a current map doesn't exist
       if (mapExists == false) {
-        Serial.println("Creating A* Map");
+        //Serial.println("Creating A* Map");
         createMap(currentLongitude, currentLatitude, targetLongitude, targetLatitude);
         mapExists = true;
         endTargetY = targetLongitude;
         endTargetX = targetLatitude;
-        createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
+        createSubMap(currentLongitude, currentLatitude);
       }
       
       currentLongitude = getLongitude();
       currentLatitude = getLatitude();
-      Serial.print(currentLongitude,8);
-      Serial.print(" ");
-      Serial.println(currentLatitude,8);
-      Serial.println();
+      //Serial.print(currentLongitude,8);
+      //Serial.print(" ");
+      //Serial.print(currentLatitude,8);
+      //Serial.print(" ----> ");
+      //Serial.print(endTargetX, 8);
+      //Serial.print(" ");
+      //Serial.println(endTargetY, 8);
 
       if (updateLocation(currentLongitude, currentLatitude) > 0) {
-        Serial.println("Updating Location");
+        //Serial.println("Updating Location");
         // If subTarget reached, iterate to next point
         if (updateLocation(currentLongitude, currentLatitude) == 1) {
           Stop(2);
-          Serial.println("Sub destination reached, proceeding to next point");
+          //Serial.println("Sub destination reached, proceeding to next point");
           ++currentIndex;
-          createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
+          createSubMap(currentLongitude, currentLatitude);
         }
         else if (updateLocation(currentLongitude, currentLatitude) == 2) {
           // Destination reached, do something to demonstrate completion like shake head or something idk
           // shakeHead();
-          Serial.println("Destination Reached");
+          //Serial.println("Destination Reached");
           return 3;
         }
       }
@@ -1003,43 +1032,142 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
       // Check if the current cardinal direction and target cardinal direction is the same
 
       while (currentCardinal != targetCardinal[currentIndex]) {
+        //Serial.println(currentCardinal - targetCardinal[currentIndex]);
         // Determine which way we need to turn to get to the target Cardinal and also how far we are from it
         // Turn Left/Right function to reach target cardinal
         if (currentCardinal < targetCardinal[currentIndex]) {
           if ((targetCardinal[currentIndex] - currentCardinal) > 4) {
             // Need to turn left
             int CardinalDifference = (8 - (targetCardinal[currentIndex] - currentCardinal)) * 45;
+            //Serial.println("Turn Left");
             TurnLeft(CardinalDifference);
           }
           else {
             // Need to turn right
-            int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
+            int CardinalDifference = (targetCardinal[currentIndex] - currentCardinal) * 45;
+            //Serial.println("Turn Right");
             TurnRight(CardinalDifference);
           }
           currentCardinal = targetCardinal[currentIndex];
-          Stop(2);
+          Stop(3);
         }
         else if (currentCardinal > targetCardinal[currentIndex]) {
           if ((currentCardinal - targetCardinal[currentIndex]) > 4) {
             // Need to turn right
             int CardinalDifference = (8 - (currentCardinal - targetCardinal[currentIndex])) * 45;
+            //Serial.println("Turn Right");
             TurnRight(CardinalDifference);
           }
           else {
             // Need to turn left
             int CardinalDifference = (currentCardinal - targetCardinal[currentIndex]) * 45;
+            //Serial.println("Turn Left");
             TurnLeft(CardinalDifference);
           }
           currentCardinal = targetCardinal[currentIndex];
-          Stop(2);
+          Stop(3);
         }
-        Serial.println("Cardinal direction reached. If this prints consecutively, the code is stuck in this loop");
+        //Serial.println("Cardinal direction reached. If this prints consecutively, the code is stuck in this loop");
       }
 
       if (movingForward == true) {
-        if (beenMoving >= 10) {
+        if (beenMoving >= 6) {
           beenMoving = 0;
-          Stop(2);
+          Stop(1);
+          delay(500);
+          if (turnLeft1 == 30) {
+            for (brakeVar = i; brakeVar >= 0; --brakeVar) {
+              for (j = 0; j < 4; ++j) {
+                analogWrite(PWM[j], brakeVar);
+              }
+              delay(8);
+            }
+            for (i = 0; i < 4; ++i) {
+              digitalWrite(Forward[i], LOW);
+              digitalWrite(Reverse[i], LOW);
+            }
+            movingForward = false;
+            movingReverse = false;
+
+            for (i = 0; i < 2; ++i) {
+              digitalWrite(RightForward[i], HIGH);
+              digitalWrite(LeftReverse[i], HIGH);
+            }
+
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], 100);
+            }
+            delay(2000);
+
+            for (i = 0; i < 2; ++i) {
+              digitalWrite(RightForward[i], LOW);
+              digitalWrite(LeftReverse[i], LOW);
+            }
+            turnLeft1 = 0;
+          }  
+
+          if (turnRight1 == 66) {
+            for (brakeVar = i; brakeVar >= 0; --brakeVar) {
+              for (j = 0; j < 4; ++j) {
+                analogWrite(PWM[j], brakeVar);
+              }
+              delay(8);
+            }
+            for (i = 0; i < 4; ++i) {
+              digitalWrite(Forward[i], LOW);
+              digitalWrite(Reverse[i], LOW);
+            }
+            movingForward = false;
+            movingReverse = false;
+
+            for (i = 0; i < 2; ++i) {
+              digitalWrite(RightReverse[i], HIGH);
+              digitalWrite(LeftForward[i], HIGH);
+            }
+
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], 100);
+            }
+            delay(2000);
+
+            for (i = 0; i < 2; ++i) {
+              digitalWrite(RightReverse[i], LOW);
+              digitalWrite(LeftForward[i], LOW);
+            }
+            //turnRight1 = 0;
+            turnLeft1 = 12;
+          }
+
+          if (turnRight2 == 120) {
+            for (brakeVar = i; brakeVar >= 0; --brakeVar) {
+              for (j = 0; j < 4; ++j) {
+                analogWrite(PWM[j], brakeVar);
+              }
+              delay(8);
+            }
+            for (i = 0; i < 4; ++i) {
+              digitalWrite(Forward[i], LOW);
+              digitalWrite(Reverse[i], LOW);
+            }
+            movingForward = false;
+            movingReverse = false;
+
+            for (i = 0; i < 2; ++i) {
+              digitalWrite(RightReverse[i], HIGH);
+              digitalWrite(LeftForward[i], HIGH);
+            }
+
+            for (j = 0; j < 4; ++j) {
+              analogWrite(PWM[j], 100);
+            }
+            delay(2000);
+
+            for (i = 0; i < 2; ++i) {
+              digitalWrite(RightReverse[i], LOW);
+              digitalWrite(LeftForward[i], LOW);
+            }
+          }
+
           while (currentLongitude == getLongitude() && currentLatitude == getLatitude()) {}
           currentLongitude = getLongitude();
           currentLatitude = getLatitude();
@@ -1048,27 +1176,30 @@ int MoveTo(double &currentLongitude, double &currentLatitude, double &targetLong
             // If subTarget reached, iterate to next point
             if (updateLocation(currentLongitude, currentLatitude) == 1) {
               Stop(2);
-              Serial.println("Sub destination reached, proceeding to next point");
+              //Serial.println("Sub destination reached, proceeding to next point");
               ++currentIndex;
-              createSubMap(currentLongitude, currentLatitude, subTargetX, subTargetY);
+              createSubMap(currentLongitude, currentLatitude);
             }
             else if (updateLocation(currentLongitude, currentLatitude) == 2) {
               // Destination reached, do something to demonstrate completion like shake head or something idk
               // shakeHead();
               Stop(2);
-              Serial.println("Destination Reached");
+              //Serial.println("Destination Reached");
               return 3;
             }
           }
         }
         else {
+          ++turnLeft1;
+          ++turnRight1;
+          ++turnRight2;
           ++beenMoving;
           MoveForward(20);
           return 0;
         }
       }
       else {
-        Serial.println("Moving Forward");
+        //Serial.println("Moving Forward");
         MoveForward(20);
         return 0;
       }

@@ -103,6 +103,7 @@ void loop() {
       // Panel Iterator will allow us to delay how often the solar panel runs automation (240 iterations = ~1 minute)
       if (checkPanelIterator > 3600) {
         checkPanelIterator = 0;
+        Stop(1);
         AutonomousSolarPanel();
       }
       else {
@@ -158,42 +159,34 @@ void loop() {
       initData();
       initFlag = false;
 
-      if(Serial1.available()) {
-        currentLongitude = getLongitude();
-        currentLatitude = getLatitude();
-        Serial.println();
-        Serial.print(currentLongitude);
-        Serial.print(" ");
-        Serial.print(currentLatitude);
-        Serial.println();
-      }
-      else {
-        Serial.println("Serial1 is not available.");
-      }
+      currentLongitude = getLongitude();
+      currentLatitude = getLatitude();
 
       while (currentLongitude == 0 || currentLatitude == 0) {
         //MoveReverse(20);
         //MoveForward(20);
         currentLongitude = getLongitude();
         currentLatitude = getLatitude();
-        Serial.print(currentLongitude);
-        Serial.print(" ");
-        Serial.print(currentLatitude);
-        Serial.println();
+        //Serial.print(currentLongitude);
+        //Serial.print(" ");
+        //Serial.print(currentLatitude);
+        //Serial.println();
       }
       //Stop(2);
-      double targetLong = currentLongitude - 0.000225;
-      double targetLat = currentLatitude + 0.000285; 
+      double targetLong = currentLongitude + 0.000090;
+      double targetLat = currentLatitude + 0.000114; 
       createMap(currentLongitude, currentLatitude, targetLong, targetLat);
+      createSubMap(currentLongitude, currentLatitude);
     }
     if (isAutomated == true) {
-      Serial.println(message);
+      //Serial.println(message);
       message = "";
       if (message == "") {
         // Panel Iterator will allow us to delay how often the solar panel runs automation
         // Realistically we would poll this every ~30-45 minutes instead of every ~30 seconds
-        if (checkPanelIterator > 7000) {
+        if (checkPanelIterator > 120) {
           checkPanelIterator = 0;
+          Stop(1);
           AutonomousSolarPanel();
         }
         else {
@@ -236,12 +229,13 @@ void loop() {
         else {
           if (MoveStatus == 3) {
             Stop(2);
-            Serial.println("Demo Complete");
+            //Serial.println("Demo Complete");
+            TurnRight(9999);
             delay(999999);
           }
           // This means everything is working as intended
           // Report anything needed to be reported
-          Serial.println("EVERYTHIG IS WORKING");
+          //Serial.println("EVERYTHIG IS WORKING");
         }
       }
       else {
