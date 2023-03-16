@@ -184,7 +184,7 @@ void loop() {
       if (message == "") {
         // Panel Iterator will allow us to delay how often the solar panel runs automation
         // Realistically we would poll this every ~30-45 minutes instead of every ~30 seconds
-        if (checkPanelIterator > 120) {
+        if (checkPanelIterator > 3600) {
           checkPanelIterator = 0;
           Stop(1);
           AutonomousSolarPanel();
