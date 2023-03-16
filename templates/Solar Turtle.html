@@ -3,237 +3,258 @@
 <head>
 	<title>Solar Hub</title>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+	<meta http-equiv="refresh" content="30" />
 	<link rel="icon" type="image/x-icon" href="static/bingchilling.ico">
+	<link rel="stylesheet" href="static/Solar Turtle.css">
 	
-	<style>
-		* {
-		  box-sizing: border-box;
-		}
+	<script>
+		/*
+		TODO:
+		- Test the domain name with the static IP (48 hours of connecting the domain should be around 6PM 2/8/2023)
+		- Test the form inputs and see if they save the command input (Command is sent to rover correctly, no output in terminal though)
+			- If this works, change the terminal output to be the string that we need 
+		- Create a float number only input for Long/Lat
+			- Have the input disappear and display (currently moving towards X and Y)
+		- Make Youtube display on the live feed portion
+			- Check CROS or what is holding us back from embedding the Youtube Live (COMPLETE - Solution was that the website needed to be through a domain)
+		- Make the data numbers display as needed
+			- Need to test the Jsonify addition 
+		- Any numbers that are displayed need to be either updated at the start when the website is opened or the values need to be saved through local storage
+			- Need a way to clear localstorage at a certain value so that it doesn't overflow or return an error
+			- Test on:
+				- Data 
+				- Terminal inputs
+		- Change the anchors for jumping to the sections to be a little bit before the title itself so it's 10/20/70-white/title/text
+		- Make Meeting the team names expand when images are hovered or this (https://www.w3docs.com/tools/code-editor/4135)
+		- Implement return to top (right now it just fades away cause our footer is changing opacity)
+		*/
+	</script>
 
-		body {
-			margin: 0;
-			background-color: #f4f4f4;
-		}
-
-		/* Style the header */
-		.header {
-			background: #f1f1f1;
-			padding: 6px;
-			text-align: center;
-			line-height: 12px;
-		}
-		.footer {
-			position: fixed;
-			bottom: 0px;
-			width: 100%;
-			height: 250px;
-			background: url(static/Grass.png) no-repeat;
-			opacity: 1.0;
-			padding: 0px;
-			text-align: center;
-
-		}
-
-		/* Style the top navigation bar */
-		.navbar {
-			overflow: hidden;
-			background-color: #bca89f;
-		}
-		/* Style the navbar links */
-		.navbar a {
-			resize: both;
-			float: left;
-			display: block;
-			color: #f2f2f2;
-			text-align: center;
-			padding: 5px;
-			margin: 7px;
-			text-decoration: none;		  
-		}
-		/* Change on hover */
-		.navbar a:hover {
-			border: 3px solid #f2f2f2;
-			border-radius: 20px;
-			padding: 1px;
-		}
-		.NavbarRow {
-			display: grid;
-			grid-template-columns: 1fr 1fr 1fr;
-		}
-		.NavbarColumn {
-			float: left;
-			padding: 15px;
-		}
-		
-		.MainGrid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			margin-top: 20px;
-		}
-		.MainColumn {
-			float: left;
-			padding: 15px;
-		}
-		.MainFullColumn {
-			grid-column-start: 1;
-			grid-column-end: 3;
-			float: left;
-			margin: 10px;
-			padding: 15px;
-		}
-
-		.GroupMembersGrid {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-		}
-		
-		.iframe-container {
-			position: relative;
-			overflow: hidden;
-			width: 100%;
-			padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
-		}
-
-		/* Then style the iframe to fit in the container div with full height and width */
-		.responsive-iframe {
-			position: absolute;
-			top: 0;
-			left: 0;
-			bottom: 0;
-			right: 0;
-			width: 100%;
-			height: 100%;
-		}
-	</style>
-	
-	<script src=
-		"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	
 	<script>
         $(document).ready(function(){
             $(window).scroll(function(){
-				$('.footer').css('opacity', 1 - $(window).scrollTop() / 400);
+				$('.grassFooter').css('opacity', 1 - $(window).scrollTop() / 400);
+				$('.ReturnToTop').css('opacity', -0.3 + $(window).scrollTop() / 400);
 				var scrollPercentage = $(window).scrollTop() / (documentHeight - windowHeight);
 				var newHeight = scrollPercentage * (-250);
-				$('.footer').css('translateY', newHeight);
             })
         })
     </script>
 
 	<script>
         function myFunction() {
-          var result = {{ result|tojson }};
-          var cmd = {{ cmd|tojson }};
+          	var cmd = {{ cmd|tojson }};
+		   	var num = {{ num|tojson }};
+			var Longitude = {{ Longitude|tojson }};
+			var Latitude = {{ Latitude|tojson }};
+			var CompassHeading = {{ CompassHeading|tojson }};
+			var RoverSpeed = {{ RoverSpeed|tojson }};
+			var PanelAngle = {{ PanelAngle|tojson }};
+			var PanelPower = {{ PanelPower|tojson }};
+			var SystemPower = {{ SystemPower|tojson }};
 
-			if (result == "initialized") {
-			document.getElementById("InitCheck").innerHTML = " - Initialized";
-			}
-			else if (result == "not initialized") {
-				document.getElementById("InitCheck").innerHTML = " - Not Initialized, please initialize";
-			}
-			
+			LongLat = "Test Long , Test Lat";
+			document.getElementById("LongLat").innerHTML = LongLat;
+
+			Compass = "Test Compass";
+			document.getElementById("Compass").innerHTML = Compass;
+
+			Speed = "Test Speed";
+			document.getElementById("Speed").innerHTML = Speed;
+
+			PanelAngle = "Test Angle";
+			document.getElementById("PanelAngle").innerHTML = PanelAngle;
+
+			SystemPower = "Test Power Draw";
+			document.getElementById("SystemPower").innerHTML = SystemPower;
+
+			PanelPower = "Test Power Generation";
+			document.getElementById("PanelPower").innerHTML = PanelPower;
+
 			if (cmd == "help") {
-				document.getElementById("cmd").innerHTML = "Current list of commands: ";
-			}
+				outputString = "Current list of commands: ";
+					/*
+				print("Current list of commands - Page 1 of 2")
+				print("NOTE: Any command with NUM requires a numerical value in place of NUM\n")
+				print("NUM Forward - Moves the turtle forward at a NUM speed of 0 - 100%")
+				print("NUM Reverse - Moves the turtle backwards at a NUM speed of 0 - 100%")
+				print("NUM Left - Turn the turtle left a given NUM angle of degrees from 0 - 360º")
+				print("NUM Right - Turn the turtle right a given NUM angle of degrees from 0 - 360º")
+				print("NUM Panel - Turn the solar panel to an angle between 80-125")
+				print("Stop - Stops the turtle")
+				print("Data - Displays the informational data of the turtle (RPY, Panel Angle, GPS coordinates, etc.)")
+				print("NUM Error - Changes the IMU error margin to the given NUM... BE CAREFUL, CHANGING THIS NUMBER CAN CAUSE MAJOR ISSUES")
+					*/
+				}
 			else if (cmd == "panel") {
-				document.getElementById("cmd").innerHTML = "Moving the solar panel";
+				outputString = "Moving the solar panel to " + " degrees";
 			}
 			else if (cmd == "forward") {
-				document.getElementById("cmd").innerHTML = "Moving forward";
+				outputString = "Moving forward at " + "% speed";
 			}
 			else if (cmd == "reverse") {
-				document.getElementById("cmd").innerHTML = "Moving reverse";
+				outputString = "Moving reverse at " + "% speed";
 			}
 			else if (cmd == "left") {
-				document.getElementById("cmd").innerHTML = "Turning left";
+				outputString = "Turning left " + " degrees";
 			}
 			else if (cmd == "right") {
-				document.getElementById("cmd").innerHTML = "Turning right";
+				outputString = "Turning right " + " degrees";
 			}
 			else if (cmd == "error") {
-				document.getElementById("cmd").innerHTML = "Changing error";
+				outputString = "Changing error";
 			}
 			else if (cmd == "stop") {
-				document.getElementById("cmd").innerHTML = "Stopping";
-			}
-			else if (cmd == "data") {
-				document.getElementById("cmd").innerHTML = "Here is the data";
+				outputString = "Stopping";
 			}
 			else if (cmd == "invalid") {
-				document.getElementById("cmd").innerHTML = "Invalid command, try again";
+				outputString = "Invalid command, try again";
 			}
-	  		else {
-				document.getElementById("cmd").innerHTML = "test";
-          	}
-        }
+			else {
+				outputString = "test";
+			}
+			document.getElementById("cmd").innerHTML = outputString;
+		}
     </script>
 </head>
 
 <body onload = "myFunction()">
-    <div class="header">
-        <h1 style="font-size:2.5vw; font-family: brush script mt, cursive;">Le Solar Hub</h1>
-        <p style="font-size:1vw; font-family: brush script mt, cursive;"> for all your Solar Turtle needs </p>
-    </div>
-
-    <div style="overflow: hidden" ; class="navbar">
+    <div style="overflow: hidden;" class="navbar" id = "Top">
         <div class="NavbarRow">
-            <a style="font-size: 20px" class="NavbarColumn" href="#What is">What is S.O.L.A.R. Turtle?</a>
-            <a style="font-size: 20px" class="NavbarColumn" href="#Demo Video">Demo Video - Updated DD/MM/YY</a>
-            <a style="float: right; font-size: 20px" class="NavbarColumn" href="#Group Members">Group Members & Contributors</a>
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#What is">What is S.O.L.A.R. Turtle?</a>
+            <a style = "font-size: 20px" class = "NavbarColumn" href = "#Demo Video">Demo Video - Updated DD/MM/YY</a>
+            <a style = "float: right; font-size: 20px" class = "NavbarColumn" href = "#Group Members">Group Members & Contributors</a>
         </div>
     </div>
 
-    <div style="text-align: center;" class="MainGrid">
-        <div class="MainColumn">
-            <h2>Control Panel<span id="InitCheck"></h2>
-			<h3>Test: <span id="cmd"></h3>
-			<form action = "{{ url_for("getcommand")}}" method="post">
-				<label for = "command">Enter a command:</label>
-				<input type = "text" id="command" name = "command" placeholder = "Type help for command list">
-				<button type = "submit">Submit</button>
-			</form>
-        </div>
-
-        <div style="width: 45vw;" class="MainColumn">
+    <div style = "text-align: center; margin-top: 20px;" class = "MainGrid">
+		<div class = "MainColumn">
             <h2>Live Feed</h2><br>
-            <div class="iframe-container">
-                <iframe class="responsive-iframe" width="800vw" height="525vw" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <div  class = "iframe-container">
+                <iframe class="responsive-iframe" style = "margin: auto;" src="https://www.youtube.com/embed/dQw4w9WgXcQ?start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <p></p>
         </div>
 
-		<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div class="MainColumn">
+            <h2>Control Panel<span id = "InitCheck"></h2>
+			<div class = "ControlPanelGrid">
+				<div>
+					<textarea class="terminalboxtitle" readonly>Title Test</textarea>	
+					<textarea id = "terminalbox" class="terminalbox" readonly></textarea>	
+				</div>
+				<div class = "datatable">
+					<h3 style = "margin-top: 0px; margin-bottom: 5px;">Test</h3>
+					<div class = "datatableRow">Compass Heading: <span id = "Compass"></div>
+					<div class = "datatableRow">Longitude/Latitude: <span id = "LongLat"></div>
+					<div class = "datatableRow">Panel Power Gen:<span id = "PanelPower"></div>
+					<div class = "datatableRow">Solar Panel Angle: <span id = "PanelAngle"></div>
+					<div class = "datatableRow">Speed: <span id = "Speed"></div>
+					<div class = "datatableRow">System Power Draw: <span id = "SystemPower"></div>
+					<form action = "{{ url_for('getcommand')}}" method = "post">
+						<label for = "command">Manual Control:</label>
+						<input type = "text" id = "command" name = "command" placeholder = "Type help for command list">
+						<button id = "submitcommand" type = "submit">Submit</button>
+					</form>
+					<script>
+						let terminalbox = document.getElementById("terminalbox");
+						let terminallog = [];
+						let form = document.querySelector("form");
 
-		<div style="text-align: center;" class="MainFullColumn">
-            <h1 id="What is">
-                What is S.O.L.A.R. Turtle?
-            </h1>
-            <hr style="width: 425px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
-			Placeholder
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+						form.addEventListener("submit", function(event) {
+							event.preventDefault();
+							let terminalInput = document.getElementById("command");
+							let now = new Date();
+							let timestamp = now.toLocaleTimeString();
 
-			<h1 id = "Demo Video">
-				Demo Video
-			</h1>
-			<hr style="width: 200px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
-			Place Holder
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+							logLines.unshift(timestamp + ": " + textInput.value);
+							if (logLines.length > 20) {
+								logLines.pop();
+							}
+							log.value = logLines.join("\n");
+							terminalInput.value = "";
+						});
+					</script>
+				</div>
+			</div>
+        </div>
 
-			<h1 id = "Group Members">
-				Group Members & Contributors
-			</h1>
-			<hr style="width: 485px; margin: auto; margin-bottom: 10px; margin-top: -10px;">
-			Place Holder
-			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+		<div style = "text-align: center; font-size: 16px;" class = "SecondaryGrid">
+			<div style = "margin-bottom: 120px;">
+				<p id = "What is"></p><br>
+				<h1>
+					What is S.O.L.A.R. Turtle?
+				</h1>
+				<hr style = "width: 33vw;">
+				<p style="margin-left: 16vw; margin-right: 16vw; text-align: justify; ">
+					The Solar Operational Land Autonomous Reconnaissance Turtle (or S.O.L.A.R. Turtle for short) is a rover that is designed to survery a designated area.
+					Designed by a team of Electrical Engineers, the current prototype is able to traverse to a given Longitude and Latitude using an A* algorithm and object detection with 
+					a lifetime of 6+ hours depending on the speed and terrain. Using a self actuating solar panel and a self-programmed sleep algorithm, the rover is capable of any journey no matter how long it takes, given the end point is 
+					a feasible destination. 
+				</p>
+			</div>	
+			
+			<div style = "margin-bottom: 120px;">
+				<p id = "Demo Video"></p><br>
+				<h1>
+					Demo Video
+				</h1>
+				<hr style="width: 15vw;">
+				<video width="1250vw" height="750vw" controls>
+					<source src = "static/Rick.mp4" type = "video/mp4">
+					Your browser does not support the video tag.
+				</video>	
+			</div>
+			
+			<div>
+				<p id = "Group Members"></p><br>
+				<h1>
+					Meet the Team
+				</h1>
+				<hr style = "width: 20vw;">
+				<div class = "GroupMembersRow">
+					<div class = "GroupMembersColumn">
+						<a href = "https://www.linkedin.com/in/denniswkang/"><img class = "GroupMembersImage" src = "static/DennisLinkedin.jpg"></a>
+						<p>Dennis Kang</p>
+					</div>
+					<div class = "GroupMembersColumn">
+						<a href = "https://www.linkedin.com/in/eyshu/"><img class = "GroupMembersImage" src = "static/EricLinkedin.jpg"></a>
+						<p>Eric Shu</p>
+					</div>
+					<div class = "GroupMembersColumn">
+						<a href = "https://www.linkedin.com/in/patrick-webb-003-ucr/"><img class = "GroupMembersImage" src = "static/PatrickLinkedin.jpg"></a>
+						<p>Patrick Webb</p>
+					</div>
+				</div>
+
+				<h3>
+					Special Thanks To
+				</h3>
+				<div class = "SpecialThanksRow">
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/vahagnt/"><img class = "SpecialThanksImage" src = "static/VahagnLinkedin.jpg"></a>
+						<p>Vahagn Tovmasian</p>
+					</div>
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/sunny-zeng/"><img class = "SpecialThanksImage" src = "static/SunnyLinkedin.jpg"></a>
+						<p>Sunny Zeng</p>
+					</div>
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/brandon-alcala-856278227/"><img class = "SpecialThanksImage" src = "static/BrandonLinkedin.jpg"></a>
+						<p>Brandon Alcala</p>
+					</div>
+					<div class = "SpecialThanksColumn">
+						<a href = "https://www.linkedin.com/in/neo-marin-3ab977156/"><img class = "SpecialThanksImage" src = "static/NeoLinkedin.jpg"></a>
+						<p>Neo Marin</p>
+					</div>
+				</div>
+			</div>
 		</div>
     </div>
-
-    <div class="footer">
-
-    </div>
-
-
+	<a href = "#Top"><img class = "ReturnToTop" src = "static/top.png"></a>
+    <div class = "grassFooter"></div>
 </body>
 </html>
